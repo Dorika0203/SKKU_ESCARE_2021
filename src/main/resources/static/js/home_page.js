@@ -14,7 +14,7 @@ function navButtonListener() {
             break;
         case 'show-sign-in':
             formUp.style.display = 'none';
-            formIn.style.display = 'block'; 
+            formIn.style.display = 'block';
     }
 }
 

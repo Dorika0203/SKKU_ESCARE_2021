@@ -64,33 +64,33 @@
                     <button class="button is-primary" id="login">로그인</button>
                 </form>
 
-                <form id='sign-up-form' class="box" style=>
+                <form id='sign-up-form' class="box" action="signup" method="post">
 
                     <div class="field">
                         <label class="label">아이디</label>
                         <div class="control">
-                            <input class="input" type="email" placeholder="e.g. alex@example.com">
+                            <input class="input" type="email" placeholder="e.g. alex@example.com" name="ID">
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">비밀번호</label>
                         <div class="control">
-                            <input class="input" type="password" placeholder="********">
+                            <input class="input" type="password" placeholder="********" name="PW">
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">성</label>
                         <div class="control">
-                            <input class="input" placeholder="Kim">
+                            <input class="input" placeholder="Kim" name="lastName">
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">이름</label>
                         <div class="control">
-                            <input class="input" placeholder="Doyeol">
+                            <input class="input" placeholder="Doyeol" name="firstName">
                         </div>
                     </div>
 
@@ -98,7 +98,7 @@
                         <label class="label">전화번호</label>
                         <div class="control">
                             <input class="input" pattern='010-[0-9]{4}-[0-9]{4}' placeholder="010-1234-5678"
-                                   title="Please enter KR tel type : 010-1234-5678">
+                                   title="Please enter KR tel type : 010-1234-5678" name="phoneNumber">
                         </div>
                     </div>
 
