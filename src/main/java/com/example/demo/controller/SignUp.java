@@ -22,7 +22,7 @@ public class SignUp {
     private String server = "https://sdkms.fortanix.com";
     private String username = "02d20054-7a29-4511-9e73-f599da9f32a6";
     private String password = "4ztxSuaKpcIXtxiDYfgMxn0M2wyZaZSYnB_BqsOeswB_j7gGHqe5xGTqBvr-DjIZrFkrEJzgL5-YI8X1VExRjg";
-    public final boolean SUCCESS = false;
+    public final boolean SUCCESS = true;
 
     @PostMapping
     public String signUp(Model model,String ID, String PW, String lastName,String firstName,String phoneNumber) {
