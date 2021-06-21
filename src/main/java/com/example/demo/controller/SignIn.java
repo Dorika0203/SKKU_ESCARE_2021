@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/signin")
 public class SignIn {
 
-    @Autowired
-    private UserDataInterface dbInterface;
-
-    @GetMapping
-    public String connect() {
-
-        UserDataModel temp = new UserDataModel("id_1", "pw_1");
-        System.out.printf("HI\n");
-        saveData(temp);
-        System.out.printf("HI2\n");
-        return "connected";
-    }
-
-    public void saveData(UserDataModel svdt) {
-        dbInterface.save(svdt);
-        dbInterface.flush();
-    }
+//    @Autowired
+//    private UserDataInterface dbInterface;
+//
+//    @GetMapping
+//    public String connect() {
+//
+//        UserDataModel temp = new UserDataModel("id_1", "pw_1", " ", " ", " ");
+//        System.out.printf("HI\n");
+//        saveData(temp);
+//        System.out.printf("HI2\n");
+//        return "connected";
+//    }
+//
+//    public void saveData(UserDataModel svdt) {
+//        dbInterface.save(svdt);
+//        dbInterface.flush();
+//    }
 }
