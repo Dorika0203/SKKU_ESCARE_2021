@@ -35,4 +35,8 @@ public class UserDataModel {
         this.id = _id;
         this.pw = _pw;
     }
+
+    public UserDataModel() {
+        super();
+    }
 }
