@@ -1,7 +1,18 @@
 package com.example.demo.model;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="UserInfo")
 public class UserDataModel {
+    @Id
     private String id;
+    @Column
     private String pw;
 
     public String getId() {
@@ -20,7 +31,7 @@ public class UserDataModel {
         this.pw = pw;
     }
 
-    UserDataModel(String _id, String _pw) {
+    public UserDataModel(String _id, String _pw) {
         this.id = _id;
         this.pw = _pw;
     }

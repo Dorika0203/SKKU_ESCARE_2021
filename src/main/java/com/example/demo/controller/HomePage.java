@@ -12,5 +12,5 @@ public class HomePage
     @GetMapping
     public String hello() {
         return "home_page"; 
-    } 
+    }
 }
