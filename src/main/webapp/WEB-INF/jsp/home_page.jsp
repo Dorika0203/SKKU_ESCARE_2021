@@ -105,8 +105,8 @@
                     <button class="button is-primary" id="sign-in">회원 가입</button>
 
                 </form>
-                <button class="button is-primary" id="connect" onclick="connectWithFortanixKMS()">connect
-                    test
+                <button class="button is-primary" id="connect" onclick="connectWithFortanixKMS()">
+                    connect test
                 </button>
             </div>
 

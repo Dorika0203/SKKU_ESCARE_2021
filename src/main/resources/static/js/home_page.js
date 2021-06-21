@@ -14,12 +14,12 @@ function navButtonListener() {
             break;
         case 'show-sign-in':
             formUp.style.display = 'none';
-            formIn.style.display = 'block';
+            formIn.style.display = 'block'; 
     }
 }
 
 function connectWithFortanixKMS() {
-    location.href = "http://localhost:8080/connect"
+    location.href = "connect"
 }
 
 signUpButton.addEventListener('click', navButtonListener);
