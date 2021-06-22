@@ -45,19 +45,19 @@
         <div class="columns">
 
             <div class="column is-two-fifth">
-                <form id='sign-in-form' class="box">
+                <form id='sign-in-form' class="box" action="signin" method="post">
 
                     <div class="field">
                         <label class="label">아이디</label>
                         <div class="control">
-                            <input class="input" type="email" placeholder="e.g. alex@example.com">
+                            <input class="input" type="email" placeholder="e.g. alex@example.com" name="ID_IN">
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">비밀번호</label>
                         <div class="control">
-                            <input class="input" type="password" placeholder="********">
+                            <input class="input" type="password" placeholder="********" name="PW_IN">
                         </div>
                     </div>
 
