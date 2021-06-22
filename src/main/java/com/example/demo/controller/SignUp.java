@@ -82,6 +82,8 @@ public class SignUp {
                 .mode(CryptMode.CBC).setIv(ivStr.getBytes());
         try {
             EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client).encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
+            System.out.println(encryptResponse.getCipher().length);
+            for(int i=0; i<encryptResponse.getCipher().length; i++) System.out.printf("%d: %d\n", i, encryptResponse.getCipher()[i]);
             return encryptResponse.getCipher();
         } catch (ApiException e) {
             e.printStackTrace();

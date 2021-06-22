@@ -63,6 +63,7 @@ public class SignIn {
                 System.out.println(sha256(PW_IN).toString());
                 System.out.println("GOT Encrypted Hash");
                 System.out.println(hexToBytes(hex));
+                System.out.println(hexToBytes(hex).length);
                 System.out.println("GOT Decrypted Hash");
                 System.out.println(DecryptCipher(hexToBytes(hex), client));
                 if(Arrays.equals(sha256(PW_IN), DecryptCipher(hexToBytes(hex), client))) return "sign_in_success";
@@ -118,7 +119,9 @@ public class SignIn {
     }
 
     public byte[] hexToBytes(String hex) {
-        byte[] retval = new BigInteger(hex, 16).toByteArray();
+        byte[] temp = new BigInteger(hex, 16).toByteArray();
+        byte[] retval = Arrays.copyOfRange(temp, 1, temp.length);
+        for(int i=0; i<retval.length; i++) System.out.printf("%d: %d\n", i, retval[i]);
         return retval;
     }
 
