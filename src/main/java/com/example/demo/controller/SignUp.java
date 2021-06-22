@@ -3,14 +3,14 @@ package com.example.demo.controller;
 import java.awt.peer.SystemTrayPeer;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-import com.example.demo.model.UserDataInterface;
-import com.example.demo.model.UserDataModel;
-import com.fortanix.sdkms.v1.ApiClient;
-import com.fortanix.sdkms.v1.ApiException;
-import com.fortanix.sdkms.v1.api.AuthenticationApi;
-import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
-import com.fortanix.sdkms.v1.model.AuthResponse;
+import com.example.demo.model.*;
+import com.fortanix.sdkms.v1.*;
+import com.fortanix.sdkms.v1.api.*;
+import com.fortanix.sdkms.v1.model.*;
+import com.fortanix.sdkms.v1.auth.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.catalina.authenticator.SpnegoAuthenticator.AuthenticateAction;
@@ -32,18 +32,8 @@ public class SignUp {
     UserDataInterface table;
 
     @PostMapping
-    public String signUp(String ID, String PW, String lastName,String firstName,String phoneNumber) {
+    public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
         System.out.println(ID + " " + PW + " " + lastName + " " + firstName + " " + phoneNumber);
-        // open DB
-        UserDataModel user = new UserDataModel(ID, PW, lastName, firstName, phoneNumber);
-
-        if(hasDuplicate(ID)){
-            SUCCESS = true;
-            table.save(user);
-            table.flush();
-        }
-
-
 
         //connect to SDKMS
         ApiClient client = new ApiClient();
@@ -63,12 +53,68 @@ public class SignUp {
             System.err.println("Unable to authenticate: " + e.getMessage());
         }
 
-        if(SUCCESS) return "sign_up_success";
+        //hashing and encrypting pw
+        String cipher = null;
+
+        try {
+            System.out.println(bytesToHex(sha256(PW)));
+            cipher = generatedCipher(bytesToHex(sha256(PW)), client).toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(cipher);
+
+        UserDataModel user = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
+
+        if (hasDuplicate(ID)) {
+            SUCCESS = true;
+            table.save(user);
+            table.flush();
+        }
+
+        if (SUCCESS) return "sign_up_success";
         else return "sign_up_fail";
     }
 
-    public Boolean hasDuplicate(String ID){
+    public Boolean hasDuplicate(String ID) {
         return !table.findById(ID).isPresent();
     }
-    
+
+    public byte[] generatedCipher(String info, ApiClient client) {
+
+        byte[] plain = info.getBytes();
+        EncryptRequest encryptRequest = new EncryptRequest();
+        encryptRequest
+                .alg(ObjectType.AES)
+                .plain(plain)
+                .mode(CryptMode.CBC);
+        try {
+            EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client).encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
+            return encryptResponse.getCipher();
+        } catch (ApiException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public byte[] sha256(String msg) throws NoSuchAlgorithmException {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        md.update(msg.getBytes());
+
+        return md.digest();
+    }
+
+    public String bytesToHex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder();
+        for (byte b: bytes) {
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
+    }
+
 }
