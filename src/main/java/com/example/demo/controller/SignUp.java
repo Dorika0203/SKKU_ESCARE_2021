@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import com.example.demo.model.*;
 import com.fortanix.sdkms.v1.*;
@@ -28,6 +29,8 @@ public class SignUp {
     @PostMapping
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
         System.out.println(ID + " " + PW + " " + lastName + " " + firstName + " " + phoneNumber);
+        byte[] newPW_ = PW.getBytes();
+        //byte[] newPW = Arrays.copyOfRange(newPW_, 1, newPW_.length);
 
         //connect to SDKMS
         ApiClient client = new ApiClient();
@@ -48,10 +51,10 @@ public class SignUp {
         }
 
         //hashing and encrypting pw
-        String cipher = null;
+        byte[] cipher = null;
 
         try {
-            cipher = bytesToHex(generatedCipher(sha256(PW), client));
+            cipher = generatedCipher(sha256(newPW_), client);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -91,14 +94,14 @@ public class SignUp {
         }
     }
 
-    public byte[] sha256(String msg) throws NoSuchAlgorithmException {
+    public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        md.update(msg.getBytes());
+        md.update(msg);
 
         return md.digest();
     }

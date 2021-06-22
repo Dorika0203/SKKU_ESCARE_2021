@@ -56,17 +56,17 @@ public class SignIn {
         if(dbInterface.findById(ID_IN).isPresent()) {
             UserDataModel foundInfo = dbInterface.getById(ID_IN);
             // login success.
-            String hex = foundInfo.getPw();
+            byte[] hex = foundInfo.getPw();
 
             try {
                 System.out.println("GOT PW HASH");
                 System.out.println(sha256(PW_IN).toString());
                 System.out.println("GOT Encrypted Hash");
-                System.out.println(hexToBytes(hex));
-                System.out.println(hexToBytes(hex).length);
+                System.out.println((hex));
+                System.out.println((hex).length);
                 System.out.println("GOT Decrypted Hash");
-                System.out.println(DecryptCipher(hexToBytes(hex), client));
-                if(Arrays.equals(sha256(PW_IN), DecryptCipher(hexToBytes(hex), client))) return "sign_in_success";
+                System.out.println(DecryptCipher((hex), client));
+                if(Arrays.equals(sha256(PW_IN), DecryptCipher((hex), client))) return "sign_in_success";
                 else flag = 1;
             } catch (NoSuchAlgorithmException e) {
                 System.out.println("NO SUCH ALRGORITHM EXCEPTION!!!!!!!!!!!!!!!!!");
@@ -118,11 +118,11 @@ public class SignIn {
         return md.digest();
     }
 
-    public byte[] hexToBytes(String hex) {
-        byte[] temp = new BigInteger(hex, 16).toByteArray();
-        byte[] retval = Arrays.copyOfRange(temp, 1, temp.length);
-        for(int i=0; i<retval.length; i++) System.out.printf("%d: %d\n", i, retval[i]);
-        return retval;
-    }
+//    public byte[] hexToBytes(String hex) {
+//        byte[] temp = new BigInteger(hex, 16).toByteArray();
+//        //byte[] retval = Arrays.copyOfRange(temp, 1, temp.length);
+//        for(int i=0; i<temp.length; i++) System.out.printf("%d: %d\n", i, temp[i]);
+//        return temp;
+//    }
 
 }
