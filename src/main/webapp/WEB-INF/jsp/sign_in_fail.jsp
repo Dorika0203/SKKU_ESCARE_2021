@@ -11,6 +11,7 @@
                 <div class="error-details">
                     Sorry, an error has occured.
                     Error message = ${errorMessage}
+                    <a href="home" title="Return to home page" target="_self">Home</a>
                 </div>
             </div>
         </div>

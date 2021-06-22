@@ -1,16 +1,20 @@
 package com.example.demo.controller;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
 import com.example.demo.model.*;
-import com.fortanix.sdkms.v1.ApiClient;
-import com.fortanix.sdkms.v1.ApiException;
-import com.fortanix.sdkms.v1.api.AuthenticationApi;
-import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
-import com.fortanix.sdkms.v1.model.AuthResponse;
+import com.fasterxml.jackson.databind.util.ArrayBuilders.ByteBuilder;
+import com.fortanix.sdkms.v1.*;
+import com.fortanix.sdkms.v1.api.*;
+import com.fortanix.sdkms.v1.model.*;
+import com.fortanix.sdkms.v1.auth.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -48,19 +52,25 @@ public class SignIn {
             System.err.println("Unable to authenticate: " + e.getMessage());
         }
 
-        // test : push userdata into DB.
-        // UserDataModel temp = new UserDataModel("qwer@asdf.com", "zxcv");
-        // dbInterface.save(temp);
-        // dbInterface.flush();
-        // System.out.printf("HI\n");
-
         // try Login.
         if(dbInterface.findById(ID_IN).isPresent()) {
             UserDataModel foundInfo = dbInterface.getById(ID_IN);
             // login success.
-            if(foundInfo.getPw().equals(PW_IN)) return "sign_in_success";
-            // password not match.
-            else flag = 1;
+            String hex = foundInfo.getPw();
+
+            try {
+                System.out.println("GOT PW HASH");
+                System.out.println(sha256(PW_IN).toString());
+                System.out.println("GOT Encrypted Hash");
+                System.out.println(hexToBytes(hex));
+                System.out.println("GOT Decrypted Hash");
+                System.out.println(DecryptCipher(hexToBytes(hex), client));
+                if(Arrays.equals(sha256(PW_IN), DecryptCipher(hexToBytes(hex), client))) return "sign_in_success";
+                else flag = 1;
+            } catch (NoSuchAlgorithmException e) {
+                System.out.println("NO SUCH ALRGORITHM EXCEPTION!!!!!!!!!!!!!!!!!");
+                e.printStackTrace();
+            }
         }
         // id does not exist.
         else flag = 2;
@@ -77,5 +87,39 @@ public class SignIn {
                 model.addAttribute("errorMessage", "FLAG VALUE IS WRONG!!");    
         }
         return "sign_in_fail";
+        
     }
+
+    public byte[] DecryptCipher(byte[] cipher, ApiClient client) {
+        String ivStr = new String("ESCAREAAAAAAAAAA");
+        DecryptRequest decryptRequest = new DecryptRequest();
+        decryptRequest.alg(ObjectType.AES).cipher(cipher).mode(CryptMode.CBC).iv(ivStr.getBytes());
+        try {
+            System.out.println("HI");
+            DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client).decrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", decryptRequest);
+            System.out.println("HI");
+            return decryptResponse.getPlain();
+        } catch (ApiException e) {
+            e.printStackTrace();
+            return null;
+        }        
+    }
+
+    public byte[] sha256(String msg) throws NoSuchAlgorithmException {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+        md.update(msg.getBytes());
+        return md.digest();
+    }
+
+    public byte[] hexToBytes(String hex) {
+        byte[] retval = new BigInteger(hex, 16).toByteArray();
+        return retval;
+    }
+
 }

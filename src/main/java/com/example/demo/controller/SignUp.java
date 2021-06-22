@@ -1,8 +1,5 @@
 package com.example.demo.controller;
 
-import java.awt.peer.SystemTrayPeer;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -13,10 +10,7 @@ import com.fortanix.sdkms.v1.model.*;
 import com.fortanix.sdkms.v1.auth.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.apache.catalina.authenticator.SpnegoAuthenticator.AuthenticateAction;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -57,14 +51,12 @@ public class SignUp {
         String cipher = null;
 
         try {
-            System.out.println(bytesToHex(sha256(PW)));
-            cipher = generatedCipher(bytesToHex(sha256(PW)), client).toString();
+            cipher = bytesToHex(generatedCipher(sha256(PW), client));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
 
         System.out.println(cipher);
-
         UserDataModel user = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
 
         if (hasDuplicate(ID)) {
@@ -81,14 +73,13 @@ public class SignUp {
         return !table.findById(ID).isPresent();
     }
 
-    public byte[] generatedCipher(String info, ApiClient client) {
-
-        byte[] plain = info.getBytes();
+    public byte[] generatedCipher(byte[] plain, ApiClient client) {
+        String ivStr = new String("ESCAREAAAAAAAAAA");
         EncryptRequest encryptRequest = new EncryptRequest();
         encryptRequest
                 .alg(ObjectType.AES)
                 .plain(plain)
-                .mode(CryptMode.CBC);
+                .mode(CryptMode.CBC).setIv(ivStr.getBytes());
         try {
             EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client).encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
             return encryptResponse.getCipher();
@@ -97,6 +88,7 @@ public class SignUp {
             return null;
         }
     }
+
     public byte[] sha256(String msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
         try {

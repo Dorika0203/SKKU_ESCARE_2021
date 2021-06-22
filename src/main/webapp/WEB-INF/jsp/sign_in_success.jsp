@@ -8,6 +8,7 @@
         <div class="col-md-12">
             <div class="error-template">
                 <h1>Sign in Success!</h1>
+                <a href="home" title="Return to home page" target="_self">Home</a>
             </div>
         </div>
     </div>
