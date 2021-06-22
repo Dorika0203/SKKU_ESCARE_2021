@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SignIn {
 
     private String server = "https://sdkms.fortanix.com";
-    private String username = "02d20054-7a29-4511-9e73-f599da9f32a6";
-    private String password = "4ztxSuaKpcIXtxiDYfgMxn0M2wyZaZSYnB_BqsOeswB_j7gGHqe5xGTqBvr-DjIZrFkrEJzgL5-YI8X1VExRjg";
+    private String username = "a025eafd-5977-4924-8087-9b262315a974";
+    private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
 
     @Autowired
     private UserDataInterface dbInterface;
