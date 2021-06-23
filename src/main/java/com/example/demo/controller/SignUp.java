@@ -44,7 +44,6 @@ public class SignUp {
             e.printStackTrace();
         }
 
-        System.out.println(cipher);
         UserDataModel user = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
 
         if (hasDuplicate(ID)) {
@@ -120,6 +119,22 @@ public class SignUp {
             System.out.println("success");
         } catch (ApiException e) {
             System.err.println("Unable to authenticate: " + e.getMessage());
+        }
+    }
+
+    public void createRSAKey(ApiClient client) {
+        SobjectRequest sobjectRequest = new SobjectRequest() .name("Name")
+                .keySize(2048)
+                .objType(ObjectType.RSA)
+                .keyOps(Arrays.asList(KeyOperations.SIGN,
+                KeyOperations.VERIFY,
+                KeyOperations.EXPORT));
+        SecurityObjectsApi securityObjectsApi = new
+                SecurityObjectsApi(client);
+        try {
+            KeyObject keyObject = securityObjectsApi.generateSecurityObject(sobjectRequest);
+        } catch (ApiException e) {
+            e.printStackTrace();
         }
     }
 }
