@@ -52,7 +52,11 @@ public class SignUp {
             table.flush();
         }
 
-        if (SUCCESS) return "sign_up_success";
+        if (SUCCESS) {
+//            GenSecurityObj newSecObj = new GenSecurityObj();
+//            newSecObj.Generate(client);
+            return "sign_up_success";
+        }
         else return "sign_up_fail";
     }
 
