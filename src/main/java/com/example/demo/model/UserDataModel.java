@@ -15,7 +15,7 @@ public class UserDataModel {
     @Id
     private String id;
     @Column
-    private String pw;
+    private byte[] pw;
     @Column
     private String Lastname;
     @Column
@@ -33,11 +33,11 @@ public class UserDataModel {
         this.id = id;
     }
 
-    public String getPw() {
+    public byte[] getPw() {
         return pw;
     }
 
-    public void setPw(String pw) {
+    public void setPw(byte[] pw) {
         this.pw = pw;
     }
 
@@ -46,7 +46,7 @@ public class UserDataModel {
     public void setLastname(String lastname) {Lastname = lastname;}
 
 
-    public UserDataModel(String _id, String _pw, String lastname, String firstname, String phonenumber) {
+    public UserDataModel(String _id, byte[] _pw, String lastname, String firstname, String phonenumber) {
         this.id = _id;
         this.pw = _pw;
         this.Lastname = lastname;
