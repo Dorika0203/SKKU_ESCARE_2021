@@ -28,27 +28,12 @@ public class SignUp {
 
     @PostMapping
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
-        System.out.println(ID + " " + PW + " " + lastName + " " + firstName + " " + phoneNumber);
         byte[] newPW_ = PW.getBytes();
         //byte[] newPW = Arrays.copyOfRange(newPW_, 1, newPW_.length);
 
         //connect to SDKMS
-        ApiClient client = new ApiClient();
-        client.setBasePath(server);
-        client.setUsername(username);
-        client.setPassword(password);
-
-        AuthenticationApi authenticationApi = new AuthenticationApi(client);
-        try {
-            AuthResponse authResponse = authenticationApi.authorize();
-            ApiKeyAuth bearerTokenAuth =
-                    (ApiKeyAuth) client.getAuthentication("bearerToken");
-            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
-            bearerTokenAuth.setApiKeyPrefix("Bearer");
-            System.out.println("success");
-        } catch (ApiException e) {
-            System.err.println("Unable to authenticate: " + e.getMessage());
-        }
+        ApiClient client = createClient(server, username, password);
+        connectFortanixsdkms(client);
 
         //hashing and encrypting pw
         byte[] cipher = null;
@@ -86,7 +71,8 @@ public class SignUp {
         try {
             EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client).encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
             System.out.println(encryptResponse.getCipher().length);
-            for(int i=0; i<encryptResponse.getCipher().length; i++) System.out.printf("%d: %d\n", i, encryptResponse.getCipher()[i]);
+            for (int i = 0; i < encryptResponse.getCipher().length; i++)
+                System.out.printf("%d: %d\n", i, encryptResponse.getCipher()[i]);
             return encryptResponse.getCipher();
         } catch (ApiException e) {
             e.printStackTrace();
@@ -108,10 +94,32 @@ public class SignUp {
 
     public String bytesToHex(byte[] bytes) {
         StringBuilder builder = new StringBuilder();
-        for (byte b: bytes) {
+        for (byte b : bytes) {
             builder.append(String.format("%02x", b));
         }
         return builder.toString();
     }
 
+    public ApiClient createClient(String server, String username, String password){
+        ApiClient client = new ApiClient();
+        client.setBasePath(server);
+        client.setUsername(username);
+        client.setPassword(password);
+        return client;
+    }
+
+    //connect to SDKMS
+    public void connectFortanixsdkms(ApiClient client) {
+        AuthenticationApi authenticationApi = new AuthenticationApi(client);
+        try {
+            AuthResponse authResponse = authenticationApi.authorize();
+            ApiKeyAuth bearerTokenAuth =
+                    (ApiKeyAuth) client.getAuthentication("bearerToken");
+            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
+            bearerTokenAuth.setApiKeyPrefix("Bearer");
+            System.out.println("success");
+        } catch (ApiException e) {
+            System.err.println("Unable to authenticate: " + e.getMessage());
+        }
+    }
 }
