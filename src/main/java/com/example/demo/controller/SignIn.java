@@ -1,22 +1,22 @@
 package com.example.demo.controller;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+        import java.math.BigInteger;
+        import java.security.MessageDigest;
+        import java.security.NoSuchAlgorithmException;
+        import java.util.Arrays;
 
-import com.example.demo.model.*;
-import com.fasterxml.jackson.databind.util.ArrayBuilders.ByteBuilder;
-import com.fortanix.sdkms.v1.*;
-import com.fortanix.sdkms.v1.api.*;
-import com.fortanix.sdkms.v1.model.*;
-import com.fortanix.sdkms.v1.auth.*;
+        import com.example.demo.model.*;
+        import com.fasterxml.jackson.databind.util.ArrayBuilders.ByteBuilder;
+        import com.fortanix.sdkms.v1.*;
+        import com.fortanix.sdkms.v1.api.*;
+        import com.fortanix.sdkms.v1.model.*;
+        import com.fortanix.sdkms.v1.auth.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Controller;
+        import org.springframework.ui.Model;
+        import org.springframework.web.bind.annotation.PostMapping;
+        import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
@@ -84,10 +84,10 @@ public class SignIn {
                 model.addAttribute("errorMessage", "No such ID");
                 break;
             default:
-                model.addAttribute("errorMessage", "FLAG VALUE IS WRONG!!");    
+                model.addAttribute("errorMessage", "FLAG VALUE IS WRONG!!");
         }
         return "sign_in_fail";
-        
+
     }
 
     public byte[] DecryptCipher(byte[] cipher, ApiClient client) {
@@ -95,14 +95,12 @@ public class SignIn {
         DecryptRequest decryptRequest = new DecryptRequest();
         decryptRequest.alg(ObjectType.AES).cipher(cipher).mode(CryptMode.CBC).iv(ivStr.getBytes());
         try {
-            System.out.println("HI");
             DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client).decrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", decryptRequest);
-            System.out.println("HI");
             return decryptResponse.getPlain();
         } catch (ApiException e) {
             e.printStackTrace();
             return null;
-        }        
+        }
     }
 
     public byte[] sha256(String msg) throws NoSuchAlgorithmException {
