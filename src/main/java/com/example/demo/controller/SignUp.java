@@ -55,7 +55,7 @@ public class SignUp {
         if (SUCCESS) {
 //            GenSecurityObj newSecObj = new GenSecurityObj();
 //            newSecObj.Generate(client);
-            return "sign_up_success";
+            return "certification";
         }
         else return "sign_up_fail";
     }
@@ -81,6 +81,11 @@ public class SignUp {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @PostMapping("certificate")
+    public String certificate(String PW){
+
     }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
