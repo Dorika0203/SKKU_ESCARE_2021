@@ -13,6 +13,7 @@ import com.fortanix.sdkms.v1.auth.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -26,9 +27,10 @@ public class CreateAccount {
     @Autowired
     AccountDataInterface table;
 
-    @PostMapping
+    @GetMapping
     public String createAccount(/*String AccountPW String ID, String lastname, String firstname*/) {
         String AccountPW = "1234";
+        System.out.println(1);
         byte[] bPW_ = AccountPW.getBytes();
 
         //connect to SDKMS
@@ -63,11 +65,12 @@ public class CreateAccount {
         String Account = GenerateAccount(tmp);
         String id = "1234"; String lastname = "Kim"; String firstname = "Minseo";
 
-
-        
         AccountDataModel account = new AccountDataModel(Account, cipher, id, lastname, firstname);
         table.save(account);
         table.flush();
+
+        //System.out.print(table.findByAccount(1234));
+
         return "account_create_success";
     }
 
