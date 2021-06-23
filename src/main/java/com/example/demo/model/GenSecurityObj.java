@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import com.fortanix.sdkms.v1.ApiClient;
+import com.fortanix.sdkms.v1.ApiException;
 import com.fortanix.sdkms.v1.api.SecurityObjectsApi;
 import com.fortanix.sdkms.v1.model.KeyObject;
 import com.fortanix.sdkms.v1.model.KeyOperations;
@@ -15,9 +16,11 @@ public class GenSecurityObj {
     private String username = "a025eafd-5977-4924-8087-9b262315a974";
     private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
 
+    public GenSecurityObj() {
+    }
 
-    public void Generate(){
-        ApiClient client = new ApiClient();
+
+    public void Generate(ApiClient client){
         client.setBasePath(server);
         client.setUsername(username);
         client.setPassword(password);
@@ -31,8 +34,15 @@ public class GenSecurityObj {
                                     KeyOperations.EXPORT));
         SecurityObjectsApi securityObjectsApi = new
                 SecurityObjectsApi(client);
-        KeyObject keyObject =
-                securityObjectsApi
+        try{
+            KeyObject keyObject =
+                    securityObjectsApi.generateSecurityObject(sobjectRequest);
+        } catch (ApiException e) {
+            System.err.println("Unable to authenticate: " + e.getMessage());
+        }
+    }
+
+    public void DeleteOBJ(){
 
     }
 }
