@@ -85,7 +85,8 @@ public class SignUp {
 
     @PostMapping("certificate")
     public String certificate(String PW){
-
+        System.out.println(PW);
+        return "sign_up_success";
     }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
