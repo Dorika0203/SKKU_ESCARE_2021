@@ -27,8 +27,6 @@ public class AccountDataModel {
     @Id
     private String account;
     @Column
-    private byte[] accountPw;
-    @Column
     private String id;
     @Column
     private String lastname;
@@ -57,9 +55,8 @@ public class AccountDataModel {
     public void setLastname(String lastname) {this.lastname = lastname;}
 
 
-    public AccountDataModel(String account, byte[] cipher, String id, String lastname, String firstname) {
+    public AccountDataModel(String account, String id, String lastname, String firstname) {
         this.account = account;
-        this.accountPw = cipher;
         this.id = id;
         this.lastname = lastname;
         this.firstname = firstname;
