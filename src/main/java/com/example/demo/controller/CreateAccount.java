@@ -1,14 +1,10 @@
 package com.example.demo.controller;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
 import com.example.demo.model.*;
 
+import com.example.demo.repository.AccountDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class CreateAccount {
 
     @Autowired
-    AccountDataInterface table;
+    AccountDataRepository table;
 
     @GetMapping
     public String createAccount(/*String AccountPW String ID, String lastname, String firstname*/) {

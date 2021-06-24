@@ -2,9 +2,9 @@ package com.example.demo.controller;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 import com.example.demo.model.*;
+import com.example.demo.repository.UserDataRepository;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.model.*;
@@ -24,7 +24,7 @@ public class SignUp {
     public boolean SUCCESS = false;
 
     @Autowired
-    UserDataInterface table;
+    UserDataRepository table;
 
     @PostMapping
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {

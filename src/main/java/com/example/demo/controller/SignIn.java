@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import com.example.demo.model.*;
-import com.fasterxml.jackson.databind.util.ArrayBuilders.ByteBuilder;
+import com.example.demo.repository.UserDataRepository;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.model.*;
@@ -28,7 +27,7 @@ public class SignIn {
     private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
 
     @Autowired
-    private UserDataInterface dbInterface;
+    private UserDataRepository dbInterface;
 
     @PostMapping
     public String connect(Model model, String ID_IN, String PW_IN) {
