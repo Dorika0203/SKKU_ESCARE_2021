@@ -67,7 +67,7 @@
                         <div class="widget-content p-0">
                             <div class="widget-content-wrapper">
                                 <div class="widget-content-left">
-                                    <img width="42" class="rounded-circle" src="SKKU_ESCARE_2021\src\main\resources\static\image\logo.png" alt="">
+                                    <img width="42" class="rounded-circle" src="SKKU_ESCARE_2021\src\main\resources\static\image\user.png" alt="">
                                 </div>
                                 <div class="widget-content-left  ml-3 header-user-info">
                                     <div class="widget-heading">
