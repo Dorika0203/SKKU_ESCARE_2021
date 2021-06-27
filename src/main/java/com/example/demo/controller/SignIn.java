@@ -95,9 +95,7 @@ public class SignIn {
         DecryptRequest decryptRequest = new DecryptRequest();
         decryptRequest.alg(ObjectType.AES).cipher(cipher).mode(CryptMode.CBC).iv(ivStr.getBytes());
         try {
-            System.out.println("HI");
             DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client).decrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", decryptRequest);
-            System.out.println("HI");
             return decryptResponse.getPlain();
         } catch (ApiException e) {
             e.printStackTrace();
