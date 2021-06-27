@@ -2,9 +2,9 @@ package com.example.demo.controller;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import com.example.demo.model.*;
-import com.example.demo.repository.UserDataRepository;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.model.*;
@@ -24,31 +24,16 @@ public class SignUp {
     public boolean SUCCESS = false;
 
     @Autowired
-    UserDataRepository table;
+    UserDataInterface table;
 
     @PostMapping
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
-        System.out.println(ID + " " + PW + " " + lastName + " " + firstName + " " + phoneNumber);
         byte[] newPW_ = PW.getBytes();
         //byte[] newPW = Arrays.copyOfRange(newPW_, 1, newPW_.length);
 
         //connect to SDKMS
-        ApiClient client = new ApiClient();
-        client.setBasePath(server);
-        client.setUsername(username);
-        client.setPassword(password);
-
-        AuthenticationApi authenticationApi = new AuthenticationApi(client);
-        try {
-            AuthResponse authResponse = authenticationApi.authorize();
-            ApiKeyAuth bearerTokenAuth =
-                    (ApiKeyAuth) client.getAuthentication("bearerToken");
-            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
-            bearerTokenAuth.setApiKeyPrefix("Bearer");
-            System.out.println("success");
-        } catch (ApiException e) {
-            System.err.println("Unable to authenticate: " + e.getMessage());
-        }
+        ApiClient client = createClient(server, username, password);
+        connectFortanixsdkms(client);
 
         //hashing and encrypting pw
         byte[] cipher = null;
@@ -59,7 +44,6 @@ public class SignUp {
             e.printStackTrace();
         }
 
-        System.out.println(cipher);
         UserDataModel user = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
 
         if (hasDuplicate(ID)) {
@@ -68,7 +52,11 @@ public class SignUp {
             table.flush();
         }
 
-        if (SUCCESS) return "sign_up_success";
+        if (SUCCESS) {
+//            GenSecurityObj newSecObj = new GenSecurityObj();
+//            newSecObj.Generate(client);
+            return "certification";
+        }
         else return "sign_up_fail";
     }
 
@@ -85,12 +73,20 @@ public class SignUp {
                 .mode(CryptMode.CBC).setIv(ivStr.getBytes());
         try {
             EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client).encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
-            for(int i=0; i<encryptResponse.getCipher().length; i++) System.out.printf("%d: %d\n", i, encryptResponse.getCipher()[i]);
+            System.out.println(encryptResponse.getCipher().length);
+            for (int i = 0; i < encryptResponse.getCipher().length; i++)
+                System.out.printf("%d: %d\n", i, encryptResponse.getCipher()[i]);
             return encryptResponse.getCipher();
         } catch (ApiException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @PostMapping("certificate")
+    public String certificate(String PW){
+        System.out.println(PW);
+        return "sign_up_success";
     }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
@@ -107,10 +103,48 @@ public class SignUp {
 
     public String bytesToHex(byte[] bytes) {
         StringBuilder builder = new StringBuilder();
-        for (byte b: bytes) {
+        for (byte b : bytes) {
             builder.append(String.format("%02x", b));
         }
         return builder.toString();
     }
 
+    public ApiClient createClient(String server, String username, String password){
+        ApiClient client = new ApiClient();
+        client.setBasePath(server);
+        client.setUsername(username);
+        client.setPassword(password);
+        return client;
+    }
+
+    //connect to SDKMS
+    public void connectFortanixsdkms(ApiClient client) {
+        AuthenticationApi authenticationApi = new AuthenticationApi(client);
+        try {
+            AuthResponse authResponse = authenticationApi.authorize();
+            ApiKeyAuth bearerTokenAuth =
+                    (ApiKeyAuth) client.getAuthentication("bearerToken");
+            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
+            bearerTokenAuth.setApiKeyPrefix("Bearer");
+            System.out.println("success");
+        } catch (ApiException e) {
+            System.err.println("Unable to authenticate: " + e.getMessage());
+        }
+    }
+
+    public void createRSAKey(ApiClient client) {
+        SobjectRequest sobjectRequest = new SobjectRequest() .name("Name")
+                .keySize(2048)
+                .objType(ObjectType.RSA)
+                .keyOps(Arrays.asList(KeyOperations.SIGN,
+                KeyOperations.VERIFY,
+                KeyOperations.EXPORT));
+        SecurityObjectsApi securityObjectsApi = new
+                SecurityObjectsApi(client);
+        try {
+            KeyObject keyObject = securityObjectsApi.generateSecurityObject(sobjectRequest);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+    }
 }
