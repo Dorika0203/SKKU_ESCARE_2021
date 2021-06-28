@@ -12,6 +12,7 @@ import com.fortanix.sdkms.v1.auth.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -44,7 +45,6 @@ public class SignUp {
             e.printStackTrace();
         }
 
-        System.out.println(cipher);
         UserDataModel user = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
 
         if (hasDuplicate(ID)) {
@@ -53,7 +53,12 @@ public class SignUp {
             table.flush();
         }
 
-        if (SUCCESS) return "sign_up_success";
+        if (SUCCESS) {
+//            GenSecurityObj newSecObj = new GenSecurityObj();
+//            newSecObj.Generate(client);
+            System.out.println("!");
+            return "certification";
+        }
         else return "sign_up_fail";
     }
 
@@ -78,6 +83,12 @@ public class SignUp {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @PostMapping("certificate")
+    public String certificate(String PW){
+        System.out.println(PW);
+        return "sign_up_success";
     }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
@@ -120,6 +131,22 @@ public class SignUp {
             System.out.println("success");
         } catch (ApiException e) {
             System.err.println("Unable to authenticate: " + e.getMessage());
+        }
+    }
+
+    public void createRSAKey(ApiClient client) {
+        SobjectRequest sobjectRequest = new SobjectRequest() .name("Name")
+                .keySize(2048)
+                .objType(ObjectType.RSA)
+                .keyOps(Arrays.asList(KeyOperations.SIGN,
+                KeyOperations.VERIFY,
+                KeyOperations.EXPORT));
+        SecurityObjectsApi securityObjectsApi = new
+                SecurityObjectsApi(client);
+        try {
+            KeyObject keyObject = securityObjectsApi.generateSecurityObject(sobjectRequest);
+        } catch (ApiException e) {
+            e.printStackTrace();
         }
     }
 }
