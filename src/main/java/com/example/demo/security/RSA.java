@@ -24,13 +24,13 @@ public class RSA {
         SecureRandom secureRandom = new SecureRandom();
         KeyPairGenerator gen;
         gen = KeyPairGenerator.getInstance("RSA");
-        gen.initialize(1024, secureRandom);
+        gen.initialize(2048, secureRandom);
         KeyPair keyPair = gen.genKeyPair();
 
         // extract the encoded private key, this is an unencrypted PKCS#8 private key
         byte[] encodedprivkey = keyPair.getPrivate().getEncoded();
 
-// We must use a PasswordBasedEncryption algorithm in order to encrypt the private key, you may use any common algorithm supported by openssl, you can check them in the openssl documentation http://www.openssl.org/docs/apps/pkcs8.html
+        // We must use a PasswordBasedEncryption algorithm in order to encrypt the private key, you may use any common algorithm supported by openssl, you can check them in the openssl documentation http://www.openssl.org/docs/apps/pkcs8.html
         String MYPBEALG = "PBEWithSHA1AndDESede";
 
         int count = 20;// hash iteration count
@@ -38,7 +38,7 @@ public class RSA {
         byte[] salt = new byte[8];
         random.nextBytes(salt);
 
-// Create PBE parameter set
+        // Create PBE parameter set
         PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, count);
         PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
         SecretKeyFactory keyFac = SecretKeyFactory.getInstance(MYPBEALG);
@@ -56,7 +56,7 @@ public class RSA {
             e.printStackTrace();
         }
 
-// Initialize PBE Cipher with key and parameters
+        // Initialize PBE Cipher with key and parameters
         try {
             pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
         } catch (InvalidKeyException e) {
@@ -65,8 +65,8 @@ public class RSA {
             e.printStackTrace();
         }
 
-// Encrypt the encoded Private Key with the PBE key
-        byte[] ciphertext;
+        // Encrypt the encoded Private Key with the PBE key
+        byte[] ciphertext = null;
         try {
             ciphertext = pbeCipher.doFinal(encodedprivkey);
         } catch (IllegalBlockSizeException e) {
@@ -75,7 +75,7 @@ public class RSA {
             e.printStackTrace();
         }
 
-// Now construct  PKCS #8 EncryptedPrivateKeyInfo object
+        // Now construct  PKCS #8 EncryptedPrivateKeyInfo object
         AlgorithmParameters algparms = AlgorithmParameters.getInstance(MYPBEALG);
         try {
             algparms.init(pbeParamSpec);
@@ -84,14 +84,14 @@ public class RSA {
         }
         EncryptedPrivateKeyInfo encinfo = new EncryptedPrivateKeyInfo(algparms, ciphertext);
 
-// and here we have it! a DER encoded PKCS#8 encrypted key!
-        byte[] encryptedPkcs8;
+        // and here we have it! a DER encoded PKCS#8 encrypted key!
+        byte[] encryptedPkcs8 = null;
         try {
             encryptedPkcs8 = encinfo.getEncoded();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ArrayList<byte[]> ret = new ArrayList<>(Arrays.asList(keyPair.getPublic().getEncoded(), keyPair.getPrivate().getEncoded(), encryptedPkcs8));
+        ArrayList<byte[]> ret = new ArrayList<>(Arrays.asList(keyPair.getPublic().getEncoded(), encryptedPkcs8));
         return ret;
     }
 
