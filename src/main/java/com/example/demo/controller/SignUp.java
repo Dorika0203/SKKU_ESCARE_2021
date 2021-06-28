@@ -83,10 +83,9 @@ public class SignUp {
         }
     }
 
-    @PostMapping("certificate")
-    public String certificate(String PW){
-
-    }
+    // @PostMapping("certificate")
+    // public String certificate(String PW){
+    // }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
