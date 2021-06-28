@@ -1,3 +1,7 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+         pageEncoding="utf-8" isELIgnored="false" %>
+<%@ taglib prefix="c"
+           uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -19,5 +23,6 @@
             <input class="input" type="password" placeholder="password" name="PW">
         </div>
     </div>
+    <button class="button is-primary" id="sign-in">확인</button>
 </form>
 </body>
