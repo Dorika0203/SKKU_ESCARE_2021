@@ -6,6 +6,7 @@ package com.example.demo.controller;
         import java.util.Arrays;
 
         import com.example.demo.model.*;
+        import com.example.demo.repository.UserDataRepository;
         import com.fasterxml.jackson.databind.util.ArrayBuilders.ByteBuilder;
         import com.fortanix.sdkms.v1.*;
         import com.fortanix.sdkms.v1.api.*;
@@ -28,7 +29,7 @@ public class SignIn {
     private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
 
     @Autowired
-    private UserDataInterface dbInterface;
+    private UserDataRepository dbInterface;
 
     @PostMapping
     public String connect(Model model, String ID_IN, String PW_IN) {

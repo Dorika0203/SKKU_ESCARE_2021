@@ -1,3 +1,7 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+         pageEncoding="utf-8" isELIgnored="false" %>
+<%@ taglib prefix="c"
+           uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -16,8 +20,11 @@
     <div class="field">
         <label class="label">비밀번호</label>
         <div class="control">
-            <input class="input" type="password" placeholder="password" name="PW">
+            <input class="input" type="password" placeholder="password" >
         </div>
     </div>
+    <button class="button is-primary" id="sign-in">확인</button>
 </form>
 </body>
+<script type="text/javascript" src="js/RSA.js"></script>
+</html>

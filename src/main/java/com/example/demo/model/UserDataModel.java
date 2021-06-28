@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="UserInfo")
+@Table(name = "UserInfo")
 public class UserDataModel {
     @Id
     private String id;
@@ -22,7 +22,8 @@ public class UserDataModel {
     private String Firstname;
     @Column
     private String PhoneNumber;
-
+    @Column
+    private String issued_time;
 
 
     public String getId() {
@@ -41,10 +42,21 @@ public class UserDataModel {
         this.pw = pw;
     }
 
-    public String getLastname() { return Lastname; }
+    public String getLastname() {
+        return Lastname;
+    }
 
-    public void setLastname(String lastname) {Lastname = lastname;}
+    public void setLastname(String lastname) {
+        Lastname = lastname;
+    }
 
+    public String getIssued_time() {
+        return issued_time;
+    }
+
+    public void setIssued_time(String issued_time) {
+        this.issued_time = issued_time;
+    }
 
     public UserDataModel(String _id, byte[] _pw, String lastname, String firstname, String phonenumber) {
         this.id = _id;
@@ -52,6 +64,7 @@ public class UserDataModel {
         this.Lastname = lastname;
         this.Firstname = firstname;
         this.PhoneNumber = phonenumber;
+        this.issued_time = null;
     }
 
     public UserDataModel() {

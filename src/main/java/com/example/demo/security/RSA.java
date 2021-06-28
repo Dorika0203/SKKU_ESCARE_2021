@@ -48,7 +48,7 @@ public class RSA {
     }
 
     /**
-     * Base64 엔코딩된 개인키 문자열로부터 PrivateKey객체를 얻는다. * @param keyString * @return * @throws NoSuchAlgorithmException * @throws InvalidKeySpecException
+     * Base64 엔코딩된 개인키 문자열로부터 PrivateKey 객체를 얻는다. * @param keyString * @return * @throws NoSuchAlgorithmException * @throws InvalidKeySpecException
      */
     public static PrivateKey getPrivateKeyFromBase64String(final String keyString) throws NoSuchAlgorithmException, InvalidKeySpecException {
         final String privateKeyString = keyString.replaceAll("\\n", "").replaceAll("-{5}[ a-zA-Z]*-{5}", "");
