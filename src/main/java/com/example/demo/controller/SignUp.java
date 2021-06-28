@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import com.example.demo.model.*;
+import com.example.demo.repository.UserDataRepository;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.model.*;
@@ -14,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/signup")
 public class SignUp {
     private String server = "https://sdkms.fortanix.com";
     private String username = "a025eafd-5977-4924-8087-9b262315a974";
@@ -25,9 +24,9 @@ public class SignUp {
     public boolean SUCCESS = false;
 
     @Autowired
-    UserDataInterface table;
+    private UserDataRepository table;
 
-    @PostMapping
+    @PostMapping("/signup")
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
         byte[] newPW_ = PW.getBytes();
         //byte[] newPW = Arrays.copyOfRange(newPW_, 1, newPW_.length);
@@ -56,12 +55,23 @@ public class SignUp {
         if (SUCCESS) {
 //            GenSecurityObj newSecObj = new GenSecurityObj();
 //            newSecObj.Generate(client);
+
             System.out.println("!");
+
             return "certification";
         }
         else return "sign_up_fail";
     }
 
+    @PostMapping("certificate")
+    public String certificate(String PW){
+        System.out.println(PW);
+        return "sign_up_success";
+    }
+
+
+
+    //class methods
     public Boolean hasDuplicate(String ID) {
         return !table.findById(ID).isPresent();
     }
@@ -75,9 +85,6 @@ public class SignUp {
                 .mode(CryptMode.CBC).setIv(ivStr.getBytes());
         try {
             EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client).encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
-            System.out.println(encryptResponse.getCipher().length);
-            for (int i = 0; i < encryptResponse.getCipher().length; i++)
-                System.out.printf("%d: %d\n", i, encryptResponse.getCipher()[i]);
             return encryptResponse.getCipher();
         } catch (ApiException e) {
             e.printStackTrace();
@@ -85,11 +92,6 @@ public class SignUp {
         }
     }
 
-    @PostMapping("certificate")
-    public String certificate(String PW){
-        System.out.println(PW);
-        return "sign_up_success";
-    }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;

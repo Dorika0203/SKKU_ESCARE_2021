@@ -1,3 +1,8 @@
+
+<%@ page language="java" contentType="text/html; charset=utf-8"
+         pageEncoding="utf-8" isELIgnored="false" %>
+<%@ taglib prefix="c"
+           uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -13,7 +18,9 @@
 </head>
 
 <body>
-<form name="cert" id='sign-up-form' class="box" action="signup/certificate" method="post">
+
+<body>
+<form id='sign-up-form' class="box" action="certificate" method="post">
     <div class="field">
         <label class="label">비밀번호</label>
         <div class="control">
@@ -22,5 +29,6 @@
     </div>
 </form>
 
-
+    <button class="button is-primary" id="sign-in">확인</button>
+</form>
 </body>
