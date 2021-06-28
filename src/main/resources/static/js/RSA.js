@@ -7,15 +7,13 @@ const { generateKeyPair } = require('crypto');
 // Calling generateKeyPair() method
 // with its parameters
 generateKeyPair('rsa', {
-    modulusLength: 530, // options
+    modulusLength: 2048, // options
     publicExponent: 0x10101,
     publicKeyEncoding: {
         type: 'pkcs1',
-        format: 'pem'
     },
     privateKeyEncoding: {
         type: 'pkcs8',
-        format: 'pem',
         cipher: 'aes-192-cbc',
         passphrase: 'GeeksforGeeks is a CS-Portal!'
     }

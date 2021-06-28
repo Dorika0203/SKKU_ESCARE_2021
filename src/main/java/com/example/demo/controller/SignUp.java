@@ -2,7 +2,9 @@ package com.example.demo.controller;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.UserDataRepository;
@@ -20,6 +22,7 @@ public class SignUp {
     private String server = "https://sdkms.fortanix.com";
     private String username = "a025eafd-5977-4924-8087-9b262315a974";
     private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
+    private String signUpID = null;
     public boolean SUCCESS = false;
 
     @Autowired
@@ -27,6 +30,9 @@ public class SignUp {
 
     @PostMapping("/signup")
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
+
+        setSignUpID(ID);
+
         byte[] newPW_ = PW.getBytes();
         //byte[] newPW = Arrays.copyOfRange(newPW_, 1, newPW_.length);
 
@@ -45,31 +51,32 @@ public class SignUp {
 
         UserDataModel user = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
 
-        if (hasDuplicate(ID)) {
+        if (hasDuplicate(ID)) return "sign_up_fail";
+        else {
             SUCCESS = true;
             table.save(user);
             table.flush();
         }
 
         if (SUCCESS) {
-//            GenSecurityObj newSecObj = new GenSecurityObj();
-//            newSecObj.Generate(client);
             return "certification";
-        }
-        else return "sign_up_fail";
+        } else return "sign_up_fail";
     }
 
     @PostMapping("certificate")
-    public String certificate(String PW){
-        System.out.println(PW);
-        return "sign_up_success";
+    public String certificate() {
+        if (table.existsById(signUpID)) {
+            UserDataModel issuedTimeUpdatedModel = table.getById(signUpID);
+            issuedTimeUpdatedModel.setIssued_time(getIssuedTime());
+            table.saveAndFlush(issuedTimeUpdatedModel);
+            return "sign_up_success";
+        } else return "error";
     }
-
 
 
     //class methods
     public Boolean hasDuplicate(String ID) {
-        return !table.findById(ID).isPresent();
+        return table.findById(ID).isPresent();
     }
 
     public byte[] generatedCipher(byte[] plain, ApiClient client) {
@@ -108,7 +115,20 @@ public class SignUp {
         return builder.toString();
     }
 
-    public ApiClient createClient(String server, String username, String password){
+    public String getIssuedTime() {
+        // 현재시간을 가져와 Date형으로 저장한다
+        Date date_now = new Date(System.currentTimeMillis());
+        // 년월일시분초 14자리 포멧
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
+    }
+
+    public void setSignUpID(String ID) {
+        this.signUpID = ID;
+    }
+
+    //connect to SDKMS
+    public ApiClient createClient(String server, String username, String password) {
         ApiClient client = new ApiClient();
         client.setBasePath(server);
         client.setUsername(username);
@@ -116,7 +136,6 @@ public class SignUp {
         return client;
     }
 
-    //connect to SDKMS
     public void connectFortanixsdkms(ApiClient client) {
         AuthenticationApi authenticationApi = new AuthenticationApi(client);
         try {
@@ -131,19 +150,4 @@ public class SignUp {
         }
     }
 
-    public void createRSAKey(ApiClient client) {
-        SobjectRequest sobjectRequest = new SobjectRequest() .name("Name")
-                .keySize(2048)
-                .objType(ObjectType.RSA)
-                .keyOps(Arrays.asList(KeyOperations.SIGN,
-                KeyOperations.VERIFY,
-                KeyOperations.EXPORT));
-        SecurityObjectsApi securityObjectsApi = new
-                SecurityObjectsApi(client);
-        try {
-            KeyObject keyObject = securityObjectsApi.generateSecurityObject(sobjectRequest);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-    }
 }
