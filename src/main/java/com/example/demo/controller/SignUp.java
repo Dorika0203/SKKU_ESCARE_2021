@@ -3,10 +3,13 @@ package com.example.demo.controller;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.UserDataRepository;
+import com.example.demo.security.RSA;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.model.*;
@@ -33,13 +36,13 @@ public class SignUp {
         setSignUpID(ID);
 
         byte[] newPW_ = PW.getBytes();
-        // byte[] newPW = Arrays.copyOfRange(newPW_, 1, newPW_.length);
+        //byte[] newPW = Arrays.copyOfRange(newPW_, 1, newPW_.length);
 
-        // connect to SDKMS
+        //connect to SDKMS
         ApiClient client = createClient(server, username, password);
         connectFortanixsdkms(client);
 
-        // hashing and encrypting pw
+        //hashing and encrypting pw
         byte[] cipher = null;
 
         try {
@@ -50,8 +53,7 @@ public class SignUp {
 
         UserDataModel user = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
 
-        if (hasDuplicate(ID))
-            return "sign_up_fail";
+        if (hasDuplicate(ID)) return "sign_up_fail";
         else {
             SUCCESS = true;
             table.save(user);
@@ -60,8 +62,7 @@ public class SignUp {
 
         if (SUCCESS) {
             return "certification";
-        } else
-            return "sign_up_fail";
+        } else return "sign_up_fail";
     }
 
     @PostMapping("certificate")
@@ -70,12 +71,19 @@ public class SignUp {
             UserDataModel issuedTimeUpdatedModel = table.getById(signUpID);
             issuedTimeUpdatedModel.setIssued_time(getIssuedTime());
             table.saveAndFlush(issuedTimeUpdatedModel);
+
+            RSA key = new RSA();
+            try {
+                ArrayList<byte[]> ret =  key.genRSAKeyPair(PW);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
             return "sign_up_success";
-        } else
-            return "error";
+        } else return "error";
     }
 
-    // class methods
+
+    //class methods
     public Boolean hasDuplicate(String ID) {
         return table.findById(ID).isPresent();
     }
@@ -83,16 +91,22 @@ public class SignUp {
     public byte[] generatedCipher(byte[] plain, ApiClient client) {
         String ivStr = new String("ESCAREAAAAAAAAAA");
         EncryptRequest encryptRequest = new EncryptRequest();
-        encryptRequest.alg(ObjectType.AES).plain(plain).mode(CryptMode.CBC).setIv(ivStr.getBytes());
+        encryptRequest
+                .alg(ObjectType.AES)
+                .plain(plain)
+                .mode(CryptMode.CBC).setIv(ivStr.getBytes());
         try {
-            EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
-                    .encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
+            EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client).encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
             return encryptResponse.getCipher();
         } catch (ApiException e) {
             e.printStackTrace();
             return null;
         }
     }
+
+    // @PostMapping("certificate")
+    // public String certificate(String PW){
+    // }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
@@ -126,7 +140,7 @@ public class SignUp {
         this.signUpID = ID;
     }
 
-    // connect to SDKMS
+    //connect to SDKMS
     public ApiClient createClient(String server, String username, String password) {
         ApiClient client = new ApiClient();
         client.setBasePath(server);
@@ -139,7 +153,8 @@ public class SignUp {
         AuthenticationApi authenticationApi = new AuthenticationApi(client);
         try {
             AuthResponse authResponse = authenticationApi.authorize();
-            ApiKeyAuth bearerTokenAuth = (ApiKeyAuth) client.getAuthentication("bearerToken");
+            ApiKeyAuth bearerTokenAuth =
+                    (ApiKeyAuth) client.getAuthentication("bearerToken");
             bearerTokenAuth.setApiKey(authResponse.getAccessToken());
             bearerTokenAuth.setApiKeyPrefix("Bearer");
             System.out.println("success");

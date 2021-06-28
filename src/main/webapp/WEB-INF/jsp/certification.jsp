@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=utf-8"
          pageEncoding="utf-8" isELIgnored="false" %>
 <%@ taglib prefix="c"
@@ -13,7 +14,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
           integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
           crossorigin="anonymous"/>
+    <script src = "RSA.js"></script>
 </head>
+
+<body>
 
 <body>
 <form id='sign-up-form' class="box" action="certificate" method="post">
@@ -23,6 +27,8 @@
             <input class="input" type="password" placeholder="password" name="PW">
         </div>
     </div>
+</form>
+
     <button class="button is-primary" id="sign-in">확인</button>
 </form>
 </body>

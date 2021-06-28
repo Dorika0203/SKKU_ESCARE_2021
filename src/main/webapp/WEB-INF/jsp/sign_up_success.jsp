@@ -48,7 +48,7 @@
         </div>
         <h1>Sign up success!</h1>
         <p>Now you have a new account for Demo Bank.</p><br/>
-        <a href="home" title="Return to home page" target="_self">Home</a>
+        <a href="http://localhost:8080/home" title="Return to home page" target="_self">Home</a>
     </div>
     </body>
 </html>
