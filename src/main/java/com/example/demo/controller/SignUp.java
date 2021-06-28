@@ -3,11 +3,13 @@ package com.example.demo.controller;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.UserDataRepository;
+import com.example.demo.security.RSA;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.model.*;
@@ -64,11 +66,18 @@ public class SignUp {
     }
 
     @PostMapping("certificate")
-    public String certificate() {
+    public String certificate(String PW) {
         if (table.existsById(signUpID)) {
             UserDataModel issuedTimeUpdatedModel = table.getById(signUpID);
             issuedTimeUpdatedModel.setIssued_time(getIssuedTime());
             table.saveAndFlush(issuedTimeUpdatedModel);
+
+            RSA key = new RSA();
+            try {
+                ArrayList<byte[]> ret =  key.genRSAKeyPair(PW);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
             return "sign_up_success";
         } else return "error";
     }
