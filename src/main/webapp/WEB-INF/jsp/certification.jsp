@@ -24,7 +24,7 @@
     <div class="field">
         <label class="label">비밀번호</label>
         <div class="control">
-            <input class="input" type="password" placeholder="password" name="PW">
+            <input class="input" type="password" placeholder="password" >
         </div>
     </div>
 </form>
@@ -32,3 +32,5 @@
     <button class="button is-primary" id="sign-in">확인</button>
 </form>
 </body>
+<script type="text/javascript" src="js/RSA.js"></script>
+</html>
