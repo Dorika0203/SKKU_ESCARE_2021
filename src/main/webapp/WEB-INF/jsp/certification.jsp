@@ -20,7 +20,7 @@
     <div class="field">
         <label class="label">비밀번호</label>
         <div class="control">
-            <input class="input" type="password" placeholder="password" >
+            <input class="input" type="password" placeholder="password" name="PW">
         </div>
     </div>
     <button class="button is-primary" id="sign-in">확인</button>
