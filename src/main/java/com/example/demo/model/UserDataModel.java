@@ -63,8 +63,6 @@ public class UserDataModel {
         this.issued_time = issued_time;
     }
 
-
-
     public UserDataModel(String _id, byte[] _pw, String lastname, String firstname, String phonenumber) {
         this.id = _id;
         this.pw = _pw;

@@ -16,8 +16,8 @@
     <meta name="description" content="This is an example dashboard created using build-in elements and components.">
     <meta name="msapplication-tap-highlight" content="no">
     
-<link href="SKKU_ESCARE_2021\src\main\resources\static\css\main.css" rel="stylesheet">
-<link rel="shortcut icon" type="image⁄x-icon" href="SKKU_ESCARE_2021\src\main\resources\static\image\logo.png">
+<link href="\css\main.css" rel="stylesheet">
+<link rel="shortcut icon" type="image⁄x-icon" href="\image\logo.png">
 
 </head>
 <body>
@@ -27,8 +27,8 @@
                 
                 <div class="header__pane ml-auto">
                     <div>
-                        <a href="SKKU_ESCARE_2021\src\main\webapp\WEB-INF\jsp\my_page.jsp">
-                            <img src="SKKU_ESCARE_2021\src\main\resources\static\image\logo.png">
+                        <a href="mypage">
+                            <img src="\image\logo.png">
                         </a>
                         
                     </div>
@@ -40,7 +40,7 @@
                     
                     <ul class="header-menu nav">
                         <li class="btn-group nav-item">
-                            <a href="SKKU_ESCARE_2021\src\main\webapp\WEB-INF\jsp\transfer_page.jsp">
+                            <a href="transferpage">
                                 | 송금
                             </a>
                             
@@ -58,7 +58,7 @@
                         <div class="widget-content p-0">
                             <div class="widget-content-wrapper">
                                 <div class="widget-content-left">
-                                    <img width="42" class="rounded-circle" src="SKKU_ESCARE_2021\src\main\resources\static\image\user.png" alt="">
+                                    <img width="42" class="rounded-circle" src="\image\user.png" alt="">
                                 </div>
                                 <div class="widget-content-left  ml-3 header-user-info">
                                     <div class="widget-heading">
@@ -68,9 +68,16 @@
                                         hyejin1234
                                     </div>
                                 </div>
+
+                              <div class="widget-content-right header-user-info ml-3">
+                                <span id="counter"> </span> 후 자동로그아웃 <input type="button" value="연장" onclick="counter_reset()">
+                              </div>
                                 <div class="widget-content-right header-user-info ml-3">
                                     <button type="button" class="btn-shadow p-1 btn btn-warning btn-sm show-toastr-example">
+                                      <a href="logout">
                                         Logout
+                                      </a>
+
                                     </button>
                                 </div>
                             </div> 
@@ -763,5 +770,10 @@
     
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
 
+    <script type="text/javascript" src="js/my_page.js"></script>
 </body>
 </html>
+
+<script>
+  counter_init();
+</script>

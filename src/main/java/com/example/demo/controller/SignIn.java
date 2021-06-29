@@ -32,6 +32,7 @@ public class SignIn {
 
     @Autowired
     private UserDataRepository userDataRepository;
+    @Autowired
     private LoginSessionRepository loginSessionRepository;
 
     @PostMapping
@@ -64,10 +65,9 @@ public class SignIn {
                     System.out.println("============SetIssued_Time=============");
                     System.out.println("============setToken=============");
                     System.out.println(loginSessionModel.getToken());
-                    loginSessionRepository.save(loginSessionModel);
-                    loginSessionRepository.flush();
 
-
+                    loginSessionRepository.saveAndFlush(loginSessionModel);
+                    System.out.println("END");
                     return "sign_in_success";
                 }
                 else flag = 1;
