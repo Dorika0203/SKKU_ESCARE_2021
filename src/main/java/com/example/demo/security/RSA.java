@@ -89,7 +89,7 @@ public class RSA {
             e.printStackTrace();
         }
         EncryptedPrivateKeyInfo encinfo = new EncryptedPrivateKeyInfo(algparms, ciphertext);
-        System.out.println("cipher" + Base64.getEncoder().encodeToString(ciphertext));
+        System.out.println("cipher"+Base64.getEncoder().encodeToString(ciphertext));
         // and here we have it! a DER encoded PKCS#8 encrypted key!
         byte[] encryptedPkcs8 = null;
         encryptedPkcs8 = encinfo.getEncryptedData();
@@ -98,7 +98,7 @@ public class RSA {
         return ret;
     }
 
-    public static String decRSAPrivKey(String password, String encPrivKey, byte[] salt) {
+    public static String decRSAPrivKey(String password, byte[] salt, String encPrivKey) {
         String MYPBEALG = "PBEWithSHA1AndDESede";
 
         int count = 20;// hash iteration count
