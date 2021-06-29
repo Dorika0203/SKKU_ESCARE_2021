@@ -100,7 +100,7 @@ public class RSA {
         return ret;
     }
 
-    public static void decRSAPrivKey(String password, byte[] salt) {
+    public static void decRSAPrivKey(String password, byte[] salt, String encPrivKey) {
         String MYPBEALG = "PBEWithSHA1AndDESede";
 
         int count = 20;// hash iteration count
@@ -140,8 +140,21 @@ public class RSA {
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
+
+        // Encrypt the encoded Private Key with the PBE key
+        byte[] ciphertext = null;
+        try {
+            ciphertext = pbeCipher.doFinal(Base64.getDecoder().decode(encPrivKey));
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        }
     }
 
+    public static void main(String[] args) {
+
+    }
 
     /**
      * Public Key로 RSA 암호화를 수행합니다. * @param plainText 암호화할 평문입니다. * @param publicKey 공개키 입니다. * @return
