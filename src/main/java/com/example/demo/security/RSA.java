@@ -12,8 +12,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.Base64.Encoder;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
@@ -22,9 +20,7 @@ public class RSA {
     /**
      * 2048비트 RSA 키쌍을 생성합니다.
      */
-    public static ArrayList<byte[]> genRSAKeyPair(String password) throws NoSuchAlgorithmException {
-        Encoder encoder = Base64.getEncoder();
-
+    public static ArrayList<String> genRSAKeyPair(String password) throws NoSuchAlgorithmException {
         SecureRandom secureRandom = new SecureRandom();
         KeyPairGenerator gen;
         gen = KeyPairGenerator.getInstance("RSA");
@@ -91,6 +87,7 @@ public class RSA {
             e.printStackTrace();
         }
         EncryptedPrivateKeyInfo encinfo = new EncryptedPrivateKeyInfo(algparms, ciphertext);
+
         // and here we have it! a DER encoded PKCS#8 encrypted key!
         byte[] encryptedPkcs8 = null;
         try {
@@ -98,7 +95,8 @@ public class RSA {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ArrayList<String> ret = new ArrayList<>(Arrays.asList(encoder.encode(keyPair.getPublic().getEncoded()), encoder.encode(encryptedPkcs8)));
+        String temp = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
+        ArrayList<String> ret = new ArrayList<>(Arrays.asList(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()), Base64.getEncoder().encodeToString(encryptedPkcs8)));
         return ret;
     }
 
