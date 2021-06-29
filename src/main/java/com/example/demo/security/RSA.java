@@ -20,6 +20,7 @@ public class RSA {
     /**
      * 2048비트 RSA 키쌍을 생성합니다.
      */
+
     public static ArrayList<String> genRSAKeyPair(String password) throws NoSuchAlgorithmException {
         SecureRandom secureRandom = new SecureRandom();
         KeyPairGenerator gen;
@@ -35,8 +36,9 @@ public class RSA {
 
         int count = 20;// hash iteration count
         SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[8];
-        random.nextBytes(salt);
+        //byte[] salt = new byte[8];
+        byte[] salt = new byte[] {(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0};
+        //random.nextBytes(salt);
 
         // Create PBE parameter set
         PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, count);
@@ -87,20 +89,16 @@ public class RSA {
             e.printStackTrace();
         }
         EncryptedPrivateKeyInfo encinfo = new EncryptedPrivateKeyInfo(algparms, ciphertext);
-
+        System.out.println("cipher" + Base64.getEncoder().encodeToString(ciphertext));
         // and here we have it! a DER encoded PKCS#8 encrypted key!
         byte[] encryptedPkcs8 = null;
-        try {
-            encryptedPkcs8 = encinfo.getEncoded();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        encryptedPkcs8 = encinfo.getEncryptedData();
         String temp = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
         ArrayList<String> ret = new ArrayList<>(Arrays.asList(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()), Base64.getEncoder().encodeToString(encryptedPkcs8)));
         return ret;
     }
 
-    public static void decRSAPrivKey(String password, byte[] salt, String encPrivKey) {
+    public static String decRSAPrivKey(String password, String encPrivKey, byte[] salt) {
         String MYPBEALG = "PBEWithSHA1AndDESede";
 
         int count = 20;// hash iteration count
@@ -150,14 +148,7 @@ public class RSA {
         } catch (BadPaddingException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        try {
-            genRSAKeyPair("abcd").get(1);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        return Base64.getEncoder().encodeToString(ciphertext);
     }
 
     /**
