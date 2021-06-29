@@ -125,14 +125,6 @@ public class SignUp {
         return md.digest();
     }
 
-    public String bytesToHex(byte[] bytes) {
-        StringBuilder builder = new StringBuilder();
-        for (byte b : bytes) {
-            builder.append(String.format("%02x", b));
-        }
-        return builder.toString();
-    }
-
     public String getCurrentTime() {
         // 현재시간을 가져와 Date형으로 저장한다
         Date date_now = new Date(System.currentTimeMillis());

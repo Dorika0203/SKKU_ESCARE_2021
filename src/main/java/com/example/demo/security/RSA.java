@@ -70,7 +70,6 @@ public class RSA {
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
-
         // Encrypt the encoded Private Key with the PBE key
         byte[] ciphertext = null;
         try {

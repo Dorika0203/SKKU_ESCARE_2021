@@ -13,9 +13,6 @@ import javax.persistence.Table;
 @Table(name = "LoginSession")
 public class LoginSessionModel {
     @Id
-    private int key;
-
-    @Column
     private String id;
 
     @Column
