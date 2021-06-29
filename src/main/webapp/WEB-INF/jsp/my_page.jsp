@@ -46,7 +46,7 @@
                             
                         </li>
                         <li class="btn-group nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
+                            <a href="reissuance" class="nav-link">
                                 | 공인인증서 재발급
                             </a>
                         </li>
