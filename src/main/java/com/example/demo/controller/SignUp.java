@@ -5,8 +5,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.Date;
 
 import com.example.demo.model.*;
@@ -31,7 +29,7 @@ public class SignUp {
     public boolean SUCCESS = false;
 
     @Autowired
-    private UserDataRepository table;
+    private UserDataRepository userDataRepository;
 
     @PostMapping("/signup")
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
@@ -54,14 +52,15 @@ public class SignUp {
             e.printStackTrace();
         }
 
-        UserDataModel user = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
+        //Insert Data in DB
+        UserDataModel userDataModel = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
 
         if (hasDuplicate(ID))
             return "sign_up_fail";
         else {
             SUCCESS = true;
-            table.save(user);
-            table.flush();
+            userDataRepository.save(userDataModel);
+            userDataRepository.flush();
         }
 
         if (SUCCESS) {
@@ -72,23 +71,16 @@ public class SignUp {
 
     @PostMapping("certificate")
     public String certificate(String PW, Model model) {
-        if (table.existsById(signUpID)) {
-            UserDataModel issuedTimeUpdatedModel = table.getById(signUpID);
-            issuedTimeUpdatedModel.setIssued_time(getIssuedTime());
-            table.saveAndFlush(issuedTimeUpdatedModel);
+        if (userDataRepository.existsById(signUpID)) {
+            UserDataModel issuedTimeUpdatedModel = userDataRepository.getById(signUpID);
+            issuedTimeUpdatedModel.setIssued_time(getCurrentTime());
+            userDataRepository.saveAndFlush(issuedTimeUpdatedModel);
 
             RSA key = new RSA();
             try {
                 ArrayList<String> keyPair = key.genRSAKeyPair(PW);
                 System.out.println(keyPair.get(0));
                 System.out.println(keyPair.get(1));
-                String salt = keyPair.get(2);
-                System.out.println("Base str of salt is " + salt);
-                System.out.println("Byte array of salt is " + Base64.getDecoder().decode(salt));
-
-                UserDataModel saltUpdatedModel = table.getById(signUpID);
-                saltUpdatedModel.setSalt(salt);
-                table.saveAndFlush(saltUpdatedModel);
                 model.addAttribute("public-key", keyPair.get(0));
                 model.addAttribute("private-key", keyPair.get(1));
             } catch (NoSuchAlgorithmException e) {
@@ -101,7 +93,7 @@ public class SignUp {
 
     // class methods
     public Boolean hasDuplicate(String ID) {
-        return table.findById(ID).isPresent();
+        return userDataRepository.findById(ID).isPresent();
     }
 
     public byte[] generatedCipher(byte[] plain, ApiClient client) {
@@ -117,6 +109,10 @@ public class SignUp {
             return null;
         }
     }
+
+    // @PostMapping("certificate")
+    // public String certificate(String PW){
+    // }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
@@ -138,7 +134,7 @@ public class SignUp {
         return builder.toString();
     }
 
-    public String getIssuedTime() {
+    public String getCurrentTime() {
         // 현재시간을 가져와 Date형으로 저장한다
         Date date_now = new Date(System.currentTimeMillis());
         // 년월일시분초 14자리 포멧

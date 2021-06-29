@@ -12,18 +12,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name="AccountInfo")
 public class AccountDataModel {
-    /*
-    @Id
-    private String account;
-    @Column
-    private byte[] accountPw;
-    @Column
-    private String id;
-    @Column
-    private String lastname;
-    @Column
-    private String firstname;
-    */
     @Id
     private String account;
     @Column
