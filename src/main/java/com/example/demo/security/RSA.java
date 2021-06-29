@@ -12,15 +12,19 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
 public class RSA {
     /**
-     * 1024비트 RSA 키쌍을 생성합니다.
+     * 2048비트 RSA 키쌍을 생성합니다.
      */
     public static ArrayList<byte[]> genRSAKeyPair(String password) throws NoSuchAlgorithmException {
+        Encoder encoder = Base64.getEncoder();
+
         SecureRandom secureRandom = new SecureRandom();
         KeyPairGenerator gen;
         gen = KeyPairGenerator.getInstance("RSA");
@@ -40,10 +44,14 @@ public class RSA {
 
         // Create PBE parameter set
         PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, count);
+        //password
         PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
+        //cipher mode
         SecretKeyFactory keyFac = SecretKeyFactory.getInstance(MYPBEALG);
+        //encrypted password
         SecretKey pbeKey = null;
         try {
+            //encrypt password
             pbeKey = keyFac.generateSecret(pbeKeySpec);
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
@@ -83,7 +91,6 @@ public class RSA {
             e.printStackTrace();
         }
         EncryptedPrivateKeyInfo encinfo = new EncryptedPrivateKeyInfo(algparms, ciphertext);
-
         // and here we have it! a DER encoded PKCS#8 encrypted key!
         byte[] encryptedPkcs8 = null;
         try {
@@ -91,8 +98,50 @@ public class RSA {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ArrayList<byte[]> ret = new ArrayList<>(Arrays.asList(keyPair.getPublic().getEncoded(), encryptedPkcs8));
+        ArrayList<String> ret = new ArrayList<>(Arrays.asList(encoder.encode(keyPair.getPublic().getEncoded()), encoder.encode(encryptedPkcs8)));
         return ret;
+    }
+
+    public static void decRSAPrivKey(String password, byte[] salt) {
+        String MYPBEALG = "PBEWithSHA1AndDESede";
+
+        int count = 20;// hash iteration count
+
+        PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, count);
+        //password
+        PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
+        //cipher mode
+        SecretKeyFactory keyFac = null;
+        try {
+            keyFac = SecretKeyFactory.getInstance(MYPBEALG);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        //encrypted password
+        SecretKey pbeKey = null;
+        try {
+            //encrypt password
+            pbeKey = keyFac.generateSecret(pbeKeySpec);
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+
+        Cipher pbeCipher = null;
+        try {
+            pbeCipher = Cipher.getInstance(MYPBEALG);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        // Initialize PBE Cipher with key and parameters
+        try {
+            pbeCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
     }
 
 
