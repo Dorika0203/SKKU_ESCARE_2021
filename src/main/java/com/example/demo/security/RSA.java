@@ -36,9 +36,9 @@ public class RSA {
 
         int count = 20;// hash iteration count
         SecureRandom random = new SecureRandom();
-        //byte[] salt = new byte[8];
-        byte[] salt = new byte[] {(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0,(byte)0x0};
-        //random.nextBytes(salt);
+        byte[] salt = new byte[8];
+        random.nextBytes(salt);
+        String saltStr = Base64.getEncoder().encodeToString(salt);
 
         // Create PBE parameter set
         PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, count);
@@ -89,12 +89,11 @@ public class RSA {
             e.printStackTrace();
         }
         EncryptedPrivateKeyInfo encinfo = new EncryptedPrivateKeyInfo(algparms, ciphertext);
-        System.out.println("cipher" + Base64.getEncoder().encodeToString(ciphertext));
+        //System.out.println("cipher" + Base64.getEncoder().encodeToString(ciphertext));
         // and here we have it! a DER encoded PKCS#8 encrypted key!
         byte[] encryptedPkcs8 = null;
         encryptedPkcs8 = encinfo.getEncryptedData();
-        String temp = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
-        ArrayList<String> ret = new ArrayList<>(Arrays.asList(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()), Base64.getEncoder().encodeToString(encryptedPkcs8)));
+        ArrayList<String> ret = new ArrayList<>(Arrays.asList(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()), Base64.getEncoder().encodeToString(encryptedPkcs8), saltStr));
         return ret;
     }
 

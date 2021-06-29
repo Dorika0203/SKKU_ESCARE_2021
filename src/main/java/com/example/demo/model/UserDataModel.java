@@ -20,10 +20,16 @@ public class UserDataModel {
     private String Lastname;
     @Column
     private String Firstname;
+
+
+
     @Column
     private String PhoneNumber;
     @Column
     private String issued_time;
+    @Column
+    private String salt;
+
 
 
     public String getId() {
@@ -57,7 +63,7 @@ public class UserDataModel {
     public void setIssued_time(String issued_time) {
         this.issued_time = issued_time;
     }
-
+    public void setSalt(String salt) { this.salt = salt; }
     public UserDataModel(String _id, byte[] _pw, String lastname, String firstname, String phonenumber) {
         this.id = _id;
         this.pw = _pw;
