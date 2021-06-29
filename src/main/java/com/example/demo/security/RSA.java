@@ -153,7 +153,11 @@ public class RSA {
     }
 
     public static void main(String[] args) {
-
+        try {
+            genRSAKeyPair("abcd").get(1);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
