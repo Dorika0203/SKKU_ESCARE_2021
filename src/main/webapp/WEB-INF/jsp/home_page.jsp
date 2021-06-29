@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=utf-8"
          pageEncoding="utf-8" isELIgnored="false" %>
 <%@ taglib prefix="c"
@@ -114,8 +115,7 @@
                 <img class="is-square" src="image/home_page_img.png" alt="home_page_img">
             </div>
         </div>
-    </div>
-</section>
+    </div></section>
 </body>
 <script type="text/javascript" src="js/home_page.js"></script>
 

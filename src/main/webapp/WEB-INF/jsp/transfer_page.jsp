@@ -30,13 +30,13 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
     -->
     <link
-      href="SKKU_ESCARE_2021\src\main\resources\static\css\main.css"
+      href="\css\main.css"
       rel="stylesheet"
     />
     <link
       rel="shortcut icon"
       type="image⁄x-icon"
-      href="SKKU_ESCARE_2021\src\main\resources\static\image\logo.png"
+      href="\image\logo.png"
     />
   </head>
   <body>
@@ -52,10 +52,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           <div class="header__pane ml-auto">
             <div>
               <a
-                href="SKKU_ESCARE_2021\src\main\webapp\WEB-INF\jsp\my_page.jsp"
+                href="mypage"
               >
                 <img
-                  src="SKKU_ESCARE_2021\src\main\resources\static\image\logo.png"
+                  src="\image\logo.png"
                 />
               </a>
             </div>
@@ -67,7 +67,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             <ul class="header-menu nav">
               <li class="btn-group nav-item">
                 <a
-                  href="SKKU_ESCARE_2021\src\main\webapp\WEB-INF\jsp\transfer_page.jsp"
+                  href="transferpage"
                 >
                   | 송금
                 </a>
@@ -87,7 +87,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                     <img
                       width="42"
                       class="rounded-circle"
-                      src="SKKU_ESCARE_2021\src\main\resources\static\image\user.png"
+                      src="\image\user.png"
                       alt=""
                     />
                   </div>
