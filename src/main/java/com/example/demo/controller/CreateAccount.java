@@ -5,6 +5,7 @@ import com.example.demo.model.*;
 import com.example.demo.repository.AccountDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -13,18 +14,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class CreateAccount {
 
     @Autowired
-    AccountDataRepository table;
+    AccountDataRepository accountData;
+
 
     @GetMapping
-    public String createAccount(/*String AccountPW String ID, String lastname, String firstname*/) {
+    public String Account(Model model) {
        
-        long tmp = table.count();
+        long tmp = accountData.count();
         String Account = GenerateAccount(tmp);
         String id = "1234"; String lastname = "Kim"; String firstname = "Minseo";
 
         AccountDataModel account = new AccountDataModel(Account, id, lastname, firstname);
-        table.save(account);
-        table.flush();
+        accountData.save(account);
+        accountData.flush();
     
         return "account_create_success";
     }

@@ -14,14 +14,19 @@ import javax.persistence.Table;
 public class UserDataModel {
     @Id
     private String id;
+
     @Column
     private byte[] pw;
+
     @Column
     private String Lastname;
+
     @Column
     private String Firstname;
+
     @Column
     private String PhoneNumber;
+
     @Column
     private String issued_time;
 
@@ -57,6 +62,8 @@ public class UserDataModel {
     public void setIssued_time(String issued_time) {
         this.issued_time = issued_time;
     }
+
+
 
     public UserDataModel(String _id, byte[] _pw, String lastname, String firstname, String phonenumber) {
         this.id = _id;
