@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 
 import com.example.demo.model.*;
@@ -80,6 +82,13 @@ public class SignUp {
                 ArrayList<String> keyPair = key.genRSAKeyPair(PW);
                 System.out.println(keyPair.get(0));
                 System.out.println(keyPair.get(1));
+                String salt = keyPair.get(2);
+                System.out.println("Base str of salt is " + salt);
+                System.out.println("Byte array of salt is " + Base64.getDecoder().decode(salt));
+
+                UserDataModel saltUpdatedModel = table.getById(signUpID);
+                saltUpdatedModel.setSalt(salt);
+                table.saveAndFlush(saltUpdatedModel);
                 model.addAttribute("public-key", keyPair.get(0));
                 model.addAttribute("private-key", keyPair.get(1));
             } catch (NoSuchAlgorithmException e) {
@@ -108,10 +117,6 @@ public class SignUp {
             return null;
         }
     }
-
-    // @PostMapping("certificate")
-    // public String certificate(String PW){
-    // }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
