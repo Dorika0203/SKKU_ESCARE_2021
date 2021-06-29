@@ -77,11 +77,11 @@ public class SignUp {
 
             RSA key = new RSA();
             try {
-                ArrayList<byte[]> keyPair = key.genRSAKeyPair(PW);
+                ArrayList<String> keyPair = key.genRSAKeyPair(PW);
                 System.out.println(keyPair.get(0));
                 System.out.println(keyPair.get(1));
-                model.addAttribute("public-key", bytesToHex(keyPair.get(0)));
-                model.addAttribute("private-key", bytesToHex(keyPair.get(1)));
+                model.addAttribute("public-key", keyPair.get(0));
+                model.addAttribute("private-key", keyPair.get(1));
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }

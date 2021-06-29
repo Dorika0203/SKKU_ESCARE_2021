@@ -20,7 +20,7 @@ public class RSA {
     /**
      * 1024비트 RSA 키쌍을 생성합니다.
      */
-    public static ArrayList<byte[]> genRSAKeyPair(String password) throws NoSuchAlgorithmException {
+    public static ArrayList<String> genRSAKeyPair(String password) throws NoSuchAlgorithmException {
         SecureRandom secureRandom = new SecureRandom();
         KeyPairGenerator gen;
         gen = KeyPairGenerator.getInstance("RSA");
@@ -91,7 +91,8 @@ public class RSA {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ArrayList<byte[]> ret = new ArrayList<>(Arrays.asList(keyPair.getPublic().getEncoded(), encryptedPkcs8));
+        String temp = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
+        ArrayList<String> ret = new ArrayList<>(Arrays.asList(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()), Base64.getEncoder().encodeToString(encryptedPkcs8)));
         return ret;
     }
 
