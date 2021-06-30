@@ -77,7 +77,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
         localStorage.setItem("public-key", '<%= request.getAttribute("public-key")%>')
         localStorage.setItem("private-key", '<%= request.getAttribute("private-key")%>')
         console.log(localStorage.getItem("public-key") + " " + localStorage.getItem("private-key"))
-        location.href = "https://localhost:8080/home"
+        location.href = "home"
       }
     </script>
   </body>
