@@ -72,11 +72,15 @@ uri="http://java.sun.com/jsp/jstl/core"%>
       var homeButton = document.getElementById("home_button");
       homeButton.addEventListener("click", init)
 
+      var user = JSON.stringify({
+                public_key:`<%=request.getAttribute("public-key")%>`,
+                private_key:`<%=request.getAttribute("private-key")%>`
+              }
+      )
       function init(e) {
         e.preventDefault()
-        localStorage.setItem("public-key", '<%= request.getAttribute("public-key")%>')
-        localStorage.setItem("private-key", '<%= request.getAttribute("private-key")%>')
-        console.log(localStorage.getItem("public-key") + " " + localStorage.getItem("private-key"))
+        localStorage.setItem(`<%=request.getAttribute("ID")%>`, user)
+        console.log(localStorage.getItem(`<%=request.getAttribute("ID")%>`)[0] + " " + localStorage.getItem(`<%=request.getAttribute("ID")%>`)[1])
         location.href = "home"
       }
     </script>

@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
+import com.example.demo.User.LoginClient;
 import com.example.demo.model.*;
 import com.example.demo.repository.LoginSessionRepository;
 import com.example.demo.repository.UserDataRepository;
@@ -68,6 +69,10 @@ public class SignIn {
 
                     loginSessionRepository.saveAndFlush(loginSessionModel);
                     System.out.println("END");
+                    System.out.println(LoginClient.getID());
+
+                    LoginClient.setID(ID_IN);
+                    System.out.println(LoginClient.getID());
                     return "sign_in_success";
                 }
                 else flag = 1;
