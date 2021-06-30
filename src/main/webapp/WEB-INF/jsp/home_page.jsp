@@ -17,6 +17,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
       crossorigin="anonymous"
     />
+    <link rel="shortcut icon" type="image⁄x-icon" href="\image\logo-only.png" />
   </head>
 
   <body>
@@ -121,7 +122,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           <div class="column">
             <img
               class="is-square"
-              src="image/home_page_logo.gif"
+              src="image/logo-lg.png"
               alt="home_page_img"
             />
           </div>

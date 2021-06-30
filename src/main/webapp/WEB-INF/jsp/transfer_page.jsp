@@ -1,91 +1,104 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         pageEncoding="utf-8" isELIgnored="false" %>
-<%@ taglib prefix="c"
-           uri="http://java.sun.com/jsp/jstl/core" %>
+pageEncoding="utf-8" isELIgnored="false" %> <%@ taglib prefix="c"
+uri="http://java.sun.com/jsp/jstl/core" %>
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Language" content="en">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Language" content="en" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Demo Bank</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
-    <meta name="description" content="This is an example dashboard created using build-in elements and components.">
-    <meta name="msapplication-tap-highlight" content="no">
-    
-<link href="\css\main.css" rel="stylesheet">
-<link rel="shortcut icon" type="image⁄x-icon" href="\image\logo.png">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"
+    />
+    <meta
+      name="description"
+      content="This is an example dashboard created using build-in elements and components."
+    />
+    <meta name="msapplication-tap-highlight" content="no" />
 
-</head>
-<body>
-    <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
-        <div class="app-header header-shadow">
-            <div class="app-header__logo">
-                
-                <div class="header__pane ml-auto">
-                    <div>
-                        <a href="mypage">
-                            <img src="\image\logo.png">
-                        </a>
-                        
-                    </div>
-                </div>
+    <link href="\css\main.css" rel="stylesheet" />
+    <link rel="shortcut icon" type="image⁄x-icon" href="\image\logo-only.png" />
+  </head>
+  <body>
+    <div
+      class="
+        app-container app-theme-white
+        body-tabs-shadow
+        fixed-sidebar fixed-header
+      "
+    >
+      <div class="app-header header-shadow">
+        <div class="app-header__logo">
+          <div class="header__pane ml-auto">
+            <div>
+              <a href="mypage">
+                <img src="\image\logo.png" />
+              </a>
             </div>
-               
-            <div class="app-header__content">
-                <div class="app-header-left">
-                    
-                    <ul class="header-menu nav">
-                        <li class="btn-group nav-item">
-                            <a href="transferpage">
-                                | 송금
-                            </a>
-                            
-                        </li>
-                        <li class="btn-group nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
-                                | 공인인증서 재발급
-                            </a>
-                        </li>
-                        
-                    </ul>        
-                </div>
-                <div class="app-header-right">
-                    <div class="header-btn-lg pr-0">
-                        <div class="widget-content p-0">
-                            <div class="widget-content-wrapper">
-                                <div class="widget-content-left">
-                                    <img width="42" class="rounded-circle" src="\image\user.png" alt="">
-                                </div>
-                                <div class="widget-content-left  ml-3 header-user-info">
-                                    <div class="widget-heading">
-                                        Hyejin Yoo
-                                    </div>
-                                    <div class="widget-subheading">
-                                        hyejin1234
-                                    </div>
-                                </div>
+          </div>
+        </div>
 
-                              <div class="widget-content-right header-user-info ml-3">
-                                <span id="counter"> </span> 후 자동로그아웃 <input type="button" value="연장" onclick="counter_reset()">
-                              </div>
-                                <div class="widget-content-right header-user-info ml-3">
-                                    <button type="button" class="btn-shadow p-1 btn btn-warning btn-sm show-toastr-example">
-                                      <a href="logout">
-                                        Logout
-                                      </a>
+        <div class="app-header__content">
+          <div class="app-header-left">
+            <ul class="header-menu nav">
+              <li class="btn-group nav-item">
+                <a href="transferpage"> | 송금 </a>
+              </li>
+              <li class="btn-group nav-item">
+                <a href="javascript:void(0);" class="nav-link">
+                  | 공인인증서 재발급
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="app-header-right">
+            <div class="header-btn-lg pr-0">
+              <div class="widget-content p-0">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <img
+                      width="42"
+                      class="rounded-circle"
+                      src="\image\user.png"
+                      alt=""
+                    />
+                  </div>
+                  <div class="widget-content-left ml-3 header-user-info">
+                    <div class="widget-heading">Hyejin Yoo</div>
+                    <div class="widget-subheading">hyejin1234</div>
+                  </div>
 
-                                    </button>
-                                </div>
-                            </div> 
-                        </div>
-                    </div>        
+                  <div class="widget-content-right header-user-info ml-3">
+                    <span id="counter"> </span> 후 자동로그아웃
+                    <input
+                      type="button"
+                      value="연장"
+                      onclick="counter_reset()"
+                    />
+                  </div>
+                  <div class="widget-content-right header-user-info ml-3">
+                    <button
+                      type="button"
+                      class="
+                        btn-shadow
+                        p-1
+                        btn btn-warning btn-sm
+                        show-toastr-example
+                      "
+                    >
+                      <a href="logout"> Logout </a>
+                    </button>
+                  </div>
                 </div>
+              </div>
             </div>
-        </div> 
+          </div>
+        </div>
+      </div>
 
       <div class="app-main">
         <div style="margin: auto; width: 1000px">
@@ -457,8 +470,8 @@
     ></script>
     <script type="text/javascript" src="js/my_page.js"></script>
   </body>
-  </html>
-  
-  <script>
-    counter_init();
-  </script>
+</html>
+
+<script>
+  counter_init();
+</script>
