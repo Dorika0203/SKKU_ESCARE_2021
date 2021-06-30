@@ -183,43 +183,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                           <div class="card-body">
                             <div class="input-group">
                               <div class="input-group mb-3">
-                                <button
-                                  class="
-                                    btn btn-outline-secondary
-                                    dropdown-toggle
-                                  "
-                                  type="button"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  은행선택
-                                </button>
-                                <ul class="dropdown-menu">
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="0"
-                                      href="#"
-                                      >a</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="1"
-                                      href="#"
-                                      >b</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="2"
-                                      href="#"
-                                      >c</a
-                                    >
-                                  </li>
-                                </ul>
                                 <input
                                   type="text"
                                   class="form-control"
@@ -232,7 +195,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                   type="text"
                                   class="form-control"
                                   aria-label="Text input with dropdown button"
-                                  placeholder="계좌번호 입력"
+                                  placeholder="금액"
                                 />
                                 <button
                                   class="btn btn-outline-secondary"
@@ -281,43 +244,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                           <div class="card-body">
                             <div class="input-group">
                               <div class="input-group mb-3">
-                                <button
-                                  class="
-                                    btn btn-outline-secondary
-                                    dropdown-toggle
-                                  "
-                                  type="button"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  은행선택
-                                </button>
-                                <ul class="dropdown-menu">
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="0"
-                                      href="#"
-                                      >a</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="1"
-                                      href="#"
-                                      >b</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="2"
-                                      href="#"
-                                      >c</a
-                                    >
-                                  </li>
-                                </ul>
                                 <input
                                   type="text"
                                   class="form-control"
@@ -330,7 +256,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                   type="text"
                                   class="form-control"
                                   aria-label="Text input with dropdown button"
-                                  placeholder="계좌번호 입력"
+                                  placeholder="금액"
                                 />
                                 <button
                                   class="btn btn-outline-secondary"
@@ -379,43 +305,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                           <div class="card-body">
                             <div class="input-group">
                               <div class="input-group mb-3">
-                                <button
-                                  class="
-                                    btn btn-outline-secondary
-                                    dropdown-toggle
-                                  "
-                                  type="button"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  은행선택
-                                </button>
-                                <ul class="dropdown-menu">
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="0"
-                                      href="#"
-                                      >a</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="1"
-                                      href="#"
-                                      >b</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="2"
-                                      href="#"
-                                      >c</a
-                                    >
-                                  </li>
-                                </ul>
                                 <input
                                   type="text"
                                   class="form-control"
@@ -428,7 +317,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                   type="text"
                                   class="form-control"
                                   aria-label="Text input with dropdown button"
-                                  placeholder="계좌번호 입력"
+                                  placeholder="금액"
                                 />
                                 <button
                                   class="btn btn-outline-secondary"
