@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -76,13 +75,16 @@ public class SignUp {
             issuedTimeUpdatedModel.setIssued_time(getCurrentTime());
             userDataRepository.saveAndFlush(issuedTimeUpdatedModel);
 
-            RSA key = new RSA();
             try {
-                ArrayList<String> keyPair = key.genRSAKeyPair(PW);
+                ArrayList<String> keyPair = RSA.genRSAKeyPair(PW);
+                UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
+                saltBase64UpdatedModel.setSalt(keyPair.get(2));
                 System.out.println(keyPair.get(0));
                 System.out.println(keyPair.get(1));
+                System.out.println(keyPair.get(2));
                 model.addAttribute("public-key", keyPair.get(0));
                 model.addAttribute("private-key", keyPair.get(1));
+                userDataRepository.saveAndFlush(saltBase64UpdatedModel);
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
@@ -110,10 +112,6 @@ public class SignUp {
         }
     }
 
-    // @PostMapping("certificate")
-    // public String certificate(String PW){
-    // }
-
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
         try {
@@ -124,14 +122,6 @@ public class SignUp {
         md.update(msg);
 
         return md.digest();
-    }
-
-    public String bytesToHex(byte[] bytes) {
-        StringBuilder builder = new StringBuilder();
-        for (byte b : bytes) {
-            builder.append(String.format("%02x", b));
-        }
-        return builder.toString();
     }
 
     public String getCurrentTime() {
