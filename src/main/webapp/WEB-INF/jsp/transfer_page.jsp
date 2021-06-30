@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="This is an example dashboard created using build-in elements and components.">
     <meta name="msapplication-tap-highlight" content="no">
-    
+
 <link href="\css\main.css" rel="stylesheet">
 <link rel="shortcut icon" type="image⁄x-icon" href="\image\logo.png">
 
@@ -24,34 +24,34 @@
     <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
         <div class="app-header header-shadow">
             <div class="app-header__logo">
-                
+
                 <div class="header__pane ml-auto">
                     <div>
                         <a href="mypage">
                             <img src="\image\logo.png">
                         </a>
-                        
+
                     </div>
                 </div>
             </div>
-               
+
             <div class="app-header__content">
                 <div class="app-header-left">
-                    
+
                     <ul class="header-menu nav">
                         <li class="btn-group nav-item">
                             <a href="transferpage">
                                 | 송금
                             </a>
-                            
+
                         </li>
                         <li class="btn-group nav-item">
                             <a href="javascript:void(0);" class="nav-link">
                                 | 공인인증서 재발급
                             </a>
                         </li>
-                        
-                    </ul>        
+
+                    </ul>
                 </div>
                 <div class="app-header-right">
                     <div class="header-btn-lg pr-0">
@@ -80,12 +80,12 @@
 
                                     </button>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
-                    </div>        
+                    </div>
                 </div>
             </div>
-        </div> 
+        </div>
 
       <div class="app-main">
         <div style="margin: auto; width: 1000px">
@@ -136,7 +136,7 @@
                     </ul>
 
                     <div class="tab-content">
-                      <div
+                      <form
                         class="tab-pane fade active show"
                         id="tab-page2-0"
                         role="tabpanel"
@@ -167,9 +167,10 @@
                           >
                             <div class="card-header-title">| 송금</div>
                           </div>
+
                           <div class="card-body">
                             <div class="input-group">
-                              <div class="input-group mb-3">
+                              <div class="input-group mb-3" id="accountBox1">
                                 <button
                                   class="
                                     btn btn-outline-secondary
@@ -178,6 +179,7 @@
                                   type="button"
                                   data-toggle="dropdown"
                                   aria-expanded="false"
+                                  id="account1"
                                 >
                                   은행선택
                                 </button>
@@ -186,7 +188,6 @@
                                     <a
                                       class="dropdown-item"
                                       tabindex="0"
-                                      href="#"
                                       >a</a
                                     >
                                   </li>
@@ -194,7 +195,6 @@
                                     <a
                                       class="dropdown-item"
                                       tabindex="1"
-                                      href="#"
                                       >b</a
                                     >
                                   </li>
@@ -202,7 +202,6 @@
                                     <a
                                       class="dropdown-item"
                                       tabindex="2"
-                                      href="#"
                                       >c</a
                                     >
                                   </li>
@@ -224,7 +223,7 @@
                                 <button
                                   class="btn btn-outline-secondary"
                                   type="button"
-                                  id="button-addon2"
+                                  id="button-addon3"
                                 >
                                   송금
                                 </button>
@@ -232,6 +231,7 @@
                             </div>
                           </div>
                         </div>
+                      </form>
                       </div>
 
                       <div
@@ -322,7 +322,7 @@
                                 <button
                                   class="btn btn-outline-secondary"
                                   type="button"
-                                  id="button-addon2"
+                                  id="button-addon4"
                                 >
                                   송금
                                 </button>
@@ -456,9 +456,10 @@
       crossorigin="anonymous"
     ></script>
     <script type="text/javascript" src="js/my_page.js"></script>
+    <script type="text/javascript" src="js/transfer_page.js"></script>
   </body>
   </html>
-  
+
   <script>
     counter_init();
   </script>
