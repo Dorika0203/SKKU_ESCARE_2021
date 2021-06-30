@@ -69,7 +69,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                       <input
                         type="button"
                         class="btn p-1 show-toastr-example"
-                        value="연장"
+                        value="🔄"
                         onclick="counter_reset()"
                       />
                     </div>
