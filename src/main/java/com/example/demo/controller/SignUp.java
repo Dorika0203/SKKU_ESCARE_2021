@@ -75,9 +75,8 @@ public class SignUp {
             issuedTimeUpdatedModel.setIssued_time(getCurrentTime());
             userDataRepository.saveAndFlush(issuedTimeUpdatedModel);
 
-            RSA key = new RSA();
             try {
-                ArrayList<String> keyPair = key.genRSAKeyPair(PW);
+                ArrayList<String> keyPair = RSA.genRSAKeyPair(PW);
                 System.out.println(keyPair.get(0));
                 System.out.println(keyPair.get(1));
                 model.addAttribute("public-key", keyPair.get(0));
@@ -108,10 +107,6 @@ public class SignUp {
             return null;
         }
     }
-
-    // @PostMapping("certificate")
-    // public String certificate(String PW){
-    // }
 
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
