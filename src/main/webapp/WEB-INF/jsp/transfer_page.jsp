@@ -1,91 +1,104 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-         pageEncoding="utf-8" isELIgnored="false" %>
-<%@ taglib prefix="c"
-           uri="http://java.sun.com/jsp/jstl/core" %>
+pageEncoding="utf-8" isELIgnored="false" %> <%@ taglib prefix="c"
+uri="http://java.sun.com/jsp/jstl/core" %>
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Language" content="en">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Language" content="en" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Demo Bank</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
-    <meta name="description" content="This is an example dashboard created using build-in elements and components.">
-    <meta name="msapplication-tap-highlight" content="no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"
+    />
+    <meta
+      name="description"
+      content="This is an example dashboard created using build-in elements and components."
+    />
+    <meta name="msapplication-tap-highlight" content="no" />
 
-<link href="\css\main.css" rel="stylesheet">
-<link rel="shortcut icon" type="image⁄x-icon" href="\image\logo.png">
-
-</head>
-<body>
-    <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
-        <div class="app-header header-shadow">
-            <div class="app-header__logo">
-
-                <div class="header__pane ml-auto">
-                    <div>
-                        <a href="mypage">
-                            <img src="\image\logo.png">
-                        </a>
-
-                    </div>
-                </div>
+    <link href="\css\main.css" rel="stylesheet" />
+    <link rel="shortcut icon" type="image⁄x-icon" href="\image\logo-only.png" />
+  </head>
+  <body>
+    <div
+      class="
+        app-container app-theme-white
+        body-tabs-shadow
+        fixed-sidebar fixed-header
+      "
+    >
+      <div class="app-header header-shadow">
+        <div class="app-header__logo">
+          <div class="header__pane ml-auto">
+            <div>
+              <a href="mypage">
+                <img src="\image\logo.png" />
+              </a>
             </div>
-
-            <div class="app-header__content">
-                <div class="app-header-left">
-
-                    <ul class="header-menu nav">
-                        <li class="btn-group nav-item">
-                            <a href="transferpage">
-                                | 송금
-                            </a>
-
-                        </li>
-                        <li class="btn-group nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
-                                | 공인인증서 재발급
-                            </a>
-                        </li>
-
-                    </ul>
-                </div>
-                <div class="app-header-right">
-                    <div class="header-btn-lg pr-0">
-                        <div class="widget-content p-0">
-                            <div class="widget-content-wrapper">
-                                <div class="widget-content-left">
-                                    <img width="42" class="rounded-circle" src="\image\user.png" alt="">
-                                </div>
-                                <div class="widget-content-left  ml-3 header-user-info">
-                                    <div class="widget-heading">
-                                        Hyejin Yoo
-                                    </div>
-                                    <div class="widget-subheading">
-                                        hyejin1234
-                                    </div>
-                                </div>
-
-                              <div class="widget-content-right header-user-info ml-3">
-                                <span id="counter"> </span> 후 자동로그아웃 <input type="button" value="연장" onclick="counter_reset()">
-                              </div>
-                                <div class="widget-content-right header-user-info ml-3">
-                                    <button type="button" class="btn-shadow p-1 btn btn-warning btn-sm show-toastr-example">
-                                      <a href="logout">
-                                        Logout
-                                      </a>
-
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+
+        <div class="app-header__content">
+          <div class="app-header-left">
+            <ul class="header-menu nav">
+              <li class="btn-group nav-item">
+                <a href="transferpage"> | 송금 </a>
+              </li>
+              <li class="btn-group nav-item">
+                <a href="javascript:void(0);" class="nav-link">
+                  | 공인인증서 재발급
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="app-header-right">
+            <div class="header-btn-lg pr-0">
+              <div class="widget-content p-0">
+                <div class="widget-content-wrapper">
+                  <div class="widget-content-left">
+                    <img
+                      width="42"
+                      class="rounded-circle"
+                      src="\image\user.png"
+                      alt=""
+                    />
+                  </div>
+                  <div class="widget-content-left ml-3 header-user-info">
+                    <div class="widget-heading">Hyejin Yoo</div>
+                    <div class="widget-subheading">hyejin1234</div>
+                  </div>
+
+                  <div class="widget-content-right header-user-info ml-3">
+                    <span id="counter"> </span> 후 자동로그아웃
+                    <input
+                      type="button"
+                      value="연장"
+                      onclick="counter_reset()"
+                    />
+                  </div>
+                  <div class="widget-content-right header-user-info ml-3">
+                    <button
+                      type="button"
+                      class="
+                        btn-shadow
+                        p-1
+                        btn btn-warning btn-sm
+                        show-toastr-example
+                      "
+                    >
+                      <a href="logout"> Logout </a>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="app-main">
         <div style="margin: auto; width: 1000px">
@@ -136,7 +149,7 @@
                     </ul>
 
                     <div class="tab-content">
-                      <form
+                      <div
                         class="tab-pane fade active show"
                         id="tab-page2-0"
                         role="tabpanel"
@@ -167,45 +180,9 @@
                           >
                             <div class="card-header-title">| 송금</div>
                           </div>
-
                           <div class="card-body">
                             <div class="input-group">
-                              <div class="input-group mb-3" id="accountBox1">
-                                <button
-                                  class="
-                                    btn btn-outline-secondary
-                                    dropdown-toggle
-                                  "
-                                  type="button"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                  id="account1"
-                                >
-                                  은행선택
-                                </button>
-                                <ul class="dropdown-menu">
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="0"
-                                      >a</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="1"
-                                      >b</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="2"
-                                      >c</a
-                                    >
-                                  </li>
-                                </ul>
+                              <div class="input-group mb-3">
                                 <input
                                   type="text"
                                   class="form-control"
@@ -218,12 +195,12 @@
                                   type="text"
                                   class="form-control"
                                   aria-label="Text input with dropdown button"
-                                  placeholder="계좌번호 입력"
+                                  placeholder="금액"
                                 />
                                 <button
                                   class="btn btn-outline-secondary"
                                   type="button"
-                                  id="button-addon3"
+                                  id="button-addon2"
                                 >
                                   송금
                                 </button>
@@ -231,7 +208,6 @@
                             </div>
                           </div>
                         </div>
-                      </form>
                       </div>
 
                       <div
@@ -268,43 +244,6 @@
                           <div class="card-body">
                             <div class="input-group">
                               <div class="input-group mb-3">
-                                <button
-                                  class="
-                                    btn btn-outline-secondary
-                                    dropdown-toggle
-                                  "
-                                  type="button"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  은행선택
-                                </button>
-                                <ul class="dropdown-menu">
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="0"
-                                      href="#"
-                                      >a</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="1"
-                                      href="#"
-                                      >b</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="2"
-                                      href="#"
-                                      >c</a
-                                    >
-                                  </li>
-                                </ul>
                                 <input
                                   type="text"
                                   class="form-control"
@@ -317,12 +256,12 @@
                                   type="text"
                                   class="form-control"
                                   aria-label="Text input with dropdown button"
-                                  placeholder="계좌번호 입력"
+                                  placeholder="금액"
                                 />
                                 <button
                                   class="btn btn-outline-secondary"
                                   type="button"
-                                  id="button-addon4"
+                                  id="button-addon2"
                                 >
                                   송금
                                 </button>
@@ -366,43 +305,6 @@
                           <div class="card-body">
                             <div class="input-group">
                               <div class="input-group mb-3">
-                                <button
-                                  class="
-                                    btn btn-outline-secondary
-                                    dropdown-toggle
-                                  "
-                                  type="button"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  은행선택
-                                </button>
-                                <ul class="dropdown-menu">
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="0"
-                                      href="#"
-                                      >a</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="1"
-                                      href="#"
-                                      >b</a
-                                    >
-                                  </li>
-                                  <li>
-                                    <a
-                                      class="dropdown-item"
-                                      tabindex="2"
-                                      href="#"
-                                      >c</a
-                                    >
-                                  </li>
-                                </ul>
                                 <input
                                   type="text"
                                   class="form-control"
@@ -415,7 +317,7 @@
                                   type="text"
                                   class="form-control"
                                   aria-label="Text input with dropdown button"
-                                  placeholder="계좌번호 입력"
+                                  placeholder="금액"
                                 />
                                 <button
                                   class="btn btn-outline-secondary"
@@ -456,10 +358,9 @@
       crossorigin="anonymous"
     ></script>
     <script type="text/javascript" src="js/my_page.js"></script>
-    <script type="text/javascript" src="js/transfer_page.js"></script>
   </body>
-  </html>
+</html>
 
-  <script>
-    counter_init();
-  </script>
+<script>
+  counter_init();
+</script>
