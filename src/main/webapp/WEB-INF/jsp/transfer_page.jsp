@@ -199,7 +199,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                 />
                                 <button
                                   class="btn btn-outline-secondary"
-                                  type="button"
+                                  type="submit"
                                   id="button-addon2"
                                 >
                                   송금
