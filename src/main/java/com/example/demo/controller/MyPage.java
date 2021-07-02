@@ -4,6 +4,7 @@ import com.example.demo.model.SignInDataModel;
 import com.example.demo.model.SignOutDataModel;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
+import com.example.demo.user.LoginClient;
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
 import com.fortanix.sdkms.v1.api.AuthenticationApi;
@@ -12,6 +13,7 @@ import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -35,8 +37,7 @@ public class MyPage {
     private SignOutDataRepository signOutDataRepository;
 
     @GetMapping
-    public String mypage() {
-
+    public String mypage(Model model) {
         // connect to SDKMS
         ApiClient client = createClient(server, username, password);
         connectFortanixsdkms(client);

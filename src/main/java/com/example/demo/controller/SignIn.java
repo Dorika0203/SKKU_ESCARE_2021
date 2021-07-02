@@ -21,7 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.example.demo.User.LoginClient.setID;
+import static com.example.demo.user.LoginClient.setUserID;
 
 
 @Controller
@@ -54,13 +54,6 @@ public class SignIn {
             byte[] hex = userDataModel.getPw();
 
             try {
-                System.out.println("GOT PW HASH");
-                System.out.println(sha256(PW_IN).toString());
-                System.out.println("GOT Encrypted Hash");
-                System.out.println((hex));
-                System.out.println((hex).length);
-                System.out.println("GOT Decrypted Hash");
-                System.out.println(DecryptCipher((hex), client));
                 if(Arrays.equals(sha256(PW_IN), DecryptCipher((hex), client)))
                 {
                     long tmp = signInDataRepository.count();
@@ -74,7 +67,6 @@ public class SignIn {
                 }
                 else flag = 1;
             } catch (NoSuchAlgorithmException e) {
-                System.out.println("NO SUCH ALRGORITHM EXCEPTION!!!!!!!!!!!!!!!!!");
                 e.printStackTrace();
             }
         }

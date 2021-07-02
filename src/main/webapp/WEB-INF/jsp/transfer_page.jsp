@@ -134,6 +134,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                           data-toggle="tab"
                           href="#tab-page2-0"
                           class="active nav-link"
+                          id="my-account1"
                           >계좌별칭</a
                         >
                       </li>
@@ -194,7 +195,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                   class="form-control"
                                   aria-label="Text input with dropdown button"
                                   placeholder="계좌번호 입력"
-                                  id="receiver_account"
+                                  id="receiver-account"
                                 />
                               </div>
                               <div class="input-group mb-3">
@@ -203,6 +204,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                   class="form-control"
                                   aria-label="Text input with dropdown button"
                                   placeholder="금액"
+                                  id="transfer-amount"
                                 />
                                 <button
                                   class="btn btn-outline-secondary"
@@ -366,15 +368,19 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       crossorigin="anonymous"
     ></script>
     <script type="text/javascript" src="js/my_page.js"></script>
-    <script src="jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
+        let keyStorage = JSON.parse(localStorage.getItem("<%= request.getAttribute("loginClientID") %>"))
+        console.log(keyStorage)
+        console.log("<%= request.getAttribute("loginClientID") %>")
         $.ajax({
         type : "POST",
         url : "transferpage/transfer",
         data : {
-            privateKey : localStorage.getItem(''),
-            brands : JSON.parse(localStorage.getItem("brands"))
-
+            publicKey : keyStorage.values("private-key")[1],
+            privateKey : keyStorage.values("private-key")[2],
+            account : document.getElementById("receiver-account"),
+            transferAmount : document.getElementById("receiver-account")
         }, // parameters
         success : function(result) {
             // alert('changed');
