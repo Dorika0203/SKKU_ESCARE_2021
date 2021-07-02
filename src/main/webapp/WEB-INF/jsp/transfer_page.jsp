@@ -147,7 +147,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                         >
                       </li>
                     </ul>
-
                     <div class="tab-content">
                       <div
                         class="tab-pane fade active show"
@@ -188,6 +187,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                   class="form-control"
                                   aria-label="Text input with dropdown button"
                                   placeholder="계좌번호 입력"
+                                  id="receiver_account"
                                 />
                               </div>
                               <div class="input-group mb-3">
@@ -200,7 +200,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                 <button
                                   class="btn btn-outline-secondary"
                                   type="submit"
-                                  id="button-addon2"
+                                  id="send"
                                 >
                                   송금
                                 </button>
@@ -358,6 +358,20 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       crossorigin="anonymous"
     ></script>
     <script type="text/javascript" src="js/my_page.js"></script>
+    <script src="jquery.js"></script>
+    <script>
+        $.ajax({
+        type : "POST",
+        url : "transferpage/transfer",
+        data : {
+            privateKey : localStorage.getItem(''),
+            brands : JSON.parse(localStorage.getItem("brands"))
+
+        }, // parameters
+        success : function(result) {
+            // alert('changed');
+        }});
+    </script>
   </body>
 </html>
 
