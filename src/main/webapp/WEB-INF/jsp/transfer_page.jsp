@@ -373,12 +373,14 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         let keyStorage = JSON.parse(localStorage.getItem("<%= request.getAttribute("loginClientID") %>"))
         console.log(keyStorage)
         console.log("<%= request.getAttribute("loginClientID") %>")
+        console.log(keyStorage.values("privateKey")[1])
+        console.log(keyStorage.values("privateKey")[2])
         $.ajax({
         type : "POST",
         url : "transferpage/transfer",
         data : {
-            publicKey : keyStorage.values("private-key")[1],
-            privateKey : keyStorage.values("private-key")[2],
+            publicKey : keyStorage.values("privateKey")[1],
+            privateKey : keyStorage.values("privateKey")[2],
             account : document.getElementById("receiver-account"),
             transferAmount : document.getElementById("receiver-account")
         }, // parameters
