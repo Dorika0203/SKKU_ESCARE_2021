@@ -10,6 +10,7 @@ import java.util.Date;
 import com.example.demo.model.*;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.UserDataRepository;
+import com.example.demo.user.LoginClient;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.model.*;
@@ -21,8 +22,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.example.demo.User.LoginClient.setID;
-
 
 @Controller
 @RequestMapping("/signin")
@@ -31,7 +30,6 @@ public class SignIn {
     private String server = "https://sdkms.fortanix.com";
     private String username = "a025eafd-5977-4924-8087-9b262315a974";
     private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
-    private String signUpID = null;
 
     @Autowired
     private UserDataRepository userDataRepository;
@@ -69,7 +67,7 @@ public class SignIn {
                     byte[] cipher = generateCipher(byteCurrentTime, client);
                     SignInDataModel signInDataModel = new SignInDataModel(iTmp, ID_IN, cipher);
                     signInDataRepository.saveAndFlush(signInDataModel);
-                    setUserID(ID_IN);
+                    LoginClient.setUserID(ID_IN);
                     return "sign_in_success";
                 }
                 else flag = 1;

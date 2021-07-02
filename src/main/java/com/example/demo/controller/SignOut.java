@@ -1,11 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.SignInDataModel;
 import com.example.demo.model.SignOutDataModel;
-import com.example.demo.model.UserDataModel;
-import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
-import com.example.demo.repository.UserDataRepository;
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
 import com.fortanix.sdkms.v1.api.AuthenticationApi;
@@ -14,17 +10,11 @@ import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 import static com.example.demo.user.LoginClient.getUserID;
@@ -37,15 +27,12 @@ public class SignOut
     private String server = "https://sdkms.fortanix.com";
     private String username = "a025eafd-5977-4924-8087-9b262315a974";
     private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
-    private String signUpID = null;
 
     @Autowired
     private SignOutDataRepository signOutDataRepository;
 
     @GetMapping
     public String connect() {
-
-        int flag = 0;
         // connect to SDKMS
         ApiClient client = createClient(server, username, password);
         connectFortanixsdkms(client);
