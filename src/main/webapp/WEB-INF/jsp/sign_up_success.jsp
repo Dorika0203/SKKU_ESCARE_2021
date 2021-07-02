@@ -46,8 +46,8 @@ uri="http://java.sun.com/jsp/jstl/core"%>
       homeButton.addEventListener("click", init)
 
       var user = JSON.stringify({
-                publicKey:`<%=request.getAttribute("public-key")%>`,
-                privateKey:`<%=request.getAttribute("private-key")%>`
+                public_key:`<%=request.getAttribute("publicKey")%>`,
+                private_key:`<%=request.getAttribute("privateKey")%>`
               }
       )
       function init(e) {
