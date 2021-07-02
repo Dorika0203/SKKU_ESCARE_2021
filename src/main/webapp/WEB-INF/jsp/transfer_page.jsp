@@ -73,6 +73,16 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                         onclick="counter_reset()"
                       />
                     </div>
+                    <div class="widget-subheading">hyejin1234</div>
+                  </div>
+
+                  <div class="widget-content-right header-user-info ml-3">
+                    <span id="counter"> </span> 후 자동로그아웃
+                    <input
+                      type="button"
+                      value="연장"
+                      onclick="counter_reset()"
+                    />
                   </div>
 
                   <div class="widget-content-right header-user-info ml-3">
@@ -196,7 +206,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                 />
                                 <button
                                   class="btn btn-outline-secondary"
-                                  type="button"
+                                  type="submit"
                                   id="button-addon2"
                                 >
                                   송금
@@ -205,6 +215,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                             </div>
                           </div>
                         </div>
+                      </form>
                       </div>
 
                       <div
