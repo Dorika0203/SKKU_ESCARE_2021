@@ -48,6 +48,11 @@ uri="http://java.sun.com/jsp/jstl/core" %>
               <div class="widget-content-wrapper">
                 <a href="transferpage"> | transfer </a>
               </div>
+              <div class="btn-group nav-item">
+                <a href="reissuance" class="nav-link">
+                  | reissuance
+                </a>
+              </div>
             </div>
           </div>
           <div class="app-header-right">
