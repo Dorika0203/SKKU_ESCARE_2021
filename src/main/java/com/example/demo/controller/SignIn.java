@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -7,7 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import com.example.demo.model.*;
-import com.example.demo.repository.LoginSessionRepository;
+import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.UserDataRepository;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static com.example.demo.User.LoginClient.setID;
 
 
 @Controller
@@ -33,7 +36,7 @@ public class SignIn {
     @Autowired
     private UserDataRepository userDataRepository;
     @Autowired
-    private LoginSessionRepository loginSessionRepository;
+    private SignInDataRepository signInDataRepository;
 
     @PostMapping
     public String connect(Model model, String ID_IN, String PW_IN) {
@@ -60,14 +63,13 @@ public class SignIn {
                 System.out.println(DecryptCipher((hex), client));
                 if(Arrays.equals(sha256(PW_IN), DecryptCipher((hex), client)))
                 {
-
-                    LoginSessionModel loginSessionModel = new LoginSessionModel(ID_IN, getCurrentTime(), sha256(getCurrentTime()));
-                    System.out.println("============SetIssued_Time=============");
-                    System.out.println("============setToken=============");
-                    System.out.println(loginSessionModel.getToken());
-
-                    loginSessionRepository.saveAndFlush(loginSessionModel);
-                    System.out.println("END");
+                    long tmp = signInDataRepository.count();
+                    int iTmp = Long.valueOf(tmp).intValue();
+                    byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
+                    byte[] cipher = generateCipher(byteCurrentTime, client);
+                    SignInDataModel signInDataModel = new SignInDataModel(iTmp, ID_IN, cipher);
+                    signInDataRepository.saveAndFlush(signInDataModel);
+                    setUserID(ID_IN);
                     return "sign_in_success";
                 }
                 else flag = 1;
@@ -92,6 +94,20 @@ public class SignIn {
         }
         return "sign_in_fail";
 
+    }
+
+    public byte[] generateCipher(byte[] plain, ApiClient client) {
+        String ivStr = new String("ESCAREAAAAAAAAAA");
+        EncryptRequest encryptRequest = new EncryptRequest();
+        encryptRequest.alg(ObjectType.AES).plain(plain).mode(CryptMode.CBC).setIv(ivStr.getBytes());
+        try {
+            EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
+                    .encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
+            return encryptResponse.getCipher();
+        } catch (ApiException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public byte[] DecryptCipher(byte[] cipher, ApiClient client) {

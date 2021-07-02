@@ -44,16 +44,11 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 
         <div class="app-header__content">
           <div class="app-header-left">
-            <ul class="header-menu nav">
-              <li class="btn-group nav-item">
-                <a href="transferpage"> | 송금 </a>
-              </li>
-              <li class="btn-group nav-item">
-                <a href="javascript:void(0);" class="nav-link">
-                  | 공인인증서 재발급
-                </a>
-              </li>
-            </ul>
+            <div class="widget-content p-0">
+              <div class="widget-content-wrapper">
+                <a href="transferpage"> | transfer </a>
+              </div>
+            </div>
           </div>
           <div class="app-header-right">
             <div class="header-btn-lg pr-0">
@@ -69,6 +64,15 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                   </div>
                   <div class="widget-content-left ml-3 header-user-info">
                     <div class="widget-heading">Hyejin Yoo</div>
+                    <div class="widget-subheading">
+                      <span id="counter"></span>
+                      <input
+                        type="button"
+                        class="btn p-1 show-toastr-example"
+                        value="🔄"
+                        onclick="counter_reset()"
+                      />
+                    </div>
                     <div class="widget-subheading">hyejin1234</div>
                   </div>
 
@@ -80,6 +84,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                       onclick="counter_reset()"
                     />
                   </div>
+
                   <div class="widget-content-right header-user-info ml-3">
                     <button
                       type="button"
@@ -108,8 +113,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                 <div class="page-title-heading">
                   <!--은행 로고-->
                   <div>
-                    Demo Bank Header
-                    <div class="page-title-subheading">discription</div>
+                    Welcome to your transfer page!
+                    <div class="page-title-subheading">
+                      You can only transfer to demo bank account.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -208,6 +215,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                             </div>
                           </div>
                         </div>
+                      </form>
                       </div>
 
                       <div
