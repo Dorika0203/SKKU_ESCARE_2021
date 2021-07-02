@@ -32,8 +32,8 @@ uri="http://java.sun.com/jsp/jstl/core"%>
               />
               <h1>Sign up Success!</h1>
               <p>Now you have a new account for Demo Bank.</p>
-              <a href="mypage" title="Return to home page" target="_self"
-                >| My page |</a
+              <a href="home" title="Return to home page" target="_self" id="home_button"
+                >| Home |</a
               >
             </div>
           </div>
@@ -46,8 +46,8 @@ uri="http://java.sun.com/jsp/jstl/core"%>
       homeButton.addEventListener("click", init)
 
       var user = JSON.stringify({
-                public_key:`<%=request.getAttribute("public-key")%>`,
-                private_key:`<%=request.getAttribute("private-key")%>`
+                public_key:`<%=request.getAttribute("publicKey")%>`,
+                private_key:`<%=request.getAttribute("privateKey")%>`
               }
       )
       function init(e) {

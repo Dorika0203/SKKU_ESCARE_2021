@@ -21,7 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.example.demo.User.LoginClient.setID;
+import static com.example.demo.user.LoginClient.setUserID;
 
 
 @Controller
