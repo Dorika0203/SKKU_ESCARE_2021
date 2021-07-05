@@ -21,6 +21,7 @@ public class TransferPage
     @PostMapping("/transfer")
     public String transfer(@RequestParam Map<String, Object> transferDataMap) {
         String privateKey = (String) transferDataMap.get("privateKey");
+        System.out.println("privateKey" + privateKey);
         return "home_page";
     }
 }
