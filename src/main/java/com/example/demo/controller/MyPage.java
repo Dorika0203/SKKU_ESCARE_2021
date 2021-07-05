@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.AccountDataModel;
 import com.example.demo.model.SignInDataModel;
 import com.example.demo.model.SignOutDataModel;
+import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
 import com.fortanix.sdkms.v1.ApiClient;
@@ -12,11 +14,13 @@ import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,9 +37,11 @@ public class MyPage {
     private SignInDataRepository signInDataRepository;
     @Autowired
     private SignOutDataRepository signOutDataRepository;
+    @Autowired
+    private AccountDataRepository accountDataRepository;
 
     @GetMapping
-    public String mypage() {
+    public String mypage(Model model) {
 
         // connect to SDKMS
         ApiClient client = createClient(server, username, password);
@@ -126,8 +132,21 @@ public class MyPage {
         int hourDiff = curHour - signInHour; int minuteDiff = curMinute - signInMinute; int secondDiff = curSecond - signInSecond;
         int diff = (((((yearDiff * 12 + monthDiff) * 31 + dayDiff) * 24 + hourDiff) * 60 + minuteDiff) * 60 + secondDiff);
 
-        if (0 <= diff && diff <= 300)
+
+        if (0 <= diff && diff <= 300) {         //Connect to mypage Success.
+            List<AccountDataModel> userAccountDataModelList = accountDataRepository.findAllByUserId(getUserID());
+            List<List<String>> userAccountDataList = new ArrayList<List<String>>();
+            for (int i = 0; i < userAccountDataModelList.size(); i++)
+            {
+                userAccountDataList.get(i).add(userAccountDataModelList.get(i).getAccount());
+                userAccountDataList.get(i).add(userAccountDataModelList.get(i).getBalance());
+            }
+
+            model.addAttribute("userAccountNameList", userAccountNameList);
+            model.addAttribute("userAccountBalanceList", userAccountBalanceList);
+
             return "my_page";
+        }
         else
             return "my_page_fail";
     }

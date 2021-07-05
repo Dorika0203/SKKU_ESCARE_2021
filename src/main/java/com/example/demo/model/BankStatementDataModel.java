@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "SignInLog")
+@Table(name = "BankStatementInfo")
 public class BankStatementDataModel {
     @Id
     private int count;
