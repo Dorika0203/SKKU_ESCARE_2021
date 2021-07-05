@@ -1,9 +1,5 @@
 package com.example.demo.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -29,6 +25,9 @@ public class UserDataModel {
 
     @Column
     private String issued_time;
+
+    @Column
+    private String salt;
 
 
     public String getId() {
@@ -63,6 +62,10 @@ public class UserDataModel {
         this.issued_time = issued_time;
     }
 
+    public String getSalt() { return salt; }
+
+    public void setSalt(String salt) { this.salt = salt; }
+
     public UserDataModel(String _id, byte[] _pw, String lastname, String firstname, String phonenumber) {
         this.id = _id;
         this.pw = _pw;
@@ -70,6 +73,7 @@ public class UserDataModel {
         this.Firstname = firstname;
         this.PhoneNumber = phonenumber;
         this.issued_time = null;
+        this.salt = null;
     }
 
     public UserDataModel() {

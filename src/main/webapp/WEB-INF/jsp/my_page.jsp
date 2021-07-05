@@ -50,6 +50,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
               </div>
               <div class="widget-content-wrapper">
                 <a href="createaccount"> | account </a>
+              <div class="btn-group nav-item">
+                <a href="reissuance" class="nav-link">
+                  | reissuance
+                </a>
               </div>
             </div>
           </div>

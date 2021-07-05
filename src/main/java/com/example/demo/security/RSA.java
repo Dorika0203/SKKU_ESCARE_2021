@@ -1,14 +1,8 @@
 package com.example.demo.security;
 
-import org.hibernate.mapping.Array;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -70,7 +64,6 @@ public class RSA {
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
-
         // Encrypt the encoded Private Key with the PBE key
         byte[] ciphertext = null;
         try {
