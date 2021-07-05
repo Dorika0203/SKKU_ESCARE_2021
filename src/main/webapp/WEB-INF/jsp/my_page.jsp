@@ -48,6 +48,8 @@ uri="http://java.sun.com/jsp/jstl/core" %>
               <div class="widget-content-wrapper">
                 <a href="transferpage"> | transfer </a>
               </div>
+              <div class="widget-content-wrapper">
+                <a href="createaccount"> | account </a>
               <div class="btn-group nav-item">
                 <a href="reissuance" class="nav-link">
                   | reissuance
@@ -126,7 +128,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                           data-toggle="tab"
                           href="#tab-page1-0"
                           class="active nav-link"
-                          >계좌별칭</a
+                          ><%%></a
                         >
                       </li>
                       <li class="nav-item">

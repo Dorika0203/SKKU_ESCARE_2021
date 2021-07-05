@@ -18,20 +18,16 @@ public class CreateAccount {
 
 
     @GetMapping
-    public String Account(Model model) {
+    public String createaccount(Model model) {
        
         long tmp = accountData.count();
-        String Account = GenerateAccount(tmp);
+        String Account = Long.toString(tmp);
         String id = "1234"; String lastname = "Kim"; String firstname = "Minseo";
 
         AccountDataModel account = new AccountDataModel(Account, id, lastname, firstname);
-        accountData.save(account);
-        accountData.flush();
+        accountData.saveAndFlush(account);
     
         return "account_create_success";
     }
 
-    public String GenerateAccount(long tmp) {
-        return Long.toString(++tmp);
-    }
 }
