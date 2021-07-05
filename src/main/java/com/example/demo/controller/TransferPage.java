@@ -3,10 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.user.LoginClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping("transferpage")
@@ -20,5 +19,8 @@ public class TransferPage
     }
 
     @PostMapping("/transfer")
-    public String transfer() {return "error";}
+    public String transfer(@RequestParam Map<String, Object> transferDataMap) {
+        String privateKey = (String) transferDataMap.get("privateKey");
+        return "home_page";
+    }
 }

@@ -53,11 +53,8 @@ public class MyPage {
 
         byte[] signIn_cipher = lastSignInDataModel.getSignIn_time();
         byte[] decryptedByteSignInTime = DecryptCipher(signIn_cipher, client);
-        System.out.println(decryptedByteSignInTime);
 
         String signIn_time = new String(decryptedByteSignInTime, StandardCharsets.UTF_8);
-        System.out.println(signIn_time);
-        System.out.println("My_Page");
 
         String signInDate; String signInTime;
         signInDate = signIn_time.split(" ")[0];
