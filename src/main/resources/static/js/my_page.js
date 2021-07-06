@@ -1,5 +1,6 @@
 var tid;
 var cnt = parseInt(300);//초기값(초단위)
+
 function counter_init() {
     tid = setInterval("counter_run()", 1000);
 }
