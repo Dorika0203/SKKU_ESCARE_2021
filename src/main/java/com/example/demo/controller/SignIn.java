@@ -10,6 +10,7 @@ import java.util.Date;
 import com.example.demo.model.*;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.UserDataRepository;
+import com.example.demo.user.LoginClient;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.model.*;
@@ -20,9 +21,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import static com.example.demo.user.LoginClient.setUserID;
-
 
 @Controller
 @RequestMapping("/signin")
@@ -62,7 +60,7 @@ public class SignIn {
                     byte[] cipher = generateCipher(byteCurrentTime, client);
                     SignInDataModel signInDataModel = new SignInDataModel(iTmp, ID_IN, cipher);
                     signInDataRepository.saveAndFlush(signInDataModel);
-                    setUserID(ID_IN);
+                    LoginClient.setUserID(ID_IN);
                     return "sign_in_success";
                 }
                 else flag = 1;

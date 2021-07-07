@@ -13,10 +13,6 @@ public class AccountDataModel {
     @Column
     private String userId;
     @Column
-    private String lastname;
-    @Column
-    private String firstname;
-    @Column
     private long balance;
 
     public long getAccount() { return account; }
@@ -33,23 +29,13 @@ public class AccountDataModel {
         this.userId = id;
     }
 
-    public String getLastname() { return lastname; }
-
-    public void setLastname(String lastname) {this.lastname = lastname;}
-
-    public String getFirstname() {return firstname;}
-
-    public void setFirstname(String firstname) {this.firstname = firstname;}
-
     public long getBalance() {return this.balance;}
 
     public void setBalance(long balance) {this.balance = balance;}
 
-    public AccountDataModel(long account, String id, String lastname, String firstname) {
+    public AccountDataModel(long account, String id) {
         this.account = account;
         this.userId = id;
-        this.lastname = lastname;
-        this.firstname = firstname;
         this.balance = 0;
     }
 

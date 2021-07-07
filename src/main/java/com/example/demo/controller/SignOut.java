@@ -27,15 +27,12 @@ public class SignOut
     private String server = "https://sdkms.fortanix.com";
     private String username = "a025eafd-5977-4924-8087-9b262315a974";
     private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
-    private String signUpID = null;
 
     @Autowired
     private SignOutDataRepository signOutDataRepository;
 
     @GetMapping
     public String connect() {
-
-        int flag = 0;
         // connect to SDKMS
         ApiClient client = createClient(server, username, password);
         connectFortanixsdkms(client);

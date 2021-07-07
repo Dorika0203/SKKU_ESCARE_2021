@@ -48,10 +48,11 @@ uri="http://java.sun.com/jsp/jstl/core" %>
               <div class="widget-content-wrapper">
                 <a href="transferpage"> | transfer </a>
               </div>
-              <div class="btn-group nav-item">
-                <a href="reissuance" class="nav-link">
-                  | reissuance
-                </a>
+              <div class="widget-content-wrapper">
+                <a href="createaccount"> | account </a>
+              </div>
+              <div class="widget-content-wrapper">
+                <a href="reissuance"> | reissuance </a>
               </div>
             </div>
           </div>
@@ -126,7 +127,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                           data-toggle="tab"
                           href="#tab-page1-0"
                           class="active nav-link"
-                          >계좌별칭</a
+                          ><%%></a
                         >
                       </li>
                       <li class="nav-item">
@@ -800,5 +801,17 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 </html>
 
 <script>
+  function showMyData() {
+    var myData = `<%=request.getAttribute("myAccountsData")%>`;
+    var accounts = JSON.parse(myData);
+
+    console.log(accounts[0]);
+    console.log("accountID : " + accounts[0].accountID);
+    console.log("balance : " + accounts[0].balance);
+    console.log("transferLogLength : " + accounts[0].transferLog.length);
+    console.log("account Num : " + accounts.length);
+    alert(myData);
+  }
   counter_init();
+  showMyData();
 </script>
