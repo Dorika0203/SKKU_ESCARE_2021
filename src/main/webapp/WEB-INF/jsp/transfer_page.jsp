@@ -382,9 +382,26 @@
                 publicKey: Object.values(keyStorage)[0],
                 privateKey: Object.values(keyStorage)[1],
                 account: document.getElementById("receiver-account").value,
-                transferAmount: document.getElementById("receiver-account").value
+                transferAmount: document.getElementById("transfer-amount").value
             }, // parameters
             success: function (result) {
+                switch (result) {
+                    case 1:
+                        alert("account or transfer amount format is incorrect")
+                        break
+                    case 2:
+                        alert("account doesn't exists!")
+                        break
+                    case 3:
+                        alert("your balance is less than transfer amount")
+                        break
+                    case 4:
+                        alert("success!")
+                        location.replace("mypage")
+                }
+            },
+            error: function (result) {
+                alert("transfer failed")
             }
         });
     })

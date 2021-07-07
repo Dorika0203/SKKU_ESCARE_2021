@@ -20,8 +20,7 @@ public class CreateAccount {
     @GetMapping
     public String Account(Model model) {
        
-        long tmp = accountData.count();
-        String Account = GenerateAccount(tmp);
+        long Account = accountData.count();
         String id = "1234"; String lastname = "Kim"; String firstname = "Minseo";
 
         AccountDataModel account = new AccountDataModel(Account, id, lastname, firstname);
@@ -29,9 +28,5 @@ public class CreateAccount {
         accountData.flush();
     
         return "account_create_success";
-    }
-
-    public String GenerateAccount(long tmp) {
-        return Long.toString(++tmp);
     }
 }

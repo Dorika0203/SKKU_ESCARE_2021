@@ -77,11 +77,8 @@ public class MyPage {
 
         byte[] signOutcipher = lastSignOutDataModel.getSignOut_time();
         byte[] decryptedByteSignOutTime = DecryptCipher(signOutcipher, client);
-        System.out.println(decryptedByteSignOutTime);
 
         String signOut_time = new String(decryptedByteSignOutTime, StandardCharsets.UTF_8);
-        System.out.println(signOut_time);
-        System.out.println("My_Page");
 
         String signOutDate; String signOutTime;
         signOutDate = signOut_time.split(" ")[0];
