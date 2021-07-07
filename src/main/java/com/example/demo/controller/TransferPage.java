@@ -58,6 +58,7 @@ public class TransferPage
                 receiverAccountData.setBalance(receiverAccountData.getBalance() + transactionAmount);
                 userAccountData.setBalance(userAccountData.getBalance() - transactionAmount);
                 accountDataRepository.saveAndFlush(receiverAccountData);
+                accountDataRepository.saveAndFlush(userAccountData);
             } 
             else {
                 //if balance is less than transfer amount
