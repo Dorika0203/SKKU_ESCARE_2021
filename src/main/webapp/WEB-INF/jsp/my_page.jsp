@@ -797,7 +797,8 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       crossorigin="anonymous"
     ></script>
 
-    <script type="text/javascript" src="js/my_page.js"></script>
+    <script type="text/javascript" src="js/my_page.js">
+    </script>
   </body>
 </html>
 

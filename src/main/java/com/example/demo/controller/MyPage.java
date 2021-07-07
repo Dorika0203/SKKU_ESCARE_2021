@@ -142,8 +142,7 @@ public class MyPage {
                 userAccountDataList.get(i).add(userAccountDataModelList.get(i).getBalance());
             }
 
-            model.addAttribute("userAccountNameList", userAccountNameList);
-            model.addAttribute("userAccountBalanceList", userAccountBalanceList);
+            model.addAttribute("userAccountNameList", userAccountDataList);
 
             return "my_page";
         }
