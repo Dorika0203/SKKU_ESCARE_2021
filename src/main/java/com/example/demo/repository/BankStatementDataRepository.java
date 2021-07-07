@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface BankStatementDataRepository extends JpaRepository<BankStatementDataModel, String> {
-    List<BankStatementDataModel> findAllByAccount (String account);
+    List<BankStatementDataModel> findAllByAccount (long account);
 }
