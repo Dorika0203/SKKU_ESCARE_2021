@@ -803,13 +803,13 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 
 <script>
   function showMyData() {
-    var myData = `<%=request.getAttribute("myAccountsData")%>`;
+    var myData = `<%=request.getAttribute("userAccountData")%>`;
     var accounts = JSON.parse(myData);
 
     console.log(accounts[0]);
     console.log("accountID : " + accounts[0].accountID);
     console.log("balance : " + accounts[0].balance);
-    console.log("transferLogLength : " + accounts[0].transferLog.length);
+    console.log("bankStatementLength : " + accounts[0].bankStatement.length);
     console.log("account Num : " + accounts.length);
     alert(myData);
   }

@@ -142,34 +142,36 @@ public class MyPage {
         {
             System.out.println("------------------ THIS IS MY ACCOUNT INFO FOR MY PAGE ------------------------ ");
 
-            AccountDataModel myAccount = accountDataRepository.findByUserId(userID);
+            AccountDataModel userAccountData = accountDataRepository.findByUserId(userID);
 
-            JSONObject accountInfo = new JSONObject();
-            JSONArray addingTransfer = new JSONArray();
+            JSONObject userAccountJSON = new JSONObject();
+            JSONArray bankStatementJSONArray = new JSONArray();
 
-            System.out.println("accountID: " + myAccount.getAccount());
-            System.out.println("balance: " + myAccount.getBalance());
-            accountInfo.put("accountID", myAccount.getAccount());
-            accountInfo.put("balance", myAccount.getBalance());
+            System.out.println("accountID: " + userAccountData.getAccount());
+            System.out.println("balance: " + userAccountData.getBalance());
+            userAccountJSON.put("accountID", userAccountData.getAccount());
+            userAccountJSON.put("balance", userAccountData.getBalance());
 
             // get maximum 10 transfer log.
 
-            List<BankStatementDataModel> accountTransferInfo = bankStatementDataRepository.findAllByAccount(myAccount.getAccount());
-            for(int j=0; j<accountTransferInfo.size(); j++)
+            List<BankStatementDataModel> bankStatementDataList = bankStatementDataRepository.findAllByAccount(userAccountData.getAccount());
+            for (int j = 0; j< bankStatementDataList.size(); j++)
             {
-                BankStatementDataModel thisTransfer = accountTransferInfo.get(j);
-                if(j == 10) break;
-                JSONObject addingOneTransfer = new JSONObject();
-                addingOneTransfer.put("sendTo", thisTransfer.getDepositAccount());
-                addingOneTransfer.put("gold", thisTransfer.getTransactionAmount());
-                addingOneTransfer.put("time", thisTransfer.getTransactionTime());
-                addingOneTransfer.put("result", thisTransfer.getAfterBalance());
-                addingTransfer.put(addingOneTransfer);
-            }
-            accountInfo.put("transferLog", addingTransfer);
+                BankStatementDataModel bankStatementData = bankStatementDataList.get(j);
+                if (j == 10) { break; }
 
-            System.out.println(accountInfo.toString());
-            model.addAttribute("myAccountsData", accountInfo.toString());
+                JSONObject bankStatementJSON = new JSONObject();
+                bankStatementJSON.put("depositAccount", bankStatementData.getDepositAccount());
+                bankStatementJSON.put("transactionAmount", bankStatementData.getTransactionAmount());
+                bankStatementJSON.put("transactionTime", bankStatementData.getTransactionTime());
+                bankStatementJSON.put("afterBalance", bankStatementData.getAfterBalance());
+
+                bankStatementJSONArray.put(bankStatementJSON);
+            }
+            userAccountJSON.put("bankStatement", bankStatementJSONArray);
+
+            System.out.println(userAccountJSON.toString());
+            model.addAttribute("userAccountData", userAccountJSON.toString());
 
             return "my_page";
         }

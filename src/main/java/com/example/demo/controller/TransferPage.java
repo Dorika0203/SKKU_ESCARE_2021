@@ -37,27 +37,27 @@ public class TransferPage
         String publicKey = (String) transferDataMap.get("publicKey");
         String accountString = (String) transferDataMap.get("receiverAccount");
         String transactionAmountString = (String) transferDataMap.get("transactionAmount");
-        long receiverAccount = 0;
+        long depositAccount = 0;
         long transactionAmount = 0;
 
         //check if all information are correct
         try{
             //check input format
-            receiverAccount = Integer.parseInt(accountString);
+            depositAccount = Integer.parseInt(accountString);
             transactionAmount = Integer.parseInt(transactionAmountString);
         } catch (NumberFormatException e) {
             //input format wrong
             return 1;
         }
-        if (accountDataRepository.existsById(receiverAccount) && accountDataRepository.existsByUserId(getUserID())){
+        if (accountDataRepository.existsById(depositAccount) && accountDataRepository.existsByUserId(getUserID())){
             //check whether each account exists
             AccountDataModel userAccountData = accountDataRepository.findByUserId(getUserID());
-            AccountDataModel receiverAccountData = accountDataRepository.findById(receiverAccount).get();
+            AccountDataModel depositAccountData = accountDataRepository.findById(depositAccount).get();
             if (userAccountData.getBalance() >= transactionAmount){
                 //transfer and edit balance
-                receiverAccountData.setBalance(receiverAccountData.getBalance() + transactionAmount);
+                depositAccountData.setBalance(depositAccountData.getBalance() + transactionAmount);
                 userAccountData.setBalance(userAccountData.getBalance() - transactionAmount);
-                accountDataRepository.saveAndFlush(receiverAccountData);
+                accountDataRepository.saveAndFlush(depositAccountData);
                 accountDataRepository.saveAndFlush(userAccountData);
             } 
             else {
