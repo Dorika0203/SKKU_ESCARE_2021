@@ -7,5 +7,5 @@ import com.example.demo.model.SignInDataModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccountDataRepository extends JpaRepository<AccountDataModel, Long> {
-    List<AccountDataModel> findAllByUserId (String userId);
+    AccountDataModel findByUserId (String userId);
 }
