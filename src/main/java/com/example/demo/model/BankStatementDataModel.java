@@ -6,50 +6,39 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "BankStatementInfo")
+@Table(name = "TransferDB")
 public class BankStatementDataModel {
     @Id
     private int count;
 
     @Column
-    private String account;
+    private long account;
 
     @Column
     private String transactionTime;
 
     @Column
-    private String transactionAmount;
+    private long transactionAmount;
 
     @Column
-    private String afterBalance;
+    private long afterBalance;
 
     @Column
-    private String depositAccount;
+    private long depositAccount;
 
 
-    public String getAccount() {
-        return account;
-    }
-
-    public void setAccount(String account) {this.account = account;}
-
+    public long getAccount() {return account;}
+    public void setAccount(long account) {this.account = account;}
     public String getTransactionTime() { return transactionTime; }
-
     public void setTransactionTime(String transactionTime) { this.transactionTime = transactionTime;}
+    public long getTransactionAmount() {return transactionAmount;}
+    public void setTransactionAmount(long transactionAmount) {this.transactionAmount = transactionAmount;}
+    public long getAfterBalance() {return afterBalance;}
+    public void setAfterBalance(long afterBalance) {this.afterBalance = afterBalance;}
+    public long getDepositAccount() {return depositAccount;}
+    public void setDepositAccount(long depositAccount) {this.depositAccount = depositAccount;}
 
-    public String getTransactionAmount() {return transactionAmount;}
-
-    public void setTransactionAmount(String transactionAmount) {this.transactionAmount = transactionAmount;}
-
-    public String getAfterBalance() {return afterBalance;}
-
-    public void setAfterBalance(String afterBalance) {this.afterBalance = afterBalance;}
-
-    public String getDepositAccount() {return depositAccount;}
-
-    public void setDepositAccount(String depositAccount) {this.depositAccount = depositAccount;}
-
-    public BankStatementDataModel(int count, String transactionTime, String transactionAmount, String afterBalance, String depositAccount) {
+    public BankStatementDataModel(int count, String transactionTime, long transactionAmount, long afterBalance, long depositAccount) {
         this.count = count;
         this.transactionTime = transactionTime;
         this.transactionAmount = transactionAmount;

@@ -79,12 +79,9 @@ public class SignUp {
                 ArrayList<String> keyPair = RSA.genRSAKeyPair(PW);
                 UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
                 saltBase64UpdatedModel.setSalt(keyPair.get(2));
-                System.out.println(keyPair.get(0));
-                System.out.println(keyPair.get(1));
-                System.out.println(keyPair.get(2));
                 model.addAttribute("ID", signUpID);
-                model.addAttribute("public-key", keyPair.get(0));
-                model.addAttribute("private-key", keyPair.get(1));
+                model.addAttribute("publicKey", keyPair.get(0));
+                model.addAttribute("privateKey", keyPair.get(1));
                 userDataRepository.saveAndFlush(saltBase64UpdatedModel);
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();

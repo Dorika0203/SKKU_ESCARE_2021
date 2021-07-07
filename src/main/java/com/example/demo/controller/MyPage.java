@@ -1,17 +1,24 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.AccountDataModel;
+import com.example.demo.model.BankStatementDataModel;
 import com.example.demo.model.SignInDataModel;
 import com.example.demo.model.SignOutDataModel;
 import com.example.demo.repository.AccountDataRepository;
+import com.example.demo.repository.BankStatementDataRepository;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
+import com.example.demo.user.LoginClient;
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
+import com.fortanix.sdkms.v1.JSON;
 import com.fortanix.sdkms.v1.api.AuthenticationApi;
 import com.fortanix.sdkms.v1.api.EncryptionAndDecryptionApi;
 import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.demo.user.LoginClient.getUserID;
 
@@ -39,6 +47,8 @@ public class MyPage {
     private SignOutDataRepository signOutDataRepository;
     @Autowired
     private AccountDataRepository accountDataRepository;
+    @Autowired
+    private BankStatementDataRepository bankStatementDataRepository;
 
     @GetMapping
     public String mypage(Model model) {
@@ -58,11 +68,8 @@ public class MyPage {
 
         byte[] signIn_cipher = lastSignInDataModel.getSignIn_time();
         byte[] decryptedByteSignInTime = DecryptCipher(signIn_cipher, client);
-        System.out.println(decryptedByteSignInTime);
 
         String signIn_time = new String(decryptedByteSignInTime, StandardCharsets.UTF_8);
-        System.out.println(signIn_time);
-        System.out.println("My_Page");
 
         String signInDate; String signInTime;
         signInDate = signIn_time.split(" ")[0];
@@ -85,11 +92,8 @@ public class MyPage {
 
         byte[] signOutcipher = lastSignOutDataModel.getSignOut_time();
         byte[] decryptedByteSignOutTime = DecryptCipher(signOutcipher, client);
-        System.out.println(decryptedByteSignOutTime);
 
         String signOut_time = new String(decryptedByteSignOutTime, StandardCharsets.UTF_8);
-        System.out.println(signOut_time);
-        System.out.println("My_Page");
 
         String signOutDate; String signOutTime;
         signOutDate = signOut_time.split(" ")[0];
@@ -133,16 +137,42 @@ public class MyPage {
         int diff = (((((yearDiff * 12 + monthDiff) * 31 + dayDiff) * 24 + hourDiff) * 60 + minuteDiff) * 60 + secondDiff);
 
 
-        if (0 <= diff && diff <= 300) {         //Connect to mypage Success.
-            List<AccountDataModel> userAccountDataModelList = accountDataRepository.findAllByUserId(getUserID());
-            List<List<String>> userAccountDataList = new ArrayList<List<String>>();
-            for (int i = 0; i < userAccountDataModelList.size(); i++)
-            {
-                userAccountDataList.get(i).add(userAccountDataModelList.get(i).getAccount());
-                userAccountDataList.get(i).add(userAccountDataModelList.get(i).getBalance());
-            }
+        // session checked. show my_page
+        if (0 <= diff && diff <= 300)
+        {
+            System.out.println("------------------ THIS IS MY ACCOUNT INFO FOR MY PAGE ------------------------ ");
+            JSONArray myAccountsData = new JSONArray();
+            List<AccountDataModel> myAccounts = accountDataRepository.findAllByUserId(userID);
 
-            model.addAttribute("userAccountNameList", userAccountDataList);
+            for(int i=0; i<myAccounts.size(); i++) {
+
+                AccountDataModel thisAcc = myAccounts.get(i);
+                JSONObject addingAccount = new JSONObject();
+                JSONArray addingTransfer = new JSONArray();
+
+                System.out.println("accountID: " + thisAcc.getAccount());
+                System.out.println("balance: " + thisAcc.getBalance());
+                addingAccount.put("accountID", thisAcc.getAccount());
+                addingAccount.put("balance", thisAcc.getBalance());
+
+                // get maximum 10 transfer log.
+                List<BankStatementDataModel> accountTransferInfo = bankStatementDataRepository.findAllByAccount(thisAcc.getAccount());
+                for(int j=0; j<accountTransferInfo.size(); j++)
+                {
+                    BankStatementDataModel thisTransfer = accountTransferInfo.get(j);
+                    if(j == 10) break;
+                    JSONObject addingOneTransfer = new JSONObject();
+                    addingOneTransfer.put("sendTo", thisTransfer.getDepositAccount());
+                    addingOneTransfer.put("gold", thisTransfer.getTransactionAmount());
+                    addingOneTransfer.put("time", thisTransfer.getTransactionTime());
+                    addingOneTransfer.put("result", thisTransfer.getAfterBalance());
+                    addingTransfer.put(addingOneTransfer);
+                }
+                addingAccount.put("transferLog", addingTransfer);
+                myAccountsData.put(addingAccount);
+            }
+            System.out.println(myAccountsData.toString());
+            model.addAttribute("myAccountsData", myAccountsData.toString());
 
             return "my_page";
         }
