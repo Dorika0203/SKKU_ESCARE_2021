@@ -142,7 +142,7 @@ public class MyPage {
         {
             System.out.println("------------------ THIS IS MY ACCOUNT INFO FOR MY PAGE ------------------------ ");
             JSONArray myAccountsData = new JSONArray();
-            List<AccountDataModel> myAccounts = accountDataRepository.findAllByUserId(userID);
+            List<AccountDataModel> myAccounts = accountDataRepository.findByUserId(userID);
 
             for(int i=0; i<myAccounts.size(); i++) {
 

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static com.example.demo.user.LoginClient.getUserID;
+
 @Controller
 @RequestMapping("transferpage")
 public class TransferPage
@@ -23,7 +25,7 @@ public class TransferPage
     @GetMapping
     public String transferpage(Model model) {
         //add ID to model
-        model.addAttribute("loginClientID", LoginClient.getUserID());
+        model.addAttribute("loginClientID", getUserID());
         return "transfer_page";
     }
 
@@ -33,32 +35,36 @@ public class TransferPage
     public int transfer(@RequestParam Map<String, Object> transferDataMap) {
         String privateKey = (String) transferDataMap.get("privateKey");
         String publicKey = (String) transferDataMap.get("publicKey");
-        String accountString = (String) transferDataMap.get("account");
-        String transferAmountString = (String) transferDataMap.get("transferAmount");
-        long account = 0;
-        long transferAmount = 0;
+        String accountString = (String) transferDataMap.get("receiverAccount");
+        String transactionAmountString = (String) transferDataMap.get("transactionAmount");
+        long receiverAccount = 0;
+        long transactionAmount = 0;
 
         //check if all information are correct
         try{
             //check input format
-            account = Integer.parseInt(accountString);
-            transferAmount = Integer.parseInt(transferAmountString);
+            receiverAccount = Integer.parseInt(accountString);
+            transactionAmount = Integer.parseInt(transactionAmountString);
         } catch (NumberFormatException e) {
             //input format wrong
             return 1;
         }
-        if(accountDataRepository.existsById(account)){
-            //check if account exists
-            AccountDataModel userAccount = accountDataRepository.findById(account).get();
-            if(userAccount.getBalance() > transferAmount){
+        if (accountDataRepository.existsById(receiverAccount) && accountDataRepository.existsByUserId(getUserID())){
+            //check whether each account exists
+            AccountDataModel userAccountData = accountDataRepository.findByUserId(getUserID());
+            AccountDataModel receiverAccountData = accountDataRepository.findById(receiverAccount).get();
+            if (userAccountData.getBalance() >= transactionAmount){
                 //transfer and edit balance
-                userAccount.setBalance(userAccount.getBalance() + transferAmount);
-                accountDataRepository.saveAndFlush(userAccount);
-            } else {
+                receiverAccountData.setBalance(receiverAccountData.getBalance() + transactionAmount);
+                userAccountData.setBalance(userAccountData.getBalance() - transactionAmount);
+                accountDataRepository.saveAndFlush(receiverAccountData);
+            } 
+            else {
                 //if balance is less than transfer amount
                 return 3;
             }
-        } else {
+        } 
+        else {
             //if account not exists
             return 2;
         }

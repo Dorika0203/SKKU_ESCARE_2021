@@ -381,8 +381,8 @@
             data: {
                 publicKey: Object.values(keyStorage)[0],
                 privateKey: Object.values(keyStorage)[1],
-                account: document.getElementById("receiver-account").value,
-                transferAmount: document.getElementById("transfer-amount").value
+                receiverAccount: document.getElementById("receiver-account").value,
+                transactionAmount: document.getElementById("transfer-amount").value
             }, // parameters
             success: function (result) {
                 switch (result) {
