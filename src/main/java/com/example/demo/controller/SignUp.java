@@ -1,13 +1,17 @@
 package com.example.demo.controller;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.UserDataRepository;
+import com.example.demo.security.GenSecurityObj;
 import com.example.demo.security.RSA;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
@@ -19,12 +23,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.example.demo.security.GenSecurityObj;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 @Controller
 public class SignUp {
     private String server = "https://sdkms.fortanix.com";
     private String username = "a025eafd-5977-4924-8087-9b262315a974";
     private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
     private String signUpID = null;
+    private ApiClient client = null;
     public boolean SUCCESS = false;
 
     @Autowired
@@ -39,7 +50,7 @@ public class SignUp {
         // byte[] newPW = Arrays.copyOfRange(newPW_, 1, newPW_.length);
 
         // connect to SDKMS
-        ApiClient client = createClient(server, username, password);
+        client = createClient(server, username, password);
         connectFortanixsdkms(client);
 
         // hashing and encrypting pw
@@ -69,11 +80,39 @@ public class SignUp {
     }
 
     @PostMapping("certificate")
-    public String certificate(String PW, Model model) {
+    public String certificate(String PW, Model model) throws ApiException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException {
         if (userDataRepository.existsById(signUpID)) {
             UserDataModel issuedTimeUpdatedModel = userDataRepository.getById(signUpID);
             issuedTimeUpdatedModel.setIssued_time(getCurrentTime());
             userDataRepository.saveAndFlush(issuedTimeUpdatedModel);
+
+            GenSecurityObj.Generate(client, signUpID);
+            KeyObject value = GenSecurityObj.getSecObj(client, signUpID);
+            byte[] pub = value.getPubKey();
+            byte[] priv = value.getValue();
+            String plain = "HI";
+
+            String B64Pub = Base64.getEncoder().encodeToString(pub);
+            String B64Priv = Base64.getEncoder().encodeToString(priv);
+            System.out.println(pub.length);
+            System.out.println(priv.length);
+
+            String Spub = new String(pub, StandardCharsets.US_ASCII);
+            String Spriv = new String(priv, StandardCharsets.US_ASCII);
+
+            System.out.println(B64Pub);
+            System.out.println(" ");
+            System.out.println(B64Priv);
+            //PublicKey publicKey = RSA.getPublicKeyFromBase64String(B64Pub);
+
+            //RSA.getPrivateKeyFromBase64String(B64Priv);
+            //PrivateKey privateKey = RSA.getPrivateKeyFromBase64String(B64Priv);
+
+            //String encrypted = RSA.encryptRSA(plain, publicKey);
+           // String decrypted = RSA.decryptRSA(encrypted, privateKey);
+
+            //System.out.println(plain + "\n");
+            //System.out.println(decrypted);
 
             try {
                 ArrayList<String> keyPair = RSA.genRSAKeyPair(PW);
