@@ -49,9 +49,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                 <a href="transferpage"> | transfer </a>
               </div>
               <div class="widget-content-wrapper">
-                <a href="createaccount"> | account </a>
-              </div>
-              <div class="widget-content-wrapper">
                 <a href="reissuance"> | reissuance </a>
               </div>
             </div>
@@ -123,28 +120,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                   <div class="card-body">
                     <ul class="nav nav-tabs nav-justified" role="tablist">
                       <li class="nav-item">
-                        <a
-                          data-toggle="tab"
-                          href="#tab-page1-0"
-                          class="active nav-link"
-                          ><%%></a
-                        >
-                      </li>
-                      <li class="nav-item">
-                        <a
-                          data-toggle="tab"
-                          href="#tab-page1-1"
-                          class="nav-link"
-                          >계좌별칭 2</a
-                        >
-                      </li>
-                      <li class="nav-item">
-                        <a
-                          data-toggle="tab"
-                          href="#tab-page1-2"
-                          class="nav-link"
-                          >계좌별칭 3</a
-                        >
+                        <a data-toggle="tab" href="#tab-page1-0" class="active nav-link" id=accountName1></a>
                       </li>
                     </ul>
                     <div class="tab-content">
@@ -156,14 +132,12 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                         <div class="card mb-3 widget-content bg-midnight-bloom">
                           <div class="widget-content-wrapper text-white">
                             <div class="widget-content-left">
-                              <div class="widget-heading">계좌별칭</div>
-                              <div class="widget-subheading">
-                                123-4567-8987-65
-                              </div>
+                              <div class="widget-heading" id=accountName2></div>
+                              <div class="widget-subheading" id=accountNumber></div>
                             </div>
                             <div class="widget-content-right">
                               <div class="widget-numbers text-white">
-                                <span>999,999 원</span>
+                                <span id=gold></span>
                               </div>
                             </div>
                           </div>
@@ -208,420 +182,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                     rm-list-borders rm-list-borders-scroll
                                     list-group list-group-flush
                                   "
-                                >
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            N_코레일유통
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.06.22 17:59:37
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>8,000</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-danger pl-2">
-                                              출금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            홍길동
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.06.22 10:42:46
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>15,900</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-success pl-2">
-                                              입금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            N_세븐일레븐
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.06.20 23:02:11
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>11,400</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-danger pl-2">
-                                              출금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            Apple
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.06.19 20:27:16
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>2,500</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-danger pl-2">
-                                              출금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            이호창
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.05.22 17:59:37
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>251,100</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-success pl-2">
-                                              입금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        class="tab-pane fade"
-                        id="tab-page1-1"
-                        role="tabpanel"
-                      >
-                        <div class="card mb-3 widget-content bg-midnight-bloom">
-                          <div class="widget-content-wrapper text-white">
-                            <div class="widget-content-left">
-                              <div class="widget-heading">계좌별칭2</div>
-                              <div class="widget-subheading">
-                                123-4567-8987-65
-                              </div>
-                            </div>
-                            <div class="widget-content-right">
-                              <div class="widget-numbers text-white">
-                                <span>888,888 원</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="mb-3 card">
-                          <div
-                            class="
-                              card-header-tab
-                              card-header-tab-animation
-                              card-header
-                            "
-                          >
-                            <div class="card-header-title">
-                              <i
-                                class="
-                                  header-icon
-                                  lnr-apartment
-                                  icon-gradient
-                                  bg-love-kiss
-                                "
-                              >
-                              </i>
-                              거래 내역
-                            </div>
-                          </div>
-                          <div class="card-body">
-                            <h6
-                              class="
-                                text-muted text-uppercase
-                                font-size-md
-                                opacity-5
-                                font-weight-normal
-                              "
-                            >
-                              입출금 내역
-                            </h6>
-                            <div class="scroll-area-sm">
-                              <div class="scrollbar-container">
-                                <ul
-                                  class="
-                                    rm-list-borders rm-list-borders-scroll
-                                    list-group list-group-flush
-                                  "
-                                >
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            N_코레일유통
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.06.22 17:59:37
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>8,000</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-danger pl-2">
-                                              출금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            홍길동
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.06.22 10:42:46
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>15,900</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-success pl-2">
-                                              입금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            N_세븐일레븐
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.06.20 23:02:11
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>11,400</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-danger pl-2">
-                                              출금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            Apple
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.06.19 20:27:16
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>2,500</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-danger pl-2">
-                                              출금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                  <li class="list-group-item">
-                                    <div class="widget-content p-0">
-                                      <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
-                                        <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            이호창
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.05.22 17:59:37
-                                          </div>
-                                        </div>
-                                        <div class="widget-content-right">
-                                          <div class="font-size-xlg text-muted">
-                                            <span>251,100</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-success pl-2">
-                                              입금
-                                            </small>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        class="tab-pane fade"
-                        id="tab-page1-2"
-                        role="tabpanel"
-                      >
-                        <div class="card mb-3 widget-content bg-midnight-bloom">
-                          <div class="widget-content-wrapper text-white">
-                            <div class="widget-content-left">
-                              <div class="widget-heading">계좌별칭3</div>
-                              <div class="widget-subheading">
-                                123-4567-8987-65
-                              </div>
-                            </div>
-                            <div class="widget-content-right">
-                              <div class="widget-numbers text-white">
-                                <span>777,777 원</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="mb-3 card">
-                          <div
-                            class="
-                              card-header-tab
-                              card-header-tab-animation
-                              card-header
-                            "
-                          >
-                            <div class="card-header-title">
-                              <i
-                                class="
-                                  header-icon
-                                  lnr-apartment
-                                  icon-gradient
-                                  bg-love-kiss
-                                "
-                              >
-                              </i>
-                              거래 내역
-                            </div>
-                          </div>
-                          <div class="card-body">
-                            <h6
-                              class="
-                                text-muted text-uppercase
-                                font-size-md
-                                opacity-5
-                                font-weight-normal
-                              "
-                            >
-                              입출금 내역
-                            </h6>
-                            <div class="scroll-area-sm">
-                              <div class="scrollbar-container">
-                                <ul
-                                  class="
-                                    rm-list-borders rm-list-borders-scroll
-                                    list-group list-group-flush
-                                  "
+                                  id='transferInfo'
                                 >
                                   <li class="list-group-item">
                                     <div class="widget-content p-0">
@@ -804,14 +365,102 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 <script>
   function showMyData() {
     var myData = `<%=request.getAttribute("userAccountData")%>`;
-    var accounts = JSON.parse(myData);
+    if(myData == null) {
+      console.log("myData is null...");
+      return;
+    }
 
-    console.log(accounts[0]);
-    console.log("accountID : " + accounts[0].accountID);
-    console.log("balance : " + accounts[0].balance);
-    console.log("bankStatementLength : " + accounts[0].bankStatement.length);
-    console.log("account Num : " + accounts.length);
-    alert(myData);
+    var accounts = JSON.parse(myData);
+    console.log(accounts);
+
+        // // set nav bar
+    // var accountTabLI = document.getElementById('accountTabListElement');
+    // var accountTabA = document.createElement('a');
+    // accountTabA.setAttribute('data-toggle', 'tab');
+    // accountTabA.setAttribute('href', '#tab-page1-0');
+    // accountTabA.setAttribute('class', 'active nav-link');
+    // accountTabA.appendChild(document.createTextNode("계좌별칭__1"));
+    // accountTabLI.appendChild(accountTabA);
+
+    // // set basic account Info
+    // var basicInfo = document.getElementById('basicAccountInfo');
+
+    // var basicInfoLeft = document.createElement('div');
+    // basicInfoLeft.setAttribute('class', 'widget-content-left');
+    // var basicInfoLeft1 = document.createElement('div');
+    // var basicInfoLeft2 = document.createElement('div');
+    // basicInfoLeft1.setAttribute('class', 'widget-heading').appendChild(
+    //   document.createTextNode("계좌별칭__1"));
+    // basicInfoLeft2.setAttribute('class', 'widget-subheading').appendChild(
+    //   document.createTextNode("123-4567-8987-65"));
+    // basicInfoLeft.appendChild(basicInfoLeft1);
+    // basicInfoLeft.appendChild(basicInfoLeft2);
+
+    // var basicInfoRight = document.createElement('div').setAttribute('class', 'widget-content-right').appendChild(
+    //   document.createElement('div').setAttribute('class', 'widget-numbers text-white').appendChild(
+    //     document.createElement('span').appendChild(
+    //       document.createTextNode("999,999,999 원")
+    //     )
+    //   )
+    // );
+
+    // basicInfo.appendChild(basicInfoLeft);
+    // basicInfo.appendChild(basicInfoRight);
+
+    // // set transfer log
+
+
+    // nav bar
+    document.getElementById('accountName1').appendChild(
+      document.createTextNode('HHHHHHHHHHHHHHH')
+    );
+
+    // account basic info
+    document.getElementById('accountName2').appendChild(
+      document.createTextNode('HHHHHHHHHHHHHHH')
+    );
+    document.getElementById('accountNumber').appendChild(
+      document.createTextNode('0')
+    );
+    document.getElementById('gold').appendChild(
+      document.createTextNode('123,456,789원')
+    );
+
+    var transferInfo = document.getElementById('transferInfo');
+
+
+    var liFrame = document.createAttribute('li').appendChild(
+      document.createElement('div').setAttribute('class', 'widget-content p-0').appendChild(
+        document.createElement('div').setAttribute('class', 'widget-content-wrapper').appendChild(
+          document.createElement('div').setAttribute('class', 'widget-content-left mr-3').appendChild(
+            document.createTextNode('|')
+          )
+        )
+      )
+    );
+
+    for (var i=0; i<accounts.bankStatement.length; i++) {
+      var liFrame = document.createAttribute('li').appendChild(
+        document.createElement('div').setAttribute('class', 'widget-content p-0').appendChild(
+          document.createElement('div').setAttribute('class', 'widget-content-wrapper').appendChild(
+            document.createElement('div').setAttribute('class', 'widget-content-left mr-3').appendChild(
+              document.createTextNode('|')
+            )
+          ).appendChild(
+            document.createElement('div').setAttribute('class', 'widget-content-left').appendChild(
+              document.createElement('div').setAttribute('class', '')
+            )
+          ).appendChild(
+
+          ).appendChild(
+
+          )
+        )
+      );
+    }
+
+    // transfer log
+
   }
   counter_init();
   showMyData();
