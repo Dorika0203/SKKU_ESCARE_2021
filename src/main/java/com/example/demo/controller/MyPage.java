@@ -87,38 +87,43 @@ public class MyPage {
         //===================================Get SignOut Time=============================================
         List<SignOutDataModel> signOutDataModelList = signOutDataRepository.findAllByUserId(userID);
         idx = signOutDataModelList.size();
-        if (idx == 0) {return "my_page";}
-        SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(idx-1);
 
-        byte[] signOutcipher = lastSignOutDataModel.getSignOut_time();
-        byte[] decryptedByteSignOutTime = DecryptCipher(signOutcipher, client);
+        // signOut data exist => compare last signOut and signIn...
+        if (idx > 0)
+        {
+            SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(idx-1);
 
-        String signOut_time = new String(decryptedByteSignOutTime, StandardCharsets.UTF_8);
+            byte[] signOutcipher = lastSignOutDataModel.getSignOut_time();
+            byte[] decryptedByteSignOutTime = DecryptCipher(signOutcipher, client);
+    
+            String signOut_time = new String(decryptedByteSignOutTime, StandardCharsets.UTF_8);
+    
+            String signOutDate; String signOutTime;
+            signOutDate = signOut_time.split(" ")[0];
+            signOutTime = signOut_time.split(" ")[1];
+    
+            int signOutYear; int signOutMonth; int signOutDay; int signOutHour; int signOutMinute; int signOutSecond;
+            signOutYear = Integer.parseInt(signOutDate.split("-")[0]);
+            signOutMonth = Integer.parseInt(signOutDate.split("-")[1]);
+            signOutDay = Integer.parseInt(signOutDate.split("-")[2]);
+    
+            signOutHour = Integer.parseInt(signOutTime.split(":")[0]);
+            signOutMinute = Integer.parseInt(signOutTime.split(":")[1]);
+            signOutSecond = Integer.parseInt(signOutTime.split(":")[2]);
+            //====================================================================================================
+            //================================Compare SignIn & SignOut Time=======================================
+            int signYearDiff = signOutYear - signInYear; int signMonthDiff = signOutMonth - signInMonth; int signDayDiff = signOutDay - signInDay;
+            int signHourDiff = signOutHour - signInHour; int signMinuteDiff = signOutMinute - signInMinute; int signSecondDiff = signOutSecond - signInSecond;
+    
+            int signDiff = (((((signYearDiff * 12 + signMonthDiff) * 31 + signDayDiff) * 24 + signHourDiff) * 60 + signMinuteDiff) * 60 + signSecondDiff);
+    
+            if (signDiff > 0)
+                return "my_page_fail";
+        }
 
-        String signOutDate; String signOutTime;
-        signOutDate = signOut_time.split(" ")[0];
-        signOutTime = signOut_time.split(" ")[1];
 
-        int signOutYear; int signOutMonth; int signOutDay; int signOutHour; int signOutMinute; int signOutSecond;
-        signOutYear = Integer.parseInt(signOutDate.split("-")[0]);
-        signOutMonth = Integer.parseInt(signOutDate.split("-")[1]);
-        signOutDay = Integer.parseInt(signOutDate.split("-")[2]);
-
-        signOutHour = Integer.parseInt(signOutTime.split(":")[0]);
-        signOutMinute = Integer.parseInt(signOutTime.split(":")[1]);
-        signOutSecond = Integer.parseInt(signOutTime.split(":")[2]);
-        //====================================================================================================
-        //================================Compare SignIn & SignOut Time=======================================
-        int signYearDiff = signOutYear - signInYear; int signMonthDiff = signOutMonth - signInMonth; int signDayDiff = signOutDay - signInDay;
-        int signHourDiff = signOutHour - signInHour; int signMinuteDiff = signOutMinute - signInMinute; int signSecondDiff = signOutSecond - signInSecond;
-
-        int signDiff = (((((signYearDiff * 12 + signMonthDiff) * 31 + signDayDiff) * 24 + signHourDiff) * 60 + signMinuteDiff) * 60 + signSecondDiff);
-
-        if (signDiff > 0)
-            return "my_page_fail";
-
+        // compare current time and last signIn time
         String current_time = getCurrentTime();
-
         String curDate; String curTime;
         curDate = current_time.split(" ")[0];
         curTime = current_time.split(" ")[1];
@@ -136,13 +141,21 @@ public class MyPage {
         int hourDiff = curHour - signInHour; int minuteDiff = curMinute - signInMinute; int secondDiff = curSecond - signInSecond;
         int diff = (((((yearDiff * 12 + monthDiff) * 31 + dayDiff) * 24 + hourDiff) * 60 + minuteDiff) * 60 + secondDiff);
 
-
         // session checked. show my_page
         if (0 <= diff && diff <= 300)
         {
             System.out.println("------------------ THIS IS MY ACCOUNT INFO FOR MY PAGE ------------------------ ");
 
             AccountDataModel userAccountData = accountDataRepository.findByUserId(userID);
+
+            if(userAccountData.equals(null))
+            {
+                System.out.println("ACCOUNT NOT EXIST!!");
+                return "my_page_fail";
+            }
+            System.out.println(userAccountData.getAccount());
+            System.out.println(userAccountData.getBalance());
+            System.out.println(userAccountData.getUserId());
 
             JSONObject userAccountJSON = new JSONObject();
             JSONArray bankStatementJSONArray = new JSONArray();

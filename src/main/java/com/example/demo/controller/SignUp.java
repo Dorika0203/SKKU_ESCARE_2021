@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.example.demo.model.*;
+import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.UserDataRepository;
 import com.example.demo.security.RSA;
+import com.example.demo.user.LoginClient;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.model.*;
@@ -29,6 +31,8 @@ public class SignUp {
 
     @Autowired
     private UserDataRepository userDataRepository;
+    @Autowired
+    AccountDataRepository accountData;
 
     @PostMapping("/signup")
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
@@ -63,6 +67,13 @@ public class SignUp {
         }
 
         if (SUCCESS) {
+
+            // create account, then make certification.
+            long Account = accountData.count();
+            AccountDataModel account = new AccountDataModel(Account, ID);
+            accountData.saveAndFlush(account);
+            System.out.println("creating account successed.");
+
             return "certification";
         } else
             return "sign_up_fail";
