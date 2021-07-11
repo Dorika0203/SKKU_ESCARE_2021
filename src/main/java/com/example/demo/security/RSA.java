@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.fortanix.fortanixRestApi;
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
 import com.fortanix.sdkms.v1.api.AuthenticationApi;
@@ -39,8 +40,9 @@ public class RSA {
     private static String username = "a025eafd-5977-4924-8087-9b262315a974";
     private static String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
 
-
+    //deprecated
     public static ArrayList<String> genRSAKeyPair(String password) throws NoSuchAlgorithmException {
+
         SecureRandom secureRandom = new SecureRandom();
         KeyPairGenerator gen;
         gen = KeyPairGenerator.getInstance("RSA");
@@ -115,11 +117,15 @@ public class RSA {
         return ret;
     }
 
-    public static String genFortanixPBEKey(String Priv, String password) throws NoSuchAlgorithmException {
-        // We must use a PasswordBasedEncryption algorithm in order to encrypt the private key, you may use any common algorithm supported by openssl, you can check them in the openssl documentation http://www.openssl.org/docs/apps/pkcs8.html
+    //generate RSA key pair from sdkms and encrypt with PBE key
+    public static ArrayList<String> genFortanixPBEKeyAndSalt(String password, PrivateKey privateKey) throws NoSuchAlgorithmException {
+
+        byte[] encodedPrivKey = privateKey.getEncoded();
+
         String MYPBEALG = "PBEWithSHA1AndDESede";
 
-        int count = 20;// hash iteration count
+        // hash iteration count
+        int count = 20;
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[8];
         random.nextBytes(salt);
@@ -127,16 +133,62 @@ public class RSA {
 
         // Create PBE parameter set
         PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, count);
+
         //password
         PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
+
         //cipher mode
         SecretKeyFactory keyFac = SecretKeyFactory.getInstance(MYPBEALG);
+
         //encrypted password
         SecretKey pbeKey = null;
+        try {
+            //encrypt password
+            pbeKey = keyFac.generateSecret(pbeKeySpec);
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
 
+        Cipher pbeCipher = null;
+        try {
+            pbeCipher = Cipher.getInstance(MYPBEALG);
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
 
+        // Initialize PBE Cipher with key and parameters
+        try {
+            pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
 
-        return null;
+        // Encrypt the encoded Private Key with the PBE key
+        byte[] ciphertext = null;
+        try {
+            ciphertext = pbeCipher.doFinal(encodedPrivKey);
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        }
+
+        String base64PrivateKey = Base64.getEncoder().encodeToString(ciphertext);
+
+        ArrayList<String> keyInfo = new ArrayList<>(Arrays.asList(base64PrivateKey, saltStr));
+
+        return keyInfo;
+    }
+
+    public static PrivateKey getPKCS8KeyFromPKCS1Key(byte[] privateKeyBytes) throws Exception {
+        // Get the private key for PKCS # 1
+        RSAPrivateKeyStructure asn1PrivKey = new RSAPrivateKeyStructure((ASN1Sequence) ASN1Sequence.fromByteArray(privateKeyBytes));
+        RSAPrivateKeySpec rsaPrivKeySpec = new RSAPrivateKeySpec(asn1PrivKey.getModulus(), asn1PrivKey.getPrivateExponent());
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PrivateKey privKey = keyFactory.generatePrivate(rsaPrivKeySpec);
+        return privKey;
     }
 
     public static String decRSAPrivKey(String password, String encPrivKey, byte[] salt) {
@@ -192,7 +244,7 @@ public class RSA {
         return Base64.getEncoder().encodeToString(ciphertext);
     }
 
-    public static String encryptRSA(String plain , PublicKey publicKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public static String encryptRSA(String plain, PublicKey publicKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         byte[] bytePlain = cipher.doFinal(plain.getBytes());
@@ -205,7 +257,7 @@ public class RSA {
         byte[] byteEncrypted = Base64.getDecoder().decode(encrypted.getBytes());
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] bytePlain = cipher.doFinal(byteEncrypted);
-        String decrypted = new String(bytePlain,"utf-8");
+        String decrypted = new String(bytePlain, "utf-8");
         return decrypted;
     }
 
@@ -231,6 +283,7 @@ public class RSA {
         return keyFactory.generatePrivate(keySpecPKCS8);
     }
 
+    //used only in demo testing
     public static void connectFortanixsdkms(ApiClient client) {
         AuthenticationApi authenticationApi = new AuthenticationApi(client);
         try {
@@ -244,41 +297,20 @@ public class RSA {
         }
     }
 
-    public  static  PrivateKey  getPKCS1Key(byte[] privateKeyBytes )  throws Exception{
-        // Get the private key for PKCS # 1
-        RSAPrivateKeyStructure asn1PrivKey = new RSAPrivateKeyStructure((ASN1Sequence) ASN1Sequence.fromByteArray(privateKeyBytes));
-        RSAPrivateKeySpec rsaPrivKeySpec = new RSAPrivateKeySpec(asn1PrivKey.getModulus(), asn1PrivKey.getPrivateExponent());
-        KeyFactory keyFactory=  KeyFactory.getInstance("RSA");
-        PrivateKey priKey= keyFactory.generatePrivate(rsaPrivKeySpec);
-        return priKey;
-    }
-
 
     public static void main(String[] args) throws Exception {
         String plain = "Hi!";
 
-        ApiClient client = new ApiClient();
-        client.setBasePath(server);
-        client.setUsername(username);
-        client.setPassword(password);
-        connectFortanixsdkms(client);
-
-        ArrayList<String> keypair = RSA.genRSAKeyPair("1234");
-        System.out.println(keypair.get(0)+"\n");
-        System.out.println(keypair.get(1)+"\n");
-        System.out.println(keypair.get(2)+"\n");
-        System.out.println(keypair.get(3)+"\n");
-
-        String B64PUB="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwH7fTjU/75iv89wPAvI7XP487KRlqq+iht3h4+goxjKx0AAC1++DQLjglgoRJwuJnt5SXdfh4Yhm8bDGego0hO5waFTIyupKZNryy3B0yfnCA1IPgWQ3dCVvHNPXYjmWX0KTKI39a+Thdnkkcc0vaq5cgyYq1oCXSzPcERlCZDlklb3gb6eg60oA7aRWCg9PC5QUJ+lBjsM6KOvym9Fjzp8K+FoneWqqCdRVgI7gXsEzh7GzQ9K7RQRIEBcjFOLqQEHGDWzSz61pUNBQ07ET6B1K0EBuD2KDaycEWP00S9ILLY1I48PyJZ+YVWfQXK0vybQQtcIrtov42Pk7zWYqwIDAQAB";
-        String B64VAL="MIIEowIBAAKCAQEAuwH7fTjU/75iv89wPAvI7XP487KRlqq+iht3h4+goxjKx0AAC1++DQLjglgoRJwuJnt5SXdfh4Yhm8bDGego0hO5waFTIyupKZNryy3B0yfnCA1IPgWQ3dCVvHNPXYjmWX0KTKI39a+Thdnkkcc0vaq5cgyYq1oCXSzPcERlCZDlklb3gb6eg60oA7aRWCg9PC5QUJ+lBjsM6KOvym9Fjzp8K+FoneWqqCdRVgI7gXsEzh7GzQ9K7RQRIEBcjFOLqQEHGDWzSz61pUNBQ07ET6B1K0EBuD2KDaycEWP00S9ILLY1I48PyJZ+YVWfQXK0vybQQtcIrtov42Pk7zWYqwIDAQABAoIBADwiTQ5dQhDi1bo8KCkG2RuSGVGz8CD00sRyRKNwygToKfycVedSaDii3ynA02IMnsJ9HelD25ImzZPb/EzOXKIA+dCL4cIDfigCYb05/4O45w+txbc77vOE6UFqCvFW3kuUa8VsvHXieZunD1rZJdp/lZZY+pbPIMd5a1L8i0jho8KHElnvoBm75wIs1HaSDwa4j2oEUNpWwbk+y8WG5TznodiK5ywNGuT59knCuHyPOW485D6HbiTUc9DYvDzMeTGe0v47onbt3ok/YacWpPb2ttUG+vZWzXo3YLdZa49rWv686wU+u/6M+2hGKSPHFQpaUDekZf6gPiq1DeIo6qECgYEA77+75jUDVgWrGsurhr0czcq0aEXG7Ru4fhSG+g2cKrMg49J59vNDoeHwwJIe0z4GvHlM42laFcdZzFmiKHZWJo9jYRbyoZ3IQfAb0jFjONF9kwq+t/K6ZMkMwGZfFOcfOh4PTYcXq1QnI59s3lC6IW+G+4DrwRM7TmzIpZ1VxTMCgYEAx68NMkfS/rcNrhoKVECJxqdw8JZaisqp3fVdvHamziMzrd9ur/8tZ7gvMEqw3rZHC3QoLe9DpJx52pblLmgNBFShBJ9YGbAuAoCIBW2baxAt8K7bjKP80aGRalJKcgpjgR5rsy4MCmBa7DLKZEEckKtxvGPKm12j7K0cP5i77qkCgYEAi5gZAOZXJeww/24dVlugfNaNCrWuKPreBlNPcCMijd40xVIU/8wO0iArPQUXe6n+5BjAwxzhfhLP32NFPsgAS31rwOlKpv2mz3XNzSpCep/HvSkheRuUmgBSM2in7hTQotdD08FX78MU8vHtwthAOB2m+6PKIWZgPr6qaXvdp+8CgYARkLeDdcf8uhOM/iNsd+TmwbHwp/k8/kjlCoF9Y56WwYf5Qo9VEghneE9GWzuly7kCK+yg5cw4fb9GWEG+zE5g1CT56B5y3AmgFLhiadrjFyBDbM5JV9+UfTbyeFyuHXXVVNy6fVF31DQLVQhyuzuNClfN76VR93HFDxFOEtxtSQKBgFL1MtXH1a1lgJyVnImhFbdeGkClkIHitf9gkjGv4ck2rF9Cwn9j/Mn7DT8AhNIQuc1aKRU4XwymcsRKa2g+VJW20GWhm4EMvql3ueXdxz4hp7dkpe+57wVsJ5zC5b7oyKMFcHVbKSjHr/D8dHWlC849+8V+OEf1m/Rn4drQ2zVf";
-
+        String B64PUB = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1K0v0d0EJLOmO8a2v6Q4EtujkBl0l56V2Vh+O23O2MPGW4a4biDgOlefaxZYBsWwASFr7cZylGQzojTQwYMDnuCBe8yoxuQnLiu9kZ9Jqd+8LoRSd6rkXTtWdh94LsVFoMHDjEWp6+G4zOq7qWUwC3QBofgEcGKN7qM/jrnVaIff2OsH8AuTaCSI96PqYjeZXN4BYS2YcoFBiTuHGCze/ov5m6EJtHWkVrvoGuxIz1FImxxwuXR8I0M+6OvolLM/Y/rJIHWDC14mRngerJvR20fboOL+SOBP4E8eajiiwikhwn1SQfqNk6yG0shjkuYgF07ZvioCNJ2tg48BKiprmQIDAQAB";
+        String B64VAL = "VcM6uUo1au0wBytQjJXMyFP2Y4UPNxA6tgx5pcGo+aLtC+14o7sWLdkbnRXNZCEkiyGUpLrTgnI2FOiPhJLJl0tYItA4NYKzlzPYcuIu+PMq1NWAJWBBLDNGLcRTHjP34CBs6LoGEDwLoUxFPN4+mOEVe/9hZS8sBE8imoYAbC+yVau2/MXlXh1oPIK+AcjRUSvDANAj4ZBXo8IqxV5dv5RxYNsY+2F2bCXhr1SAJr7r16VQoUy5MA2C5f7LnnVpHtaeaEziAJ6UoB1mg9M+MgLPgzaaW/sOU7CErhO+LfP0nFye5WQ+VfZUOt2IbMXSaEGXYp4UEzn+JGB5WPlxs++sXLgaeFSpSMB357u/LkgfFxGcYZZcAF9aQi+vQxB9CJ+gSYUPVmYflJBEWvfpeqSjT4B4ieAuA+5H5KuNcZCvP3sjQyl0OO/9oJ5Ay7peLRUd1XnKo1GFbbeM+csSOYJ3C/D7Jbj0BpaDz8C3HpLJVQZKJ89KUgUX24Ciftvjcgf7vYq1qKp8OJXHZ9FFEkQnlzCgrsP88WljaETGkNWD/pWfX3hseUHvb8IBYJz+GaI2Seh6c9ZM1cvI501J/Uern13RQF5V+6Wy0sGqmhOgPP3LybYHfs0s0C3xsR9lxSUN0NPzx71osHWSFZ0cEypsZavPEt9bKzXu4iSUX4KJvBNdZvS4SpLoFeUyiQTKFFsMWEDXlgCLxogpymmJP2wQsdUSTEKrSXmEpgHlzVV4KP28q7b0wDK1dq37s7MW";
         byte[] BArrVal = Base64.getDecoder().decode(B64VAL);
 
 
-        //String decPBEKey = RSA.decRSAPrivKey("1234",keypair.get(1),Base64.getDecoder().decode(keypair.get(2).getBytes()));
+        String decPBEKey = decRSAPrivKey("asd",B64VAL, Base64.getDecoder().decode("+ckLJtDzTfk="));
 
         PublicKey pubKey = RSA.getPublicKeyFromBase64String(B64PUB);
-        PrivateKey privKey = RSA.getPKCS1Key(BArrVal);
+        PrivateKey privKey = getPrivateKeyFromBase64String(decPBEKey);
+//        PrivateKey privKey = RSA.getPKCS8KeyFromPKCS1Key(BArrVal);
 
         String cipher = RSA.encryptRSA(plain, pubKey);
         String decText = RSA.decryptRSA(cipher, privKey);

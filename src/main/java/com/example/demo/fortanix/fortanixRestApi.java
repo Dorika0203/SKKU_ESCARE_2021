@@ -1,31 +1,34 @@
-package com.example.demo.security;
+package com.example.demo.fortanix;
 
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
 import com.fortanix.sdkms.v1.api.SecurityObjectsApi;
 import com.fortanix.sdkms.v1.model.*;
-import io.swagger.annotations.Api;
 
-import java.security.Key;
 import java.util.Arrays;
-import java.util.List;
 
-public class GenSecurityObj {
-    private SobjectRequest sobjectRequest;
+public class fortanixRestApi {
+    public static ApiClient createClient(String server, String username, String password) {
+        ApiClient client = new ApiClient();
+        client.setBasePath(server);
+        client.setUsername(username);
+        client.setPassword(password);
+        return client;
+    }
+
     private static String server = "https://sdkms.fortanix.com";
     private static String username = "a025eafd-5977-4924-8087-9b262315a974";
     private static String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
-    private static ApiClient client = new ApiClient();
 
-    public static void Generate(ApiClient client, String ID){
+    public static void genRSAKeyFromFortanixSDKMS(ApiClient client, String ID){
         SobjectRequest sobjectRequest = new SobjectRequest()
                 .name(ID)
                 .keySize(2048)
                 .objType(ObjectType.RSA)
                 .keyOps(Arrays.asList(KeyOperations.SIGN,
-                                    KeyOperations.VERIFY,
-                                    KeyOperations.EXPORT,
-                                    KeyOperations.UNWRAPKEY));
+                        KeyOperations.VERIFY,
+                        KeyOperations.EXPORT,
+                        KeyOperations.UNWRAPKEY));
         SecurityObjectsApi securityObjectsApi = new
                 SecurityObjectsApi(client);
         try{
@@ -44,6 +47,5 @@ public class GenSecurityObj {
 
         return keyObject;
     }
-
 
 }
