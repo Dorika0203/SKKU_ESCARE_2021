@@ -24,7 +24,8 @@ public class GenSecurityObj {
                 .objType(ObjectType.RSA)
                 .keyOps(Arrays.asList(KeyOperations.SIGN,
                                     KeyOperations.VERIFY,
-                                    KeyOperations.EXPORT));
+                                    KeyOperations.EXPORT,
+                                    KeyOperations.UNWRAPKEY));
         SecurityObjectsApi securityObjectsApi = new
                 SecurityObjectsApi(client);
         try{

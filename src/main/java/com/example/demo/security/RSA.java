@@ -1,15 +1,28 @@
 package com.example.demo.security;
 
+import com.fortanix.sdkms.v1.ApiClient;
+import com.fortanix.sdkms.v1.ApiException;
+import com.fortanix.sdkms.v1.api.AuthenticationApi;
+import com.fortanix.sdkms.v1.api.WrappingAndUnwrappingApi;
+import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
+import com.fortanix.sdkms.v1.model.AuthResponse;
+import com.fortanix.sdkms.v1.model.KeyObject;
+import com.fortanix.sdkms.v1.model.ObjectType;
+import com.fortanix.sdkms.v1.model.UnwrapKeyRequest;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
 import org.hibernate.mapping.Array;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.InvalidParameterSpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.spec.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -21,6 +34,11 @@ public class RSA {
     /**
      * 2048비트 RSA 키쌍을 생성합니다.
      */
+
+    private static String server = "https://sdkms.fortanix.com";
+    private static String username = "a025eafd-5977-4924-8087-9b262315a974";
+    private static String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
+
 
     public static ArrayList<String> genRSAKeyPair(String password) throws NoSuchAlgorithmException {
         SecureRandom secureRandom = new SecureRandom();
@@ -95,6 +113,30 @@ public class RSA {
         encryptedPkcs8 = encinfo.getEncryptedData();
         ArrayList<String> ret = new ArrayList<>(Arrays.asList(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()), Base64.getEncoder().encodeToString(encryptedPkcs8), saltStr, Base64.getEncoder().encodeToString(encodedprivkey)));
         return ret;
+    }
+
+    public static String genFortanixPBEKey(String Priv, String password) throws NoSuchAlgorithmException {
+        // We must use a PasswordBasedEncryption algorithm in order to encrypt the private key, you may use any common algorithm supported by openssl, you can check them in the openssl documentation http://www.openssl.org/docs/apps/pkcs8.html
+        String MYPBEALG = "PBEWithSHA1AndDESede";
+
+        int count = 20;// hash iteration count
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[8];
+        random.nextBytes(salt);
+        String saltStr = Base64.getEncoder().encodeToString(salt);
+
+        // Create PBE parameter set
+        PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, count);
+        //password
+        PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
+        //cipher mode
+        SecretKeyFactory keyFac = SecretKeyFactory.getInstance(MYPBEALG);
+        //encrypted password
+        SecretKey pbeKey = null;
+
+
+
+        return null;
     }
 
     public static String decRSAPrivKey(String password, String encPrivKey, byte[] salt) {
@@ -189,8 +231,37 @@ public class RSA {
         return keyFactory.generatePrivate(keySpecPKCS8);
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException {
+    public static void connectFortanixsdkms(ApiClient client) {
+        AuthenticationApi authenticationApi = new AuthenticationApi(client);
+        try {
+            AuthResponse authResponse = authenticationApi.authorize();
+            ApiKeyAuth bearerTokenAuth = (ApiKeyAuth) client.getAuthentication("bearerToken");
+            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
+            bearerTokenAuth.setApiKeyPrefix("Bearer");
+            System.out.println("success");
+        } catch (ApiException e) {
+            System.err.println("Unable to authenticate: " + e.getMessage());
+        }
+    }
+
+    public  static  PrivateKey  getPKCS1Key(byte[] privateKeyBytes )  throws Exception{
+        // Get the private key for PKCS # 1
+        RSAPrivateKeyStructure asn1PrivKey = new RSAPrivateKeyStructure((ASN1Sequence) ASN1Sequence.fromByteArray(privateKeyBytes));
+        RSAPrivateKeySpec rsaPrivKeySpec = new RSAPrivateKeySpec(asn1PrivKey.getModulus(), asn1PrivKey.getPrivateExponent());
+        KeyFactory keyFactory=  KeyFactory.getInstance("RSA");
+        PrivateKey priKey= keyFactory.generatePrivate(rsaPrivKeySpec);
+        return priKey;
+    }
+
+
+    public static void main(String[] args) throws Exception {
         String plain = "Hi!";
+
+        ApiClient client = new ApiClient();
+        client.setBasePath(server);
+        client.setUsername(username);
+        client.setPassword(password);
+        connectFortanixsdkms(client);
 
         ArrayList<String> keypair = RSA.genRSAKeyPair("1234");
         System.out.println(keypair.get(0)+"\n");
@@ -201,11 +272,13 @@ public class RSA {
         String B64PUB="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwH7fTjU/75iv89wPAvI7XP487KRlqq+iht3h4+goxjKx0AAC1++DQLjglgoRJwuJnt5SXdfh4Yhm8bDGego0hO5waFTIyupKZNryy3B0yfnCA1IPgWQ3dCVvHNPXYjmWX0KTKI39a+Thdnkkcc0vaq5cgyYq1oCXSzPcERlCZDlklb3gb6eg60oA7aRWCg9PC5QUJ+lBjsM6KOvym9Fjzp8K+FoneWqqCdRVgI7gXsEzh7GzQ9K7RQRIEBcjFOLqQEHGDWzSz61pUNBQ07ET6B1K0EBuD2KDaycEWP00S9ILLY1I48PyJZ+YVWfQXK0vybQQtcIrtov42Pk7zWYqwIDAQAB";
         String B64VAL="MIIEowIBAAKCAQEAuwH7fTjU/75iv89wPAvI7XP487KRlqq+iht3h4+goxjKx0AAC1++DQLjglgoRJwuJnt5SXdfh4Yhm8bDGego0hO5waFTIyupKZNryy3B0yfnCA1IPgWQ3dCVvHNPXYjmWX0KTKI39a+Thdnkkcc0vaq5cgyYq1oCXSzPcERlCZDlklb3gb6eg60oA7aRWCg9PC5QUJ+lBjsM6KOvym9Fjzp8K+FoneWqqCdRVgI7gXsEzh7GzQ9K7RQRIEBcjFOLqQEHGDWzSz61pUNBQ07ET6B1K0EBuD2KDaycEWP00S9ILLY1I48PyJZ+YVWfQXK0vybQQtcIrtov42Pk7zWYqwIDAQABAoIBADwiTQ5dQhDi1bo8KCkG2RuSGVGz8CD00sRyRKNwygToKfycVedSaDii3ynA02IMnsJ9HelD25ImzZPb/EzOXKIA+dCL4cIDfigCYb05/4O45w+txbc77vOE6UFqCvFW3kuUa8VsvHXieZunD1rZJdp/lZZY+pbPIMd5a1L8i0jho8KHElnvoBm75wIs1HaSDwa4j2oEUNpWwbk+y8WG5TznodiK5ywNGuT59knCuHyPOW485D6HbiTUc9DYvDzMeTGe0v47onbt3ok/YacWpPb2ttUG+vZWzXo3YLdZa49rWv686wU+u/6M+2hGKSPHFQpaUDekZf6gPiq1DeIo6qECgYEA77+75jUDVgWrGsurhr0czcq0aEXG7Ru4fhSG+g2cKrMg49J59vNDoeHwwJIe0z4GvHlM42laFcdZzFmiKHZWJo9jYRbyoZ3IQfAb0jFjONF9kwq+t/K6ZMkMwGZfFOcfOh4PTYcXq1QnI59s3lC6IW+G+4DrwRM7TmzIpZ1VxTMCgYEAx68NMkfS/rcNrhoKVECJxqdw8JZaisqp3fVdvHamziMzrd9ur/8tZ7gvMEqw3rZHC3QoLe9DpJx52pblLmgNBFShBJ9YGbAuAoCIBW2baxAt8K7bjKP80aGRalJKcgpjgR5rsy4MCmBa7DLKZEEckKtxvGPKm12j7K0cP5i77qkCgYEAi5gZAOZXJeww/24dVlugfNaNCrWuKPreBlNPcCMijd40xVIU/8wO0iArPQUXe6n+5BjAwxzhfhLP32NFPsgAS31rwOlKpv2mz3XNzSpCep/HvSkheRuUmgBSM2in7hTQotdD08FX78MU8vHtwthAOB2m+6PKIWZgPr6qaXvdp+8CgYARkLeDdcf8uhOM/iNsd+TmwbHwp/k8/kjlCoF9Y56WwYf5Qo9VEghneE9GWzuly7kCK+yg5cw4fb9GWEG+zE5g1CT56B5y3AmgFLhiadrjFyBDbM5JV9+UfTbyeFyuHXXVVNy6fVF31DQLVQhyuzuNClfN76VR93HFDxFOEtxtSQKBgFL1MtXH1a1lgJyVnImhFbdeGkClkIHitf9gkjGv4ck2rF9Cwn9j/Mn7DT8AhNIQuc1aKRU4XwymcsRKa2g+VJW20GWhm4EMvql3ueXdxz4hp7dkpe+57wVsJ5zC5b7oyKMFcHVbKSjHr/D8dHWlC849+8V+OEf1m/Rn4drQ2zVf";
 
+        byte[] BArrVal = Base64.getDecoder().decode(B64VAL);
+
 
         //String decPBEKey = RSA.decRSAPrivKey("1234",keypair.get(1),Base64.getDecoder().decode(keypair.get(2).getBytes()));
 
         PublicKey pubKey = RSA.getPublicKeyFromBase64String(B64PUB);
-        PrivateKey privKey = RSA.getPrivateKeyFromBase64String(B64VAL);
+        PrivateKey privKey = RSA.getPKCS1Key(BArrVal);
 
         String cipher = RSA.encryptRSA(plain, pubKey);
         String decText = RSA.decryptRSA(cipher, privKey);
