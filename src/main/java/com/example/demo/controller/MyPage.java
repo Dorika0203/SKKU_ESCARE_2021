@@ -57,6 +57,7 @@ public class MyPage {
         ApiClient client = createClient(server, username, password);
         connectFortanixsdkms(client);
 
+        //check if user is login
         String userID = getUserID();
         if (userID == null) {return "my_page_fail";}
 

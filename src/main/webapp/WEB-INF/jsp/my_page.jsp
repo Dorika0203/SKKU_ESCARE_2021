@@ -127,7 +127,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                           data-toggle="tab"
                           href="#tab-page1-0"
                           class="active nav-link"
-                          ><%%></a
+                          >계좌별칭 1</a
                         >
                       </li>
                       <li class="nav-item">

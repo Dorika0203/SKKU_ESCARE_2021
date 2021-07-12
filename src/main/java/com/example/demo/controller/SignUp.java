@@ -49,7 +49,7 @@ public class SignUp {
         client = createClient(server, username, password);
         connectFortanixsdkms(client);
 
-        // hashing and encrypting pw
+        //hashing and encrypting pw
         byte[] cipher = null;
 
         try {
@@ -77,21 +77,25 @@ public class SignUp {
 
     @PostMapping("certificate")
     public String certificate(String PW, Model model) throws Exception {
+        //check DB if this user can receive certificate
         if (userDataRepository.existsById(signUpID)) {
             UserDataModel issuedTimeUpdatedModel = userDataRepository.getById(signUpID);
             issuedTimeUpdatedModel.setIssued_time(getCurrentTime());
             userDataRepository.saveAndFlush(issuedTimeUpdatedModel);
 
+            //get RSA key pair from sdkms
             fortanixRestApi.genRSAKeyFromFortanixSDKMS(client, signUpID);
             KeyObject value = fortanixRestApi.getSecObj(client, signUpID);
             byte[] pub = value.getPubKey();
-            byte[] priv = value.getValue();
+            byte[] priv = value.getValue();//pkcs1 priv key
 
             try {
                 String B64Pub = Base64.getEncoder().encodeToString(pub);
-                PrivateKey privateKey = getPKCS8KeyFromPKCS1Key(priv);
-                ArrayList<String> keyAndSalt = genFortanixPBEKeyAndSalt(PW, privateKey);
+                PrivateKey privateKey = getPKCS8KeyFromPKCS1Key(priv);//change pkcs1 key into pkcs8 key
+                ArrayList<String> keyAndSalt = genFortanixPBEKeyAndSalt(PW, privateKey);//return arraylist of pbe encrypted priv key and used salt
                 UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
+
+                //add data to DB
                 saltBase64UpdatedModel.setSalt(keyAndSalt.get(1));
                 model.addAttribute("ID", signUpID);
                 model.addAttribute("publicKey", B64Pub);

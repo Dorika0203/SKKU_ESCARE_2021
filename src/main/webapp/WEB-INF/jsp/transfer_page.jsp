@@ -370,8 +370,18 @@
 ></script>
 <script type="text/javascript" src="js/my_page.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="node-forge/dist/forge.min.js"></script>
 <script>
+    let pki = forge.pki
     let keyStorage = JSON.parse(localStorage.getItem("<%= request.getAttribute("loginClientID") %>"))
+    let publicKey = Object.values(keyStorage)[0]
+    let pbeEncryptedPrivateKey =Object.values(keyStorage)[1]
+    let decodedData = window.atob(pbeEncryptedPrivateKey);
+    var privateKeyInfo = pki.decryptPrivateKeyInfo(
+        pbeEncryptedPrivateKey, 'myCustomPasswordHere');
+    console.log(privateKey)
+    let account = document.getElementById("receiver-account").value
+    let transferAmount = document.getElementById("transfer-amount").value
     console.log(keyStorage)
     console.log("<%= request.getAttribute("loginClientID") %>")
     $(document).on('click', '#send', function () {
