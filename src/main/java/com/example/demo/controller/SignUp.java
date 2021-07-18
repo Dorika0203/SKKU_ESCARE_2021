@@ -90,17 +90,18 @@ public class SignUp {
             byte[] priv = value.getValue();//pkcs1 priv key
 
             try {
+                //change pkcs1 key into pkcs8 key
+                PrivateKey privateKey = getPKCS8KeyFromPKCS1Key(priv);
                 String B64Pub = Base64.getEncoder().encodeToString(pub);
-                PrivateKey privateKey = getPKCS8KeyFromPKCS1Key(priv);//change pkcs1 key into pkcs8 key
-                ArrayList<String> keyAndSalt = genFortanixPBEKeyAndSalt(PW, privateKey);//return arraylist of pbe encrypted priv key and used salt
+                String B64Priv = Base64.getEncoder().encodeToString(privateKey.getEncoded());
                 UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
 
                 //add data to DB
-                saltBase64UpdatedModel.setSalt(keyAndSalt.get(1));
+                saltBase64UpdatedModel.setSalt("0");
                 model.addAttribute("ID", signUpID);
                 model.addAttribute("publicKey", B64Pub);
-                model.addAttribute("privateKey", keyAndSalt.get(0));
-                model.addAttribute("salt", keyAndSalt.get(1));
+                model.addAttribute("privateKey", B64Priv);
+                model.addAttribute("password", PW);
                 userDataRepository.saveAndFlush(saltBase64UpdatedModel);
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
