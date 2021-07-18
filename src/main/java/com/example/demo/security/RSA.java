@@ -318,6 +318,8 @@ public class RSA {
         System.out.println("Plain text is " + plain + "\n");
         System.out.println("Cipher text is " + cipher + "\n");
         System.out.println("Decrypted cipher text is " + decText + "\n");
+
+
     }
 
 }

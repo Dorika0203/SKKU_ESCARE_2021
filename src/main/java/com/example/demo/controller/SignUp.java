@@ -100,6 +100,7 @@ public class SignUp {
                 model.addAttribute("ID", signUpID);
                 model.addAttribute("publicKey", B64Pub);
                 model.addAttribute("privateKey", keyAndSalt.get(0));
+                model.addAttribute("salt", keyAndSalt.get(1));
                 userDataRepository.saveAndFlush(saltBase64UpdatedModel);
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();

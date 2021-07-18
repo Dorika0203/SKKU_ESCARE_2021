@@ -375,11 +375,15 @@
     let pki = forge.pki
     let keyStorage = JSON.parse(localStorage.getItem("<%= request.getAttribute("loginClientID") %>"))
     let publicKey = Object.values(keyStorage)[0]
-    let pbeEncryptedPrivateKey =Object.values(keyStorage)[1]
-    let decodedData = window.atob(pbeEncryptedPrivateKey);
-    var privateKeyInfo = pki.decryptPrivateKeyInfo(
-        pbeEncryptedPrivateKey, 'myCustomPasswordHere');
-    console.log(privateKey)
+    let pbeEncryptedPrivateKey = `-----BEGIN ENCRYPTED PRIVATE KEY-----\n` +  Object.values(keyStorage)[1] + `\n-----END ENCRYPTED PRIVATE KEY----- `
+    console.log('pbeEncryptedPrivateKey: ' + pbeEncryptedPrivateKey)
+    let salt = Object.values(keyStorage)[2]
+    let derivedKey = forge.pkcs5.pbkdf2('asd', salt, 20, 16);
+    let base64DerivedKey = window.btoa(derivedKey)
+    console.log('pbe key:' + derivedKey)
+    console.log('base64 pbe key:' + base64DerivedKey)
+    let privateKey =  pki.decryptRsaPrivateKey(pbeEncryptedPrivateKey, "password")
+    console.log('private key: ' + privateKey)
     let account = document.getElementById("receiver-account").value
     let transferAmount = document.getElementById("transfer-amount").value
     console.log(keyStorage)

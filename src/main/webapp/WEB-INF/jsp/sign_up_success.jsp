@@ -47,7 +47,8 @@ uri="http://java.sun.com/jsp/jstl/core"%>
 
       var user = JSON.stringify({
                 public_key:`<%=request.getAttribute("publicKey")%>`,
-                private_key:`<%=request.getAttribute("privateKey")%>`
+                private_key:`<%=request.getAttribute("privateKey")%>`,
+                salt:`<%=request.getAttribute("salt")%>`
               }
       )
       function init(e) {
