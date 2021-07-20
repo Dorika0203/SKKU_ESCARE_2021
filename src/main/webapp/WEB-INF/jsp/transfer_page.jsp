@@ -373,21 +373,24 @@
 <script src="node-forge/dist/forge.min.js"></script>
 <script>
     let pki = forge.pki
-    let keyStorage = JSON.parse(localStorage.getItem("<%= request.getAttribute("loginClientID") %>"))
+    let keyStorage = JSON.parse(localStorage.getItem(`<%= request.getAttribute("loginClientID") %>`))
     let publicKey = Object.values(keyStorage)[0]
-    let pbeEncryptedPrivateKey = `-----BEGIN ENCRYPTED PRIVATE KEY-----\n` +  Object.values(keyStorage)[1] + `\n-----END ENCRYPTED PRIVATE KEY----- `
-    console.log('pbeEncryptedPrivateKey: ' + pbeEncryptedPrivateKey)
-    let salt = Object.values(keyStorage)[2]
-    let derivedKey = forge.pkcs5.pbkdf2('asd', salt, 20, 16);
-    let base64DerivedKey = window.btoa(derivedKey)
-    console.log('pbe key:' + derivedKey)
-    console.log('base64 pbe key:' + base64DerivedKey)
-    let privateKey =  pki.decryptRsaPrivateKey(pbeEncryptedPrivateKey, "password")
-    console.log('private key: ' + privateKey)
+    let pbeEncryptedPrivateKey = Object.values(keyStorage)[1]
+    let base64Salt = Object.values(keyStorage)[2]
+    let salt = window.atob(base64Salt)
+    let derivedKey = forge.pkcs5.pbkdf2('123', salt, 20, 16);
+    let privateKey =  pki.decryptRsaPrivateKey(pbeEncryptedPrivateKey, derivedKey)
     let account = document.getElementById("receiver-account").value
     let transferAmount = document.getElementById("transfer-amount").value
-    console.log(keyStorage)
-    console.log("<%= request.getAttribute("loginClientID") %>")
+
+    console.log('original private key: ' + privateKey)
+    console.log(JSON.stringify(privateKey))
+    console.log('pbe key:' + window.btoa(derivedKey))
+    console.log('pbeEncryptedPrivateKey: ' + pbeEncryptedPrivateKey)
+
+    console.log(`<%= request.getAttribute("loginClientID") %>`)
+
+
     $(document).on('click', '#send', function () {
         $.ajax({
             type: "POST",

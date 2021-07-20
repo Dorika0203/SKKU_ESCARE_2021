@@ -48,7 +48,7 @@
     let privateKey = pki.privateKeyFromPem(javaPrivateKey);
     let salt = forge.random.getBytesSync(128);
     let base64Salt = window.btoa(salt)
-    let derivedKey = forge.pkcs5.pbkdf2('<%=request.getAttribute("password")%>', salt, 20, 16);
+    let derivedKey = forge.pkcs5.pbkdf2(`<%=request.getAttribute("password")%>`, salt, 20, 16);
     let pem = pki.encryptRsaPrivateKey(privateKey, derivedKey);
     let homeButton = document.getElementById("home_button");
     homeButton.addEventListener("click", init)
@@ -58,6 +58,11 @@
             salt: base64Salt
         }
     )
+    console.log(`<%=request.getAttribute("password")%>`)
+    console.log('original private key: ' + privateKey)
+    console.log(JSON.stringify(privateKey))
+    console.log('pbe key: ' + window.btoa(derivedKey))
+    console.log('pbeEncryptedPrivateKey: ' + pem)
 
     function init(e) {
         e.preventDefault()
