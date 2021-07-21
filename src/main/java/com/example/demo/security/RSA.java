@@ -261,6 +261,28 @@ public class RSA {
         return decrypted;
     }
 
+    public static void signatureVerify(String msg, PublicKey publicKey, byte[] sign) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, SignatureException {
+        String msgB = msg;
+        Signature signatureB = Signature.getInstance("SHA1withRSA");
+        signatureB.initVerify(publicKey);
+        signatureB.update(msgB.getBytes());
+        boolean verifty = signatureB.verify(sign);
+        System.out.println("검증 결과 : " + verifty);
+    }
+
+    public static String encryptSHA_1(String input) throws NoSuchAlgorithmException {
+        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = mDigest.digest(input.getBytes());
+
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < result.length; i++) {
+            stringBuffer.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+        }
+
+        return stringBuffer.toString();
+    }
+
+
     public static PublicKey getPublicKeyFromBase64String(String keyString) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String publicKeyString =
                 keyString.replace("\\n", "").replaceAll("-{5}[ a-zA-Z]*-{5}", "");
@@ -306,7 +328,7 @@ public class RSA {
         byte[] BArrVal = Base64.getDecoder().decode(B64VAL);
 
 
-        String decPBEKey = decRSAPrivKey("asd",B64VAL, Base64.getDecoder().decode("+ckLJtDzTfk="));
+        String decPBEKey = decRSAPrivKey("asd", B64VAL, Base64.getDecoder().decode("+ckLJtDzTfk="));
 
         PublicKey pubKey = RSA.getPublicKeyFromBase64String(B64PUB);
         PrivateKey privKey = getPrivateKeyFromBase64String(decPBEKey);

@@ -9,17 +9,31 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import static com.example.demo.security.RSA.*;
+
 @Controller
 @RequestMapping("transferpage")
-public class TransferPage
-{
+public class TransferPage {
     @Autowired
     AccountDataRepository accountDataRepository;
+
     @GetMapping
     public String transferpage(Model model) {
         //add ID to model
@@ -30,39 +44,41 @@ public class TransferPage
     //needed to return value to ajax
     @ResponseBody
     @PostMapping("/transfer")
-    public int transfer(@RequestParam Map<String, Object> transferDataMap) {
-        String privateKey = (String) transferDataMap.get("privateKey");
+    public int transfer(@RequestParam Map<String, Object> transferDataMap) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, SignatureException {
+        String transferData = (String) transferDataMap.get("transferData");
+        String signature = (String) transferDataMap.get("signature");
         String publicKey = (String) transferDataMap.get("publicKey");
-        String accountString = (String) transferDataMap.get("account");
-        String transferAmountString = (String) transferDataMap.get("transferAmount");
+        PublicKey publicKey1 = getPublicKeyFromBase64String(publicKey);
+        signatureVerify(transferData, publicKey1, signature.getBytes(StandardCharsets.UTF_8));
         long account = 0;
         long transferAmount = 0;
-
-        //check if all information are correct
-        try{
-            //check input format
-            account = Integer.parseInt(accountString);
-            transferAmount = Integer.parseInt(transferAmountString);
-        } catch (NumberFormatException e) {
-            //input format wrong
-            return 1;
-        }
-        if(accountDataRepository.existsById(account)){
-            //check if account exists
-            AccountDataModel userAccount = accountDataRepository.findById(account).get();
-            if(userAccount.getBalance() > transferAmount){
-                //transfer and edit balance
-                userAccount.setBalance(userAccount.getBalance() + transferAmount);
-                accountDataRepository.saveAndFlush(userAccount);
-            } else {
-                //if balance is less than transfer amount
-                return 3;
-            }
-        } else {
-            //if account not exists
-            return 2;
-        }
-        //transfer success
-        return 4;
+        System.out.println(transferData + "\n" + signature + "\n" + publicKey + "\n");
+        return 1;
+//        //check if all information are correct
+//        try{
+//            //check input format
+//            account = Integer.parseInt(accountString);
+//            transferAmount = Integer.parseInt(transferAmountString);
+//        } catch (NumberFormatException e) {
+//            //input format wrong
+//            return 1;
+//        }
+//        if(accountDataRepository.existsById(account)){
+//            //check if account exists
+//            AccountDataModel userAccount = accountDataRepository.findById(account).get();
+//            if(userAccount.getBalance() > transferAmount){
+//                //transfer and edit balance
+//                userAccount.setBalance(userAccount.getBalance() + transferAmount);
+//                accountDataRepository.saveAndFlush(userAccount);
+//            } else {
+//                //if balance is less than transfer amount
+//                return 3;
+//            }
+//        } else {
+//            //if account not exists
+//            return 2;
+//        }
+//        //transfer success
+//        return 4;
     }
 }

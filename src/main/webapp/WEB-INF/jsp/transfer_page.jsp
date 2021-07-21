@@ -398,19 +398,20 @@
         let password = $("#password").val();
         let pbeKey = forge.pkcs5.pbkdf2(password, salt, 20, 16);
         let privateKey = pki.decryptRsaPrivateKey(pbeEncryptedPrivateKey, pbeKey)
+        let publicKey1 = pki.setRsaPublicKey(privateKey.n, privateKey.e);
         let account = $("#receiver-account").val()
         let transferAmount = $("#transfer-amount").val()
         let transferData = account + transferAmount + Date.now()
         md.update(transferData, 'utf8');
         let signature = privateKey.sign(md);
-        console.log(signature)
-        console.log(md.digest().toHex())
+        let verified = publicKey1.verify(md.digest().bytes(), signature);
+        console.log(verified)
         $.ajax({
             type: "POST",
             url: "transferpage/transfer",
             data: {
                 transferData: transferData,
-                hmac: md.digest().toHex(),
+                signature: signature,
                 publicKey: publicKey
             }, // parameters
             success: function (result) {
