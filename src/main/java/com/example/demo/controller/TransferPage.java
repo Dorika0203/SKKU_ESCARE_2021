@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +52,7 @@ public class TransferPage {
         PublicKey publicKey1 = getPublicKeyFromBase64String(publicKey);
         System.out.println(transferData + "\n" + signature + "\n" + publicKey + "\n");
 
-        signatureVerify(transferData, publicKey1, signature.getBytes(StandardCharsets.UTF_8));
+        signatureVerify(transferData, publicKey1, Base64.getDecoder().decode(signature));
         long account = 0;
         long transferAmount = 0;
         return 1;
