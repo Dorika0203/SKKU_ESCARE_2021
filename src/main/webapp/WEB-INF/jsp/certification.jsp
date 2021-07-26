@@ -23,7 +23,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     <link href="\css\main.css" rel="stylesheet" />
     <link rel="shortcut icon" type="image⁄x-icon" href="\image\logo-only.png" />
 
-    <script src="RSA.js"></script>
   </head>
   <body>
     <div
