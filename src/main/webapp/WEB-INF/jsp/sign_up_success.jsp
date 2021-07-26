@@ -43,18 +43,19 @@
 </div>
 <script src="node-forge/dist/forge.min.js"></script>
 <script>
-    let javaPrivateKey = `-----BEGIN PRIVATE KEY-----\n` + `<%=request.getAttribute("privateKey")%>` + '\n-----END PRIVATE KEY-----'
+    let javaPrivateKey = `-----BEGIN PRIVATE KEY-----` + `<%=request.getAttribute("privateKey")%>` + '-----END PRIVATE KEY-----'
+    let publicKey = '-----BEGIN PUBLIC KEY-----' + `<%=request.getAttribute("publicKey")%>` + '-----END PUBLIC KEY-----'
     let pki = forge.pki
     let privateKey = pki.privateKeyFromPem(javaPrivateKey);
     let salt = forge.random.getBytesSync(128);
     let base64Salt = window.btoa(salt)
     let derivedKey = forge.pkcs5.pbkdf2(`<%=request.getAttribute("password")%>`, salt, 20, 16);
-    let pem = pki.encryptRsaPrivateKey(privateKey, derivedKey);
+    let privateKey = pki.encryptRsaPrivateKey(privateKey, derivedKey);
     let homeButton = document.getElementById("home_button");
     homeButton.addEventListener("click", init)
     let user = JSON.stringify({
-            public_key: `<%=request.getAttribute("publicKey")%>`,
-            private_key: pem,
+            public_key: publicKey,
+            private_key: privateKey,
             salt: base64Salt
         }
     )

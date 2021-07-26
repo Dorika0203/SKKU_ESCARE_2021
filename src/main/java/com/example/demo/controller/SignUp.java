@@ -89,23 +89,17 @@ public class SignUp {
             byte[] pub = value.getPubKey();
             byte[] priv = value.getValue();//pkcs1 priv key
 
-            try {
-                //change pkcs1 key into pkcs8 key
-                PrivateKey privateKey = getPKCS8KeyFromPKCS1Key(priv);
-                String B64Pub = Base64.getEncoder().encodeToString(pub);
-                String B64Priv = Base64.getEncoder().encodeToString(privateKey.getEncoded());
-                UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
+            String B64Pub = Base64.getEncoder().encodeToString(pub);
+            String B64Priv = Base64.getEncoder().encodeToString(priv);
+            UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
 
-                //add data to DB
-                saltBase64UpdatedModel.setSalt("0");
-                model.addAttribute("ID", signUpID);
-                model.addAttribute("publicKey", B64Pub);
-                model.addAttribute("privateKey", B64Priv);
-                model.addAttribute("password", PW);
-                userDataRepository.saveAndFlush(saltBase64UpdatedModel);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+            //add data to DB
+            saltBase64UpdatedModel.setSalt("0");
+            model.addAttribute("ID", signUpID);
+            model.addAttribute("publicKey", B64Pub);
+            model.addAttribute("privateKey", B64Priv);
+            model.addAttribute("password", PW);
+            userDataRepository.saveAndFlush(saltBase64UpdatedModel);
             return "sign_up_success";
         } else
             return "error";

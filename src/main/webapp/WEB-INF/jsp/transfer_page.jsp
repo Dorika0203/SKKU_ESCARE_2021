@@ -380,61 +380,63 @@
         crossorigin="anonymous"
 ></script>
 <script type="text/javascript" src="js/my_page.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="node-forge/dist/forge.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     //PKI element
     let pki = forge.pki
     let keyStorage = JSON.parse(localStorage.getItem('<%= request.getAttribute("loginClientID") %>'))
-    let publicKey = Object.values(keyStorage)[0]
+    let publicKey = Object.values(keyStorage)[0];
+    let thingTobeDeprecated = pki.publicKeyFromPem(Object.values(keyStorage)[0]);
+    console.log(publicKey)
     let pbeEncryptedPrivateKey = Object.values(keyStorage)[1]
     let base64Salt = Object.values(keyStorage)[2]
     let salt = window.atob(base64Salt)
-
-    //node-forge HMAC
-    let md = forge.md.sha1.create();
-
-    $(document).on('click', '#send', function () {
-        let password = $("#password").val();
-        let pbeKey = forge.pkcs5.pbkdf2(password, salt, 20, 16);
-        let privateKey = pki.decryptRsaPrivateKey(pbeEncryptedPrivateKey, pbeKey)
-        let publicKey1 = pki.setRsaPublicKey(privateKey.n, privateKey.e);
-        let account = $("#receiver-account").val()
-        let transferAmount = $("#transfer-amount").val()
-        let transferData = account + transferAmount + Date.now()
-        md.update(transferData, 'utf8');
-        let signature = privateKey.sign(md);
-        let verified = publicKey1.verify(md.digest().bytes(), signature);
-        console.log(verified)
-        $.ajax({
-            type: "POST",
-            url: "transferpage/transfer",
-            data: {
-                transferData: transferData,
-                signature: signature,
-                publicKey: publicKey
-            }, // parameters
-            success: function (result) {
-                switch (result) {
-                    case 1:
-                        alert("account or transfer amount format is incorrect")
-                        break
-                    case 2:
-                        alert("account doesn't exists!")
-                        break
-                    case 3:
-                        alert("your balance is less than transfer amount")
-                        break
-                    case 4:
-                        alert("success!")
-                        location.replace("mypage")
+    $(function () {
+        $('#send').click(function () {
+            let password = $("#password").val();
+            let pbeKey = forge.pkcs5.pbkdf2(password, salt, 20, 16);
+            let privateKey = pki.decryptRsaPrivateKey(pbeEncryptedPrivateKey, pbeKey)
+            let account = $("#receiver-account").val()
+            let transferAmount = $("#transfer-amount").val()
+            let transferData = account + transferAmount
+            //signature
+            let md = forge.md.sha1.create();
+            md.update(transferData, 'utf8');
+            let signature = privateKey.sign(md);
+            let base64Signature = window.btoa(signature)
+            let verified = thingTobeDeprecated.verify(md.digest().bytes(), signature);
+            console.log(verified)
+            $.ajax({
+                type: "POST",
+                url: "transferpage/transfer",
+                data: {
+                    transferData: transferData,
+                    signature: base64Signature,
+                    publicKey: publicKey
+                }, // parameters
+                success: function (result) {
+                    switch (result) {
+                        case 1:
+                            alert("account or transfer amount format is incorrect")
+                            break
+                        case 2:
+                            alert("account doesn't exists!")
+                            break
+                        case 3:
+                            alert("your balance is less than transfer amount")
+                            break
+                        case 4:
+                            alert("success!")
+                            location.replace("mypage")
+                    }
+                },
+                error: function (result) {
+                    alert("transfer failed")
                 }
-            },
-            error: function (result) {
-                alert("transfer failed")
-            }
-        });
-    })
+            });
+        })
+    });
 </script>
 </body>
 </html>
