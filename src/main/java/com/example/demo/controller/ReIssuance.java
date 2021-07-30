@@ -22,29 +22,25 @@ public class ReIssuance {
     private String signUpID = null;
 
     @GetMapping("reissuance")
-    public String reissuance(){ return "reissuance"; }
+    public String reissuance() {
+        return "reissuance";
+    }
 
     @PostMapping("reissue")
-    public String Reissue(String PW, Model model){
+    public String Reissue(String PW, Model model) {
         System.out.println(signUpID);
         signUpID = LoginClient.getUserID();
         System.out.println(signUpID);
-        if (signUpID!=null) {
+        if (signUpID != null) {
 
-            try {
-                ArrayList<String> keyPair = RSA.genRSAKeyPair(PW);
-                UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
-                saltBase64UpdatedModel.setSalt(keyPair.get(2));
-                System.out.println(keyPair.get(0));
-                System.out.println(keyPair.get(1));
-                System.out.println(keyPair.get(2));
-                model.addAttribute("ID", signUpID);
-                model.addAttribute("publicKey", keyPair.get(0));
-                model.addAttribute("privateKey", keyPair.get(1));
-                userDataRepository.saveAndFlush(saltBase64UpdatedModel);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+
+            UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
+            saltBase64UpdatedModel.setSalt("");
+            model.addAttribute("ID", signUpID);
+            model.addAttribute("publicKey", "");
+            model.addAttribute("privateKey", "");
+            userDataRepository.saveAndFlush(saltBase64UpdatedModel);
+
             return "sign_up_success";
         } else
             return "error";

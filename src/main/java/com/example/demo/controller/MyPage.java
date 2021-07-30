@@ -141,7 +141,6 @@ public class MyPage {
         // session checked. show my_page
         if (0 <= diff && diff <= 300)
         {
-            System.out.println("------------------ THIS IS MY ACCOUNT INFO FOR MY PAGE ------------------------ ");
             JSONArray myAccountsData = new JSONArray();
             List<AccountDataModel> myAccounts = accountDataRepository.findAllByUserId(userID);
 
@@ -151,8 +150,6 @@ public class MyPage {
                 JSONObject addingAccount = new JSONObject();
                 JSONArray addingTransfer = new JSONArray();
 
-                System.out.println("accountID: " + thisAcc.getAccount());
-                System.out.println("balance: " + thisAcc.getBalance());
                 addingAccount.put("accountID", thisAcc.getAccount());
                 addingAccount.put("balance", thisAcc.getBalance());
 
@@ -172,7 +169,6 @@ public class MyPage {
                 addingAccount.put("transferLog", addingTransfer);
                 myAccountsData.put(addingAccount);
             }
-            System.out.println(myAccountsData.toString());
             model.addAttribute("myAccountsData", myAccountsData.toString());
             return "my_page";
         }

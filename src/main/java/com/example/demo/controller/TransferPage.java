@@ -36,7 +36,7 @@ public class TransferPage {
     AccountDataRepository accountDataRepository;
 
     @GetMapping
-    public String transferpage(Model model) {
+    public String transferPage(Model model) {
         //add ID to model
         model.addAttribute("loginClientID", LoginClient.getUserID());
         return "transfer_page";
@@ -48,39 +48,49 @@ public class TransferPage {
     public int transfer(@RequestParam Map<String, Object> transferDataMap) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, SignatureException {
         String transferData = (String) transferDataMap.get("transferData");
         String signature = (String) transferDataMap.get("signature");
-        String publicKey = (String) transferDataMap.get("publicKey");
-        PublicKey publicKey1 = getPublicKeyFromBase64String(publicKey);
-        System.out.println(transferData + "\n" + signature + "\n" + publicKey + "\n");
+        String base64PublicKey = (String) transferDataMap.get("publicKey");
+        PublicKey publicKey = getPublicKeyFromBase64String(base64PublicKey);
+        String[] transferDataArray = transferData.split("\\s");
 
-        signatureVerify(transferData, publicKey1, Base64.getDecoder().decode(signature));
         long account = 0;
         long transferAmount = 0;
-        return 1;
-//        //check if all information are correct
-//        try{
-//            //check input format
-//            account = Integer.parseInt(accountString);
-//            transferAmount = Integer.parseInt(transferAmountString);
-//        } catch (NumberFormatException e) {
-//            //input format wrong
-//            return 1;
-//        }
-//        if(accountDataRepository.existsById(account)){
-//            //check if account exists
-//            AccountDataModel userAccount = accountDataRepository.findById(account).get();
-//            if(userAccount.getBalance() > transferAmount){
-//                //transfer and edit balance
-//                userAccount.setBalance(userAccount.getBalance() + transferAmount);
-//                accountDataRepository.saveAndFlush(userAccount);
-//            } else {
-//                //if balance is less than transfer amount
-//                return 3;
-//            }
-//        } else {
-//            //if account not exists
-//            return 2;
-//        }
-//        //transfer success
-//        return 4;
+        long messageTimestamp = 0;
+        long currentTime = System.currentTimeMillis() / 1000;
+
+        if (signatureVerified(transferData, publicKey, Base64.getDecoder().decode(signature))) {
+            //check if all information are correct
+            try {
+                account = Integer.parseInt(transferDataArray[0]);
+                transferAmount = Integer.parseInt(transferDataArray[1]);
+                messageTimestamp = Integer.parseInt(transferDataArray[2]);
+            } catch (NumberFormatException e) {
+                //input format wrong
+                return 1;
+            }
+            if (currentTime - messageTimestamp < 10 && currentTime - messageTimestamp >= 0) {
+                if (accountDataRepository.existsById(account)) {
+                    //check if account exists
+                    AccountDataModel userAccount = accountDataRepository.findById(account).get();
+                    if (userAccount.getBalance() > transferAmount) {
+                        //transfer and edit balance
+                        userAccount.setBalance(userAccount.getBalance() + transferAmount);
+                        accountDataRepository.saveAndFlush(userAccount);
+                    } else {
+                        //if balance is less than transfer amount
+                        return 3;
+                    }
+                } else {
+                    //if account not exists
+                    return 2;
+                }
+            } else {
+                return 0;
+            }
+            //transfer success
+            return 4;
+        } else {
+            //wrong signature
+            return 0;
+        }
     }
 }

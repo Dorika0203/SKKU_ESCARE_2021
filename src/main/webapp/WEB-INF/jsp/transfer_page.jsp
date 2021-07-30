@@ -399,7 +399,8 @@
             let privateKey = pki.decryptRsaPrivateKey(pbeEncryptedPrivateKey, pbeKey)
             let account = $("#receiver-account").val()
             let transferAmount = $("#transfer-amount").val()
-            let transferData = account + transferAmount
+            let timestampSecond = Math.floor(+ new Date() / 1000);
+            let transferData = account + " " + transferAmount + " " + timestampSecond
             //signature
             let md = forge.md.sha1.create();
             md.update(transferData, 'utf8');
@@ -417,6 +418,9 @@
                 }, // parameters
                 success: function (result) {
                     switch (result) {
+                        case 0:
+                            alert("error")
+                            break
                         case 1:
                             alert("account or transfer amount format is incorrect")
                             break

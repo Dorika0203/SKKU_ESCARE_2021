@@ -1,27 +1,14 @@
 package com.example.demo.security;
 
-import com.example.demo.fortanix.fortanixRestApi;
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
 import com.fortanix.sdkms.v1.api.AuthenticationApi;
-import com.fortanix.sdkms.v1.api.WrappingAndUnwrappingApi;
 import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.AuthResponse;
-import com.fortanix.sdkms.v1.model.KeyObject;
-import com.fortanix.sdkms.v1.model.ObjectType;
-import com.fortanix.sdkms.v1.model.UnwrapKeyRequest;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
-import org.hibernate.mapping.Array;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.*;
 import java.util.ArrayList;
@@ -39,83 +26,6 @@ public class RSA {
     private static String server = "https://sdkms.fortanix.com";
     private static String username = "a025eafd-5977-4924-8087-9b262315a974";
     private static String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
-
-    //deprecated
-    public static ArrayList<String> genRSAKeyPair(String password) throws NoSuchAlgorithmException {
-
-        SecureRandom secureRandom = new SecureRandom();
-        KeyPairGenerator gen;
-        gen = KeyPairGenerator.getInstance("RSA");
-        gen.initialize(2048, secureRandom);
-        KeyPair keyPair = gen.genKeyPair();
-
-        // extract the encoded private key, this is an unencrypted PKCS#8 private key
-        byte[] encodedprivkey = keyPair.getPrivate().getEncoded();
-
-        // We must use a PasswordBasedEncryption algorithm in order to encrypt the private key, you may use any common algorithm supported by openssl, you can check them in the openssl documentation http://www.openssl.org/docs/apps/pkcs8.html
-        String MYPBEALG = "PBEWithSHA1AndDESede";
-
-        int count = 20;// hash iteration count
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[8];
-        random.nextBytes(salt);
-        String saltStr = Base64.getEncoder().encodeToString(salt);
-
-        // Create PBE parameter set
-        PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, count);
-        //password
-        PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
-        //cipher mode
-        SecretKeyFactory keyFac = SecretKeyFactory.getInstance(MYPBEALG);
-        //encrypted password
-        SecretKey pbeKey = null;
-        try {
-            //encrypt password
-            pbeKey = keyFac.generateSecret(pbeKeySpec);
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-
-        Cipher pbeCipher = null;
-        try {
-            pbeCipher = Cipher.getInstance(MYPBEALG);
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        }
-
-        // Initialize PBE Cipher with key and parameters
-        try {
-            pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        }
-        // Encrypt the encoded Private Key with the PBE key
-        byte[] ciphertext = null;
-        try {
-            ciphertext = pbeCipher.doFinal(encodedprivkey);
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        }
-
-        // Now construct  PKCS #8 EncryptedPrivateKeyInfo object
-        AlgorithmParameters algparms = AlgorithmParameters.getInstance(MYPBEALG);
-        try {
-            algparms.init(pbeParamSpec);
-        } catch (InvalidParameterSpecException e) {
-            e.printStackTrace();
-        }
-        EncryptedPrivateKeyInfo encinfo = new EncryptedPrivateKeyInfo(algparms, ciphertext);
-        //System.out.println("cipher" + Base64.getEncoder().encodeToString(ciphertext));
-        // and here we have it! a DER encoded PKCS#8 encrypted key!
-        byte[] encryptedPkcs8 = null;
-        encryptedPkcs8 = encinfo.getEncryptedData();
-        ArrayList<String> ret = new ArrayList<>(Arrays.asList(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()), Base64.getEncoder().encodeToString(encryptedPkcs8), saltStr, Base64.getEncoder().encodeToString(encodedprivkey)));
-        return ret;
-    }
 
     //generate RSA key pair from sdkms and encrypt with PBE key
     public static ArrayList<String> genFortanixPBEKeyAndSalt(String password, PrivateKey privateKey) throws NoSuchAlgorithmException {
@@ -261,27 +171,14 @@ public class RSA {
         return decrypted;
     }
 
-    public static void signatureVerify(String msg, PublicKey publicKey, byte[] sign) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, SignatureException {
+    public static boolean signatureVerified(String msg, PublicKey publicKey, byte[] sign) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, SignatureException {
         String msgB = msg;
-        Signature signatureB = Signature.getInstance("SHA1withRSA");
-        signatureB.initVerify(publicKey);
-        signatureB.update(msgB.getBytes());
-        boolean verifty = signatureB.verify(sign);
-        System.out.println("검증 결과 : " + verifty);
+        Signature signature = Signature.getInstance("SHA1withRSA");
+        signature.initVerify(publicKey);
+        signature.update(msgB.getBytes());
+        boolean verify = signature.verify(sign);
+        return verify;
     }
-
-    public static String encryptSHA_1(String input) throws NoSuchAlgorithmException {
-        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
-        byte[] result = mDigest.digest(input.getBytes());
-
-        StringBuffer stringBuffer = new StringBuffer();
-        for (int i = 0; i < result.length; i++) {
-            stringBuffer.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
-        }
-
-        return stringBuffer.toString();
-    }
-
 
     public static PublicKey getPublicKeyFromBase64String(String keyString) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String publicKeyString =
