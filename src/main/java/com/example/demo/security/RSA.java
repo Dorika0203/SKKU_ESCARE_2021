@@ -170,8 +170,8 @@ public class RSA {
     public static PublicKey getPublicKeyFromBase64String(String keyString) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String publicKeyString =
                 keyString.replace("\\n", "").replaceAll("-{5}[ a-zA-Z]*-{5}", "");
+        
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-
         X509EncodedKeySpec keySpecX509 =
                 new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyString));
 
@@ -181,6 +181,7 @@ public class RSA {
     public static PrivateKey getPrivateKeyFromBase64String(String keyString) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String privateKeyString =
                 keyString.replace("\\n", "").replaceAll("-{5}[ a-zA-Z]*-{5}", "");
+        System.out.println(privateKeyString);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
         PKCS8EncodedKeySpec keySpecPKCS8 =
@@ -192,15 +193,14 @@ public class RSA {
     public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException {
         String plain = "Hi!";
 
-        ArrayList<String> keypair = RSA.genRSAKeyPair("1234");
-        System.out.println(keypair.get(0)+"\n");
-        System.out.println(keypair.get(1)+"\n");
-        System.out.println(keypair.get(2)+"\n");
-        System.out.println(keypair.get(3)+"\n");
+//        ArrayList<String> keypair = RSA.genRSAKeyPair("1234");
+//        System.out.println(keypair.get(0)+"\n");
+//        System.out.println(keypair.get(1)+"\n");
+//        System.out.println(keypair.get(2)+"\n");
+//        System.out.println(keypair.get(3)+"\n");
 
-        String B64PUB="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwH7fTjU/75iv89wPAvI7XP487KRlqq+iht3h4+goxjKx0AAC1++DQLjglgoRJwuJnt5SXdfh4Yhm8bDGego0hO5waFTIyupKZNryy3B0yfnCA1IPgWQ3dCVvHNPXYjmWX0KTKI39a+Thdnkkcc0vaq5cgyYq1oCXSzPcERlCZDlklb3gb6eg60oA7aRWCg9PC5QUJ+lBjsM6KOvym9Fjzp8K+FoneWqqCdRVgI7gXsEzh7GzQ9K7RQRIEBcjFOLqQEHGDWzSz61pUNBQ07ET6B1K0EBuD2KDaycEWP00S9ILLY1I48PyJZ+YVWfQXK0vybQQtcIrtov42Pk7zWYqwIDAQAB";
-        String B64VAL="MIIEowIBAAKCAQEAuwH7fTjU/75iv89wPAvI7XP487KRlqq+iht3h4+goxjKx0AAC1++DQLjglgoRJwuJnt5SXdfh4Yhm8bDGego0hO5waFTIyupKZNryy3B0yfnCA1IPgWQ3dCVvHNPXYjmWX0KTKI39a+Thdnkkcc0vaq5cgyYq1oCXSzPcERlCZDlklb3gb6eg60oA7aRWCg9PC5QUJ+lBjsM6KOvym9Fjzp8K+FoneWqqCdRVgI7gXsEzh7GzQ9K7RQRIEBcjFOLqQEHGDWzSz61pUNBQ07ET6B1K0EBuD2KDaycEWP00S9ILLY1I48PyJZ+YVWfQXK0vybQQtcIrtov42Pk7zWYqwIDAQABAoIBADwiTQ5dQhDi1bo8KCkG2RuSGVGz8CD00sRyRKNwygToKfycVedSaDii3ynA02IMnsJ9HelD25ImzZPb/EzOXKIA+dCL4cIDfigCYb05/4O45w+txbc77vOE6UFqCvFW3kuUa8VsvHXieZunD1rZJdp/lZZY+pbPIMd5a1L8i0jho8KHElnvoBm75wIs1HaSDwa4j2oEUNpWwbk+y8WG5TznodiK5ywNGuT59knCuHyPOW485D6HbiTUc9DYvDzMeTGe0v47onbt3ok/YacWpPb2ttUG+vZWzXo3YLdZa49rWv686wU+u/6M+2hGKSPHFQpaUDekZf6gPiq1DeIo6qECgYEA77+75jUDVgWrGsurhr0czcq0aEXG7Ru4fhSG+g2cKrMg49J59vNDoeHwwJIe0z4GvHlM42laFcdZzFmiKHZWJo9jYRbyoZ3IQfAb0jFjONF9kwq+t/K6ZMkMwGZfFOcfOh4PTYcXq1QnI59s3lC6IW+G+4DrwRM7TmzIpZ1VxTMCgYEAx68NMkfS/rcNrhoKVECJxqdw8JZaisqp3fVdvHamziMzrd9ur/8tZ7gvMEqw3rZHC3QoLe9DpJx52pblLmgNBFShBJ9YGbAuAoCIBW2baxAt8K7bjKP80aGRalJKcgpjgR5rsy4MCmBa7DLKZEEckKtxvGPKm12j7K0cP5i77qkCgYEAi5gZAOZXJeww/24dVlugfNaNCrWuKPreBlNPcCMijd40xVIU/8wO0iArPQUXe6n+5BjAwxzhfhLP32NFPsgAS31rwOlKpv2mz3XNzSpCep/HvSkheRuUmgBSM2in7hTQotdD08FX78MU8vHtwthAOB2m+6PKIWZgPr6qaXvdp+8CgYARkLeDdcf8uhOM/iNsd+TmwbHwp/k8/kjlCoF9Y56WwYf5Qo9VEghneE9GWzuly7kCK+yg5cw4fb9GWEG+zE5g1CT56B5y3AmgFLhiadrjFyBDbM5JV9+UfTbyeFyuHXXVVNy6fVF31DQLVQhyuzuNClfN76VR93HFDxFOEtxtSQKBgFL1MtXH1a1lgJyVnImhFbdeGkClkIHitf9gkjGv4ck2rF9Cwn9j/Mn7DT8AhNIQuc1aKRU4XwymcsRKa2g+VJW20GWhm4EMvql3ueXdxz4hp7dkpe+57wVsJ5zC5b7oyKMFcHVbKSjHr/D8dHWlC849+8V+OEf1m/Rn4drQ2zVf";
-
+        String B64PUB="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxGlEqRxAf43a2MuNB4YtFwz/LILN7PpAMFkuFTeVds/R/0PZ1JWK7ERnufePjajufkQ8hH2JAUuoMruY2UjSthQyoQysB7whEUyqnBBkJ+5EsbAjI4MXsyS49icq0Uue6ZB+p8JK9zxu2wAwc1r9R9lYB1iQmNgvbj9OYQPifvj+IGtek7cCR3B1SHwRxkx4xmGeWf1XQj9cphnNSkt55I5i2bcm2BQI61hbco8QnxavfTBk2xgrCB5fojyUqN7voR9MLFiqUFlLFXYhGVsAdczZMTwvFSNwP0LvAHfyaWeIhwi8BIzB0P0EeI5i4I4gEQKbX9TKuLDCYeLxXUaCTQIDAQAB";
+        String B64VAL="MIIEowIBAAKCAQEAxGlEqRxAf43a2MuNB4YtFwz/LILN7PpAMFkuFTeVds/R/0PZ1JWK7ERnufePjajufkQ8hH2JAUuoMruY2UjSthQyoQysB7whEUyqnBBkJ+5EsbAjI4MXsyS49icq0Uue6ZB+p8JK9zxu2wAwc1r9R9lYB1iQmNgvbj9OYQPifvj+IGtek7cCR3B1SHwRxkx4xmGeWf1XQj9cphnNSkt55I5i2bcm2BQI61hbco8QnxavfTBk2xgrCB5fojyUqN7voR9MLFiqUFlLFXYhGVsAdczZMTwvFSNwP0LvAHfyaWeIhwi8BIzB0P0EeI5i4I4gEQKbX9TKuLDCYeLxXUaCTQIDAQABAoIBAASJL9I9+klX09GE5eViFmF9Zdk3zhymbNwQ+yz3QybixsU/4mRz7ajmLYUQcArD93oIBmPC6GqUvjYpue5urZsR3Vd1zPVCxXq6TAhdoop/iKuX1z/nM6Fp/DGHFwiNWAap1Rr3tDaAeUjqeLP5Snch0FQfGfvFplbD9IHuDomDGSwI+nAkLKM0Pe+iINP2urMt2DAJQVvpln1nXOuEz0rPUgOBYr9gbJWdTVHcVCTfdm7ec0iTzf+FUCfZmyoi7PjkBzn/fjnjNaEc3OukCs9v5Swq7fCl9Y5A0CBjWeFNfMhv6YG5H+XUd7qGnMJk8IIHj40GlZzQL7+hqkB8TXECgYEA8jaA/NcB06nyKlGvAQ6lp19tWeb09F8Rg6PWglPi6PH5LYrgSFYc+Xyfy8bjBr5+d+ep06I0+s3RgACBTxH45y8PhNGlj8husqj6pl9YA2yrXV23rFdGGwtNa/DarN9pccdNPI42MD3uIxmrCBi9r9KVIUCp/QgnY+sou4zG1MUCgYEAz5dZAbo8c07yN7PkwIcDT/AJxXEui8q/KMMHG3P1lHq5mqeoOiO4/apytzkNNhMQ7zgCL58JJgYms6BrLfPpprYOvnhDQuRdW2SIqsNSKAB4PHiV1GzciYRozd+UxOD0hIlRyssOqW52DGtDNhM4DlCDtLc0gYHjAUvHgf0PH+kCgYEAoTU7ho0HzzvmTNpO8xIvmQV/f32jfV4lBwutwtJYTRh38yLigeKmqDqVFIjMI3n4LJAIzS3Bu0fvbxVm+xyIID6HQqxSWC9b1hd3s/HzX1wddifhDpiLtYZBQl1s/fA4exzeQDaaxGMDs2LrHZlx7qrmzNoACcQ6i1tBogphb80CgYAFU+sS4ka+5t3MlC9gyZZKLOzzRk5dhByX3TmHeNhqsSOmVns40sXirMc48JvoMWET4qobssc3VJ0Vqx5VFZd/kdibBtcjFl1XBSOEznKDWE+9rZKa2xhl5yIRdpWI4AUmiaexvrhnnNAmzXHyJ1ge9e4La1BLqpu64skCCw6iUQKBgHQ7DG7qagHDzraj4K7oSlCJbXufA5QcIXjCYFzZS26L+n560I7JZLJ+UNDy8GNqYpbGjlXuDOX/DXGokCJ/LYuyvzYPU6iSISwtpYtEgCQcsvycX8HxnCOTngnIx2r6v3xOQ3qdCRDOVJGAf1XagQqQjlcc367fNalRh58CN8r3";
 
         //String decPBEKey = RSA.decRSAPrivKey("1234",keypair.get(1),Base64.getDecoder().decode(keypair.get(2).getBytes()));
 

@@ -17,9 +17,9 @@ public class GenSecurityObj {
     private static String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
     private static ApiClient client = new ApiClient();
 
-    public static void Generate(ApiClient client, String ID){
+    public static void GenerateRSAKey(ApiClient client, String userID){
         SobjectRequest sobjectRequest = new SobjectRequest()
-                .name(ID)
+                .name(userID)
                 .keySize(2048)
                 .objType(ObjectType.RSA)
                 .keyOps(Arrays.asList(KeyOperations.SIGN,
@@ -35,7 +35,7 @@ public class GenSecurityObj {
         }
     }
 
-    public static KeyObject getSecObj(ApiClient client, String ID) throws ApiException {
+    public static KeyObject getRSAKey(ApiClient client, String ID) throws ApiException {
         SobjectDescriptor soDescriptor = new SobjectDescriptor()
                 .name(ID);
         SecurityObjectsApi securityObjectsApi = new SecurityObjectsApi(client);
@@ -44,5 +44,7 @@ public class GenSecurityObj {
         return keyObject;
     }
 
+    public static void genKEKKey() {
 
+    }
 }

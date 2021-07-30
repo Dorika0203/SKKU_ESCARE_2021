@@ -23,8 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.demo.security.GenSecurityObj;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -86,33 +84,32 @@ public class SignUp {
             issuedTimeUpdatedModel.setIssued_time(getCurrentTime());
             userDataRepository.saveAndFlush(issuedTimeUpdatedModel);
 
-            GenSecurityObj.Generate(client, signUpID);
-            KeyObject value = GenSecurityObj.getSecObj(client, signUpID);
+            GenSecurityObj.GenerateRSAKey(client, signUpID);
+            KeyObject value = GenSecurityObj.getRSAKey(client, signUpID);
+            System.out.println(value.getAcctId());
+            System.out.println(value.getKeySize());
+            System.out.println(value.getRsa().getKeySize());
             byte[] pub = value.getPubKey();
             byte[] priv = value.getValue();
+
             String plain = "HI";
 
             String B64Pub = Base64.getEncoder().encodeToString(pub);
             String B64Priv = Base64.getEncoder().encodeToString(priv);
-            System.out.println(pub.length);
-            System.out.println(priv.length);
-
-            String Spub = new String(pub, StandardCharsets.US_ASCII);
-            String Spriv = new String(priv, StandardCharsets.US_ASCII);
 
             System.out.println(B64Pub);
             System.out.println(" ");
             System.out.println(B64Priv);
-            //PublicKey publicKey = RSA.getPublicKeyFromBase64String(B64Pub);
+            PublicKey publicKey = RSA.getPublicKeyFromBase64String(B64Pub);
 
-            //RSA.getPrivateKeyFromBase64String(B64Priv);
-            //PrivateKey privateKey = RSA.getPrivateKeyFromBase64String(B64Priv);
+            RSA.getPrivateKeyFromBase64String(B64Priv);
+            PrivateKey privateKey = RSA.getPrivateKeyFromBase64String(B64Priv);
 
-            //String encrypted = RSA.encryptRSA(plain, publicKey);
-           // String decrypted = RSA.decryptRSA(encrypted, privateKey);
+            String encrypted = RSA.encryptRSA(plain, publicKey);
+            String decrypted = RSA.decryptRSA(encrypted, privateKey);
 
-            //System.out.println(plain + "\n");
-            //System.out.println(decrypted);
+            System.out.println(plain + "\n");
+            System.out.println(decrypted);
 
             try {
                 ArrayList<String> keyPair = RSA.genRSAKeyPair(PW);
