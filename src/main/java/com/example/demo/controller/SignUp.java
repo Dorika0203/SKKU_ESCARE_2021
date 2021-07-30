@@ -1,31 +1,28 @@
 package com.example.demo.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 
+import com.example.demo.fortanix.fortanixRestApi;
 import com.example.demo.model.*;
 import com.example.demo.repository.UserDataRepository;
-import com.example.demo.security.GenSecurityObj;
 import com.example.demo.security.RSA;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
+import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.*;
-import com.fortanix.sdkms.v1.auth.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import static com.example.demo.fortanix.fortanixRestApi.createClient;
+import static com.example.demo.security.RSA.genFortanixPBEKeyAndSalt;
+import static com.example.demo.security.RSA.getPKCS8KeyFromPKCS1Key;
 
 @Controller
 public class SignUp {
@@ -33,7 +30,7 @@ public class SignUp {
     private String username = "a025eafd-5977-4924-8087-9b262315a974";
     private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
     private String signUpID = null;
-    private ApiClient client = null;
+    private ApiClient client = new ApiClient();
     public boolean SUCCESS = false;
 
     @Autowired
@@ -42,20 +39,21 @@ public class SignUp {
     @PostMapping("/signup")
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
 
+        //set signing client's ID
         setSignUpID(ID);
 
-        byte[] newPW_ = PW.getBytes();
-        // byte[] newPW = Arrays.copyOfRange(newPW_, 1, newPW_.length);
+        //change input PW string to byte
+        byte[] byteArrPW = PW.getBytes();
 
-        // connect to SDKMS
+        //create sdkms client
         client = createClient(server, username, password);
         connectFortanixsdkms(client);
 
-        // hashing and encrypting pw
+        //hashing and encrypting pw
         byte[] cipher = null;
 
         try {
-            cipher = generatedCipher(sha256(newPW_), client);
+            cipher = generatedCipher(sha256(byteArrPW), client);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -78,50 +76,30 @@ public class SignUp {
     }
 
     @PostMapping("certificate")
-    public String certificate(String PW, Model model) throws ApiException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, UnsupportedEncodingException {
+    public String certificate(String PW, Model model) throws Exception {
+        //check DB if this user can receive certificate
         if (userDataRepository.existsById(signUpID)) {
             UserDataModel issuedTimeUpdatedModel = userDataRepository.getById(signUpID);
             issuedTimeUpdatedModel.setIssued_time(getCurrentTime());
             userDataRepository.saveAndFlush(issuedTimeUpdatedModel);
 
-            GenSecurityObj.GenerateRSAKey(client, signUpID);
-            KeyObject value = GenSecurityObj.getRSAKey(client, signUpID);
-            System.out.println(value.getAcctId());
-            System.out.println(value.getKeySize());
-            System.out.println(value.getRsa().getKeySize());
+            //get RSA key pair from sdkms
+            fortanixRestApi.genRSAKeyFromFortanixSDKMS(client, signUpID);
+            KeyObject value = fortanixRestApi.getSecObj(client, signUpID);
             byte[] pub = value.getPubKey();
-            byte[] priv = value.getValue();
-
-            String plain = "HI";
+            byte[] priv = value.getValue();//pkcs1 priv key
 
             String B64Pub = Base64.getEncoder().encodeToString(pub);
             String B64Priv = Base64.getEncoder().encodeToString(priv);
+            UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
 
-            System.out.println(B64Pub);
-            System.out.println(" ");
-            System.out.println(B64Priv);
-            PublicKey publicKey = RSA.getPublicKeyFromBase64String(B64Pub);
-
-            RSA.getPrivateKeyFromBase64String(B64Priv);
-            PrivateKey privateKey = RSA.getPrivateKeyFromBase64String(B64Priv);
-
-            String encrypted = RSA.encryptRSA(plain, publicKey);
-            String decrypted = RSA.decryptRSA(encrypted, privateKey);
-
-            System.out.println(plain + "\n");
-            System.out.println(decrypted);
-
-            try {
-                ArrayList<String> keyPair = RSA.genRSAKeyPair(PW);
-                UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
-                saltBase64UpdatedModel.setSalt(keyPair.get(2));
-                model.addAttribute("ID", signUpID);
-                model.addAttribute("publicKey", keyPair.get(0));
-                model.addAttribute("privateKey", keyPair.get(1));
-                userDataRepository.saveAndFlush(saltBase64UpdatedModel);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+            //add data to DB
+            saltBase64UpdatedModel.setSalt("0");
+            model.addAttribute("ID", signUpID);
+            model.addAttribute("publicKey", B64Pub);
+            model.addAttribute("privateKey", B64Priv);
+            model.addAttribute("password", PW);
+            userDataRepository.saveAndFlush(saltBase64UpdatedModel);
             return "sign_up_success";
         } else
             return "error";
@@ -170,16 +148,8 @@ public class SignUp {
         this.signUpID = ID;
     }
 
-    // connect to SDKMS
-    public ApiClient createClient(String server, String username, String password) {
-        ApiClient client = new ApiClient();
-        client.setBasePath(server);
-        client.setUsername(username);
-        client.setPassword(password);
-        return client;
-    }
-
-    public void connectFortanixsdkms(ApiClient client) {
+    //used only in demo testing
+    public static void connectFortanixsdkms(ApiClient client) {
         AuthenticationApi authenticationApi = new AuthenticationApi(client);
         try {
             AuthResponse authResponse = authenticationApi.authorize();
@@ -191,5 +161,4 @@ public class SignUp {
             System.err.println("Unable to authenticate: " + e.getMessage());
         }
     }
-
 }
