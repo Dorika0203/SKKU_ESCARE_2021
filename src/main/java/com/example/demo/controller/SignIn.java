@@ -134,13 +134,6 @@ public class SignIn {
         return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
     }
 
-//    public byte[] hexToBytes(String hex) {
-//        byte[] temp = new BigInteger(hex, 16).toByteArray();
-//        //byte[] retval = Arrays.copyOfRange(temp, 1, temp.length);
-//        for(int i=0; i<temp.length; i++) System.out.printf("%d: %d\n", i, temp[i]);
-//        return temp;
-//    }
-
     // connect to SDKMS
     public ApiClient createClient(String server, String username, String password) {
         ApiClient client = new ApiClient();
