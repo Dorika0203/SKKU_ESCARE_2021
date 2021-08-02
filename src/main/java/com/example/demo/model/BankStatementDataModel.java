@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "TransferDB")
+@Table(name = "BankStatementInfo")
 public class BankStatementDataModel {
     @Id
     private int count;
@@ -28,14 +28,23 @@ public class BankStatementDataModel {
 
 
     public long getAccount() {return account;}
+
     public void setAccount(long account) {this.account = account;}
+
     public String getTransactionTime() { return transactionTime; }
+
     public void setTransactionTime(String transactionTime) { this.transactionTime = transactionTime;}
+
     public long getTransactionAmount() {return transactionAmount;}
+
     public void setTransactionAmount(long transactionAmount) {this.transactionAmount = transactionAmount;}
+
     public long getAfterBalance() {return afterBalance;}
+
     public void setAfterBalance(long afterBalance) {this.afterBalance = afterBalance;}
+
     public long getDepositAccount() {return depositAccount;}
+
     public void setDepositAccount(long depositAccount) {this.depositAccount = depositAccount;}
 
     public BankStatementDataModel(int count, String transactionTime, long transactionAmount, long afterBalance, long depositAccount) {
