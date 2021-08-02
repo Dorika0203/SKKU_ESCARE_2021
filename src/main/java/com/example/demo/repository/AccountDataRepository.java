@@ -10,4 +10,6 @@ public interface AccountDataRepository extends JpaRepository<AccountDataModel, L
     AccountDataModel findByUserId (String userId);
 
     Boolean existsByUserId (String userId);
+
+    List<AccountDataModel> findAllByUserId(String userID);
 }
