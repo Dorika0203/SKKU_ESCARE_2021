@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.AccountDataModel;
+import com.example.demo.model.BankStatementDataModel;
 import com.example.demo.repository.AccountDataRepository;
+import com.example.demo.repository.BankStatementDataRepository;
 import com.example.demo.user.LoginClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,6 +36,8 @@ import static com.example.demo.security.RSA.*;
 public class TransferPage {
     @Autowired
     AccountDataRepository accountDataRepository;
+    @Autowired
+    BankStatementDataRepository bankStatementDataRepository;
 
     @GetMapping
     public String transferPage(Model model) {
@@ -52,17 +56,18 @@ public class TransferPage {
         PublicKey publicKey = getPublicKeyFromBase64String(base64PublicKey);
         String[] transferDataArray = transferData.split("\\s");
 
-        long recieverAccount = 0;
-        long remitterAccount = 0;
+        long receiverAccount = 0;
+        long senderAccount = 0;
         long transferAmount = 0;
+        long afterBalance = 0;
         long messageTimestamp = 0;
         long currentTime = System.currentTimeMillis() / 1000;
 
         if (signatureVerified(transferData, publicKey, Base64.getDecoder().decode(signature))) {
             //check if all information are correct
             try {
-                recieverAccount = Integer.parseInt(transferDataArray[0]);
-                remitterAccount = Integer.parseInt(transferDataArray[1]);
+                receiverAccount = Integer.parseInt(transferDataArray[0]);
+                senderAccount = Integer.parseInt(transferDataArray[1]);
                 transferAmount = Integer.parseInt(transferDataArray[2]);
                 messageTimestamp = Integer.parseInt(transferDataArray[3]);
             } catch (NumberFormatException e) {
@@ -70,15 +75,16 @@ public class TransferPage {
                 return 1;
             }
             if (currentTime - messageTimestamp < 10 && currentTime - messageTimestamp >= 0) {
-                if (accountDataRepository.existsById(recieverAccount) && accountDataRepository.existsById(remitterAccount)) {
+                if (accountDataRepository.existsById(receiverAccount) && accountDataRepository.existsById(senderAccount)) {
                     //check if account exists
-                    AccountDataModel remitterUserAccount = accountDataRepository.findById(remitterAccount).get();
-                    AccountDataModel recieverUserAccount = accountDataRepository.findById(recieverAccount).get();
-                    if (remitterUserAccount.getBalance() >= transferAmount) {
+                    AccountDataModel senderUserAccount = accountDataRepository.findById(senderAccount).get();
+                    AccountDataModel recieverUserAccount = accountDataRepository.findById(receiverAccount).get();
+                    if (senderUserAccount.getBalance() >= transferAmount) {
                         //transfer and edit balance
-                        recieverUserAccount.setBalance(recieverUserAccount.getBalance() + transferAmount);
-                        remitterUserAccount.setBalance(remitterUserAccount.getBalance() + transferAmount);
-                        accountDataRepository.saveAndFlush(remitterUserAccount);
+                        afterBalance = recieverUserAccount.getBalance() + transferAmount;
+                        recieverUserAccount.setBalance(afterBalance);
+                        senderUserAccount.setBalance(senderUserAccount.getBalance() - transferAmount);
+                        accountDataRepository.saveAndFlush(senderUserAccount);
                         accountDataRepository.saveAndFlush(recieverUserAccount);
                     } else {
                         //if balance is less than transfer amount
@@ -92,6 +98,9 @@ public class TransferPage {
                 return 0;
             }
             //transfer success
+            long count = bankStatementDataRepository.count();
+            BankStatementDataModel transferLog = new BankStatementDataModel(count, currentTime, transferAmount, afterBalance, senderAccount);
+            bankStatementDataRepository.saveAndFlush(transferLog);
             return 4;
         } else {
             //wrong signature

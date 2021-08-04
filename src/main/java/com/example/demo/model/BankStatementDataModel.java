@@ -9,13 +9,13 @@ import javax.persistence.Table;
 @Table(name = "BankStatementInfo")
 public class BankStatementDataModel {
     @Id
-    private int count;
+    private long count;
 
     @Column
     private long account;
 
     @Column
-    private String transactionTime;
+    private long transactionTime;
 
     @Column
     private long transactionAmount;
@@ -31,9 +31,9 @@ public class BankStatementDataModel {
 
     public void setAccount(long account) {this.account = account;}
 
-    public String getTransactionTime() { return transactionTime; }
+    public long getTransactionTime() { return transactionTime; }
 
-    public void setTransactionTime(String transactionTime) { this.transactionTime = transactionTime;}
+    public void setTransactionTime(long transactionTime) { this.transactionTime = transactionTime;}
 
     public long getTransactionAmount() {return transactionAmount;}
 
@@ -47,7 +47,7 @@ public class BankStatementDataModel {
 
     public void setDepositAccount(long depositAccount) {this.depositAccount = depositAccount;}
 
-    public BankStatementDataModel(int count, String transactionTime, long transactionAmount, long afterBalance, long depositAccount) {
+    public BankStatementDataModel(long count, long transactionTime, long transactionAmount, long afterBalance, long depositAccount) {
         this.count = count;
         this.transactionTime = transactionTime;
         this.transactionAmount = transactionAmount;
