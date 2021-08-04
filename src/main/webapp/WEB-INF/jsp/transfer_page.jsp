@@ -66,7 +66,7 @@
                             <div class="widget-content-left ml-3 header-user-info">
                                 <div class="widget-heading">Hyejin Yoo</div>
                                 <div class="widget-subheading">
-                                    <span id="counter"></span>
+                                    <span id="counter1"></span>
                                     <input
                                             type="button"
                                             class="btn p-1 show-toastr-example"
@@ -189,55 +189,52 @@
                                                 <div class="card-header-title">| 송금</div>
                                             </div>
                                             <div class="card-body">
+                                                <div class="md-form form-group w-50 mb-3">
+                                                    <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            aria-label="Text input with dropdown button"
+                                                            placeholder="비밀번호"
+                                                            id="password"
+                                                    />
+                                                </div>
                                                 <div class="input-group">
                                                     <div class="input-group mb-3">
                                                         <input
                                                                 type="text"
                                                                 class="form-control"
                                                                 aria-label="Text input with dropdown button"
-                                                                placeholder="비밀번호"
-                                                                id="password"
+                                                                placeholder="보내는 계좌번호 입력"
+                                                                id="remitter-account"
                                                         />
                                                     </div>
-                                                    <div class="input-group">
-                                                        <div class="input-group mb-3">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    aria-label="Text input with dropdown button"
-                                                                    placeholder="보내는 계좌번호 입력"
-                                                                    id="remitter-account"
-                                                            />
-                                                        </div>
-                                                        <div class="input-group mb-3">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    aria-label="Text input with dropdown button"
-                                                                    placeholder="받는 계좌번호 입력"
-                                                                    id="receiver-account"
-                                                            />
-                                                        </div>
-                                                        <div class="input-group mb-3">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    aria-label="Text input with dropdown button"
-                                                                    placeholder="금액"
-                                                                    id="transfer-amount"
-                                                            />
-                                                            <button
-                                                                    class="btn btn-outline-secondary"
-                                                                    type="submit"
-                                                                    id="send"
-                                                            >
-                                                                송금
-                                                            </button>
-                                                        </div>
+                                                    <div class="input-group mb-3">
+                                                        <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                aria-label="Text input with dropdown button"
+                                                                placeholder="받는 계좌번호 입력"
+                                                                id="receiver-account"
+                                                        />
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                aria-label="Text input with dropdown button"
+                                                                placeholder="금액"
+                                                                id="transfer-amount"
+                                                        />
+                                                        <button
+                                                                class="btn btn-outline-secondary"
+                                                                type="submit"
+                                                                id="send"
+                                                        >
+                                                            송금
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            </form>
                                         </div>
 
                                         <div
@@ -396,7 +393,6 @@
     let pki = forge.pki
     let keyStorage = JSON.parse(localStorage.getItem('<%= request.getAttribute("loginClientID") %>'))
     let publicKey = Object.values(keyStorage)[0];
-    let thingTobeDeprecated = pki.publicKeyFromPem(Object.values(keyStorage)[0]);
     console.log(publicKey)
     let pbeEncryptedPrivateKey = Object.values(keyStorage)[1]
     let base64Salt = Object.values(keyStorage)[2]
@@ -409,15 +405,13 @@
             let remitterAccount = $("#remitter-account").val()
             let recieverAccount = $("#receiver-account").val()
             let transferAmount = $("#transfer-amount").val()
-            let timestampSecond = Math.floor(+ new Date() / 1000);
-            let transferData = recieverAccount + " " + remitterAccount +  " " + transferAmount + " " + timestampSecond
+            let timestampSecond = Math.floor(+new Date() / 1000);
+            let transferData = recieverAccount + " " + remitterAccount + " " + transferAmount + " " + timestampSecond
             //signature
             let md = forge.md.sha1.create();
             md.update(transferData, 'utf8');
             let signature = privateKey.sign(md);
             let base64Signature = window.btoa(signature)
-            let verified = thingTobeDeprecated.verify(md.digest().bytes(), signature);
-            console.log(verified)
             $.ajax({
                 type: "POST",
                 url: "transferpage/transfer",
