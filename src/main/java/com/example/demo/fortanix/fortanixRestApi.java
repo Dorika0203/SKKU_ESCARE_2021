@@ -2,7 +2,10 @@ package com.example.demo.fortanix;
 
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
+import com.fortanix.sdkms.v1.api.AuthenticationApi;
+import com.fortanix.sdkms.v1.api.EncryptionAndDecryptionApi;
 import com.fortanix.sdkms.v1.api.SecurityObjectsApi;
+import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.*;
 
 import java.util.Arrays;
@@ -16,9 +19,18 @@ public class fortanixRestApi {
         return client;
     }
 
-    private static String server = "https://sdkms.fortanix.com";
-    private static String username = "a025eafd-5977-4924-8087-9b262315a974";
-    private static String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
+    public static void connectFortanixsdkms(ApiClient client) {
+        AuthenticationApi authenticationApi = new AuthenticationApi(client);
+        try {
+            AuthResponse authResponse = authenticationApi.authorize();
+            ApiKeyAuth bearerTokenAuth = (ApiKeyAuth) client.getAuthentication("bearerToken");
+            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
+            bearerTokenAuth.setApiKeyPrefix("Bearer");
+            System.out.println("success");
+        } catch (ApiException e) {
+            System.err.println("Unable to authenticate: " + e.getMessage());
+        }
+    }
 
     public static void genRSAKeyFromFortanixSDKMS(ApiClient client, String ID){
         SobjectRequest sobjectRequest = new SobjectRequest()
@@ -48,4 +60,30 @@ public class fortanixRestApi {
         return keyObject;
     }
 
+    public static byte[] generateAESCipher(byte[] plain, ApiClient client) {
+        String ivStr = new String("ESCAREAAAAAAAAAA");
+        EncryptRequest encryptRequest = new EncryptRequest();
+        encryptRequest.alg(ObjectType.AES).plain(plain).mode(CryptMode.CBC).setIv(ivStr.getBytes());
+        try {
+            EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
+                    .encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
+            return encryptResponse.getCipher();
+        } catch (ApiException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] DecryptAESCipher(byte[] cipher, ApiClient client) {
+        String ivStr = new String("ESCAREAAAAAAAAAA");
+        DecryptRequest decryptRequest = new DecryptRequest();
+        decryptRequest.alg(ObjectType.AES).cipher(cipher).mode(CryptMode.CBC).iv(ivStr.getBytes());
+        try {
+            DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client).decrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", decryptRequest);
+            return decryptResponse.getPlain();
+        } catch (ApiException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
