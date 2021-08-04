@@ -205,7 +205,16 @@
                                                                     type="text"
                                                                     class="form-control"
                                                                     aria-label="Text input with dropdown button"
-                                                                    placeholder="계좌번호 입력"
+                                                                    placeholder="보내는 계좌번호 입력"
+                                                                    id="remitter-account"
+                                                            />
+                                                        </div>
+                                                        <div class="input-group mb-3">
+                                                            <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    aria-label="Text input with dropdown button"
+                                                                    placeholder="받는 계좌번호 입력"
                                                                     id="receiver-account"
                                                             />
                                                         </div>
@@ -397,10 +406,11 @@
             let password = $("#password").val();
             let pbeKey = forge.pkcs5.pbkdf2(password, salt, 20, 16);
             let privateKey = pki.decryptRsaPrivateKey(pbeEncryptedPrivateKey, pbeKey)
-            let account = $("#receiver-account").val()
+            let remitterAccount = $("#remitter-account").val()
+            let recieverAccount = $("#receiver-account").val()
             let transferAmount = $("#transfer-amount").val()
             let timestampSecond = Math.floor(+ new Date() / 1000);
-            let transferData = account + " " + transferAmount + " " + timestampSecond
+            let transferData = recieverAccount + " " + remitterAccount +  " " + transferAmount + " " + timestampSecond
             //signature
             let md = forge.md.sha1.create();
             md.update(transferData, 'utf8');

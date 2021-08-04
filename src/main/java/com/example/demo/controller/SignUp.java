@@ -76,10 +76,10 @@ public class SignUp {
         if (SUCCESS) {
 
             // create account, then make certification.
-            long Account = accountData.count();
-            AccountDataModel account = new AccountDataModel(Account, ID);
-            accountData.saveAndFlush(account);
-            System.out.println("creating account successed.");
+//            long Account = accountData.count();
+//            AccountDataModel account = new AccountDataModel(Account, ID);
+//            accountData.saveAndFlush(account);
+//            System.out.println("creating account successed.");
 
             return "certification";
         } else

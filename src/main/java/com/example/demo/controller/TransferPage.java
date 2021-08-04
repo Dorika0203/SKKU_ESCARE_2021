@@ -52,7 +52,8 @@ public class TransferPage {
         PublicKey publicKey = getPublicKeyFromBase64String(base64PublicKey);
         String[] transferDataArray = transferData.split("\\s");
 
-        long account = 0;
+        long recieverAccount = 0;
+        long remitterAccount = 0;
         long transferAmount = 0;
         long messageTimestamp = 0;
         long currentTime = System.currentTimeMillis() / 1000;
@@ -60,21 +61,25 @@ public class TransferPage {
         if (signatureVerified(transferData, publicKey, Base64.getDecoder().decode(signature))) {
             //check if all information are correct
             try {
-                account = Integer.parseInt(transferDataArray[0]);
-                transferAmount = Integer.parseInt(transferDataArray[1]);
-                messageTimestamp = Integer.parseInt(transferDataArray[2]);
+                recieverAccount = Integer.parseInt(transferDataArray[0]);
+                remitterAccount = Integer.parseInt(transferDataArray[1]);
+                transferAmount = Integer.parseInt(transferDataArray[2]);
+                messageTimestamp = Integer.parseInt(transferDataArray[3]);
             } catch (NumberFormatException e) {
                 //input format wrong
                 return 1;
             }
             if (currentTime - messageTimestamp < 10 && currentTime - messageTimestamp >= 0) {
-                if (accountDataRepository.existsById(account)) {
+                if (accountDataRepository.existsById(recieverAccount) && accountDataRepository.existsById(remitterAccount)) {
                     //check if account exists
-                    AccountDataModel userAccount = accountDataRepository.findById(account).get();
-                    if (userAccount.getBalance() > transferAmount) {
+                    AccountDataModel remitterUserAccount = accountDataRepository.findById(remitterAccount).get();
+                    AccountDataModel recieverUserAccount = accountDataRepository.findById(recieverAccount).get();
+                    if (remitterUserAccount.getBalance() >= transferAmount) {
                         //transfer and edit balance
-                        userAccount.setBalance(userAccount.getBalance() + transferAmount);
-                        accountDataRepository.saveAndFlush(userAccount);
+                        recieverUserAccount.setBalance(recieverUserAccount.getBalance() + transferAmount);
+                        remitterUserAccount.setBalance(remitterUserAccount.getBalance() + transferAmount);
+                        accountDataRepository.saveAndFlush(remitterUserAccount);
+                        accountDataRepository.saveAndFlush(recieverUserAccount);
                     } else {
                         //if balance is less than transfer amount
                         return 3;
