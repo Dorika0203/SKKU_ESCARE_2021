@@ -51,7 +51,6 @@ public class SignUp {
 
         //create sdkms client
         client = createClient(server, username, password);
-        connectFortanixsdkms(client);
 
         //hashing and encrypting pw
         byte[] cipher = null;
