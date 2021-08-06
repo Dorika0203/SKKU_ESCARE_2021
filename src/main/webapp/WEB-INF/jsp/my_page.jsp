@@ -373,7 +373,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
   var i;
   var select_list = document.getElementById('select_list');
   var select_panel = document.getElementById('select_panel');
-  console.log(select_list);
   for (i=0; i<accounts.length; i++)
   {
     // select list creation
