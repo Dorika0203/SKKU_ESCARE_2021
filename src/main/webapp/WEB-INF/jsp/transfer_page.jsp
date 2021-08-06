@@ -389,6 +389,8 @@
 <script src="node-forge/dist/forge.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+    let accountJSONData = `<%=request.getAttribute("myAccountsData")%>`;
+    let accounts = JSON.parse(accountJSONData);
     //PKI element
     let pki = forge.pki
     let keyStorage = JSON.parse(localStorage.getItem('<%= request.getAttribute("loginClientID") %>'))
