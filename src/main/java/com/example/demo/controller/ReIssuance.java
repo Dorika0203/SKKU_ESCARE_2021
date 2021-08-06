@@ -162,8 +162,7 @@ public class ReIssuance {
         signUpID = LoginClient.getUserID();
         System.out.println(signUpID);
         if (signUpID != null) {
-            ApiClient client;
-            client = createClient(server, username, password);
+
             KeyObject value = fortanixRestApi.getSecObj(client, signUpID);
             byte[] pub = value.getPubKey();
             byte[] priv = value.getValue();//pkcs1 priv key

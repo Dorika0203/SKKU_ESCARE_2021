@@ -77,7 +77,7 @@ public class TransferPage {
         }
         model.addAttribute("myAccountsData", myAccountsData.toString());
         model.addAttribute("loginClientID", LoginClient.getUserID());
-        return "transfer_page";
+
         //SignInSession signInSession = new SignInSession();
         //signInSession.SessionChecker("transfer_page");
 
