@@ -43,7 +43,6 @@ public class SignIn {
         int flag = 0;
         // connect to SDKMS
         ApiClient client = createClient(server, username, password);
-        connectFortanixsdkms(client);
         setClient(client);
 
         // try Login.

@@ -9,6 +9,8 @@ import com.example.demo.repository.BankStatementDataRepository;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
 import com.example.demo.user.LoginClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import com.fortanix.sdkms.v1.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,8 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +62,22 @@ public class TransferPage {
     @GetMapping
     public String transferPage(Model model) {
         //add ID to model
+        List<AccountDataModel> loginUserAccountList = accountDataRepository.findAllByUserId(LoginClient.getUserID());
+        JSONArray myAccountsData = new JSONArray();
+
+        for (int i = 0; i < loginUserAccountList.size(); i++) {
+
+            AccountDataModel accountInfo = loginUserAccountList.get(i);
+            JSONObject sendingData = new JSONObject();
+
+            sendingData.put("accountID", accountInfo.getAccount());
+            sendingData.put("balance", accountInfo.getBalance());
+
+            myAccountsData.put(sendingData);
+        }
+        model.addAttribute("myAccountsData", myAccountsData.toString());
+        model.addAttribute("loginClientID", LoginClient.getUserID());
+        return "transfer_page";
         //SignInSession signInSession = new SignInSession();
         //signInSession.SessionChecker("transfer_page");
 
