@@ -126,11 +126,9 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                     <div class="tab-content" id='select_panel'>
 
                       <!-- div1 -->
-
                       <!-- <div class="tab-pane fade active show" id="tab-page1-0" role="tabpanel"> -->
 
                         <!-- div2 ~ div8-->
-                        
                         <!-- <div class="card mb-3 widget-content bg-midnight-bloom">
                           <div class="widget-content-wrapper text-white">
                             <div class="widget-content-left">
@@ -145,7 +143,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                           </div>
                         </div> -->
                         
-                        <!-- div9 ~  -->
+                        <!-- div9 ~ -->
                         <!-- <div class="mb-3 card">
                           <div
                             class="
@@ -189,31 +187,22 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                   <li class="list-group-item">
                                     <div class="widget-content p-0">
                                       <div class="widget-content-wrapper">
-                                        <div class="widget-content-left mr-3">
-                                          |
-                                        </div>
+                                        <div class="widget-content-left mr-3">|</div>
                                         <div class="widget-content-left">
-                                          <div class="widget-heading">
-                                            N_코레일유통
-                                          </div>
-                                          <div class="widget-subheading">
-                                            2021.06.22 17:59:37
-                                          </div>
+                                          <div class="widget-heading">N_코레일유통</div>
+                                          <div class="widget-subheading">2021.06.22 17:59:37</div>
                                         </div>
                                         <div class="widget-content-right">
                                           <div class="font-size-xlg text-muted">
                                             <span>8,000</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-danger pl-2">
-                                              출금
-                                            </small>
+                                            <small class="opacity-5 pr-1">원</small>
+                                            <small class="text-danger pl-2">출금</small>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                   </li>
+                                  
                                   <li class="list-group-item">
                                     <div class="widget-content p-0">
                                       <div class="widget-content-wrapper">
@@ -231,12 +220,8 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                                         <div class="widget-content-right">
                                           <div class="font-size-xlg text-muted">
                                             <span>15,900</span>
-                                            <small class="opacity-5 pr-1"
-                                              >원</small
-                                            >
-                                            <small class="text-success pl-2">
-                                              입금
-                                            </small>
+                                            <small class="opacity-5 pr-1">원</small>
+                                            <small class="text-success pl-2">입금</small>
                                           </div>
                                         </div>
                                       </div>
@@ -332,8 +317,9 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                           </div>
                         </div> -->
 
-
                       <!-- </div> -->
+
+
 
                     </div>
                   </div>
@@ -388,8 +374,8 @@ uri="http://java.sun.com/jsp/jstl/core" %>
   var select_list = document.getElementById('select_list');
   var select_panel = document.getElementById('select_panel');
   console.log(select_list);
-  for (i=0; i<accounts.length; i++) {
-
+  for (i=0; i<accounts.length; i++)
+  {
     // select list creation
     var newList = document.createElement("li");
     newList.setAttribute("class", "nav-item");
@@ -437,11 +423,96 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     div2.appendChild(div3);
     div1.appendChild(div2);
 
-    select_panel.appendChild(div1);
 
     // account transfer log description
+    var div9 = document.createElement('div');
+    div9.setAttribute('class', 'mb-3 card');
+    var div10 = document.createElement('div');
+    div10.setAttribute('class', 'card-header-tab card-header-tab-animation card-header');
+    var div11 = document.createElement('div');
+    div11.setAttribute('class', 'card-header-title');
+    var i1 = document.createElement('i');
+    i1.setAttribute('class', 'header-icon lnr-apartment icon-gradient bg-love-kiss');
+    div11.appendChild(i1);
+    div11.append('거래내역');
+    div10.appendChild(div11);
+    div9.appendChild(div10);
 
+    var div12 = document.createElement('div');
+    div12.setAttribute('class', 'card-body');
+    var h6_1 = document.createElement('h6');
+    h6_1.setAttribute('class', 'text-muted text-uppercase font-size-md opacity-5 font-weight-normal');
+    h6_1.append('입출금 내역');
+    div12.appendChild(h6_1);
 
+    var div13 = document.createElement('div');
+    div13.setAttribute('class', 'cscroll-area-sm');
+    var div14 = document.createElement('div');
+    div14.setAttribute('class', 'scrollbar-container');
+    var ul1 = document.createElement('ul');
+    ul1.setAttribute('class', 'rm-list-borders rm-list-borders-scroll list-group list-group-flush');
+    
+    var tempLog = accounts[i].transferLog;
+    var j;
+    for(j=0; j<tempLog.length; j++)
+    {
+      var TsendTo = tempLog.sendTo;
+      var Tgold = tempLog.gold;
+      var Ttime = tempLog.time;
+      var Tresult = tempLog.result;
+      
+      var li1 = document.createElement('li');
+      li1.setAttribute('class', 'list-group-item');
+
+      var div15 = document.createElement('div');
+      div15.setAttribute('class', 'widget-content p-0');
+      var div16 = document.createElement('div');
+      div16.setAttribute('class', 'widget-content-wrapper');
+      var div17 = document.createElement('div');
+      div17.setAttribute('class', 'widget-content-left mr-3');
+      div17.append('|');
+      var div18 = document.createElement('div');
+      div18.setAttribute('class', 'widget-content-left');
+      var div19 = document.createElement('div');
+      div19.setAttribute('class', 'widget-heading');
+      div19.append(TsendTo);
+      var div20 = document.createElement('div');
+      div20.setAttribute('class', 'widget-subheading');
+      div20.append(Ttime);
+      var div21 = document.createElement('div');
+      div21.setAttribute('class', 'widget-content-right');
+      var div22 = document.createElement('div');
+      div22.setAttribute('class', 'font-size-xlg text-muted');
+      var span2 = document.createElement('span');
+      span2.append(Tgold);
+      var small1 = document.createElement('small');
+      small1.setAttribute('class', 'opacity-5 pr-1');
+      small1.append('원');
+      var small2 = document.createElement('small');
+      small2.setAttribute('class', 'text-danger pl-2');
+      small2.append('출금');
+      div22.appendChild(span2);
+      div22.appendChild(small1);
+      div22.appendChild(small2);
+      div21.appendChild(div22);
+      div18.appendChild(div19);
+      div18.appendChild(div20);
+      div16.appendChild(div17);
+      div16.appendChild(div18);
+      div16.appendChild(div21);
+      div15.appendChild(div16);
+      li1.appendChild(div15);
+
+      ul1.appendChild(li1);
+    }
+    div14.appendChild(ul1);
+    div13.appendChild(div14);
+    div12.appendChild(div13);
+    div9.appendChild(div12);
+    div1.appendChild(div9);
+
+    select_panel.appendChild(div1);
   }
   console.log(select_list);
+  console.log(select_panel);
 </script>
