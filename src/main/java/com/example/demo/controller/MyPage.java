@@ -26,6 +26,9 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.example.demo.fortanix.fortanixRestApi.*;
 import static com.example.demo.user.LoginClient.getClient;
@@ -179,12 +182,22 @@ public class MyPage {
 
                 // get maximum 10 transfer log.
                 List<BankStatementDataModel> accountTransferInfo = bankStatementDataRepository.findAllByAccount(thisAcc.getAccount());
+                accountTransferInfo = Stream.concat(accountTransferInfo.stream(), bankStatementDataRepository.findAllByDepositAccount(thisAcc.getAccount()).stream()).collect(Collectors.toList());
+
                 for (int j = 0; j < accountTransferInfo.size(); j++) {
                     BankStatementDataModel thisTransfer = accountTransferInfo.get(j);
                     if (j == 10) break;
                     JSONObject addingOneTransfer = new JSONObject();
-                    addingOneTransfer.put("sendTo", thisTransfer.getDepositAccount());
-                    addingOneTransfer.put("gold", thisTransfer.getTransactionAmount());
+                    if(thisTransfer.getAccount() == thisAcc.getAccount())
+                    {
+                        addingOneTransfer.put("sendTo", thisTransfer.getDepositAccount());
+                        addingOneTransfer.put("gold", thisTransfer.getTransactionAmount());
+                    }
+                    else
+                    {
+                        addingOneTransfer.put("sendTo", thisTransfer.getAccount());
+                        addingOneTransfer.put("gold", thisTransfer.getTransactionAmount() * -1);
+                    }
                     addingOneTransfer.put("time", thisTransfer.getTransactionTime());
                     addingOneTransfer.put("result", thisTransfer.getAfterBalance());
                     addingTransfer.put(addingOneTransfer);

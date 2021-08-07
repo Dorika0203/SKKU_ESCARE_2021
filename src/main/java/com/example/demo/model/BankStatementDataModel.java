@@ -47,8 +47,9 @@ public class BankStatementDataModel {
 
     public void setDepositAccount(long depositAccount) {this.depositAccount = depositAccount;}
 
-    public BankStatementDataModel(long count, long transactionTime, long transactionAmount, long afterBalance, long depositAccount) {
+    public BankStatementDataModel(long count, long account, long transactionTime, long transactionAmount, long afterBalance, long depositAccount) {
         this.count = count;
+        this.account = account;
         this.transactionTime = transactionTime;
         this.transactionAmount = transactionAmount;
         this.afterBalance = afterBalance;

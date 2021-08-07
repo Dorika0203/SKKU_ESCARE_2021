@@ -378,9 +378,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     // select list creation
     var newList = document.createElement("li");
     newList.setAttribute("class", "nav-item");
-    console.log(newList);
     var temp = document.createElement('a');
-    console.log(temp);
     temp.setAttribute('data-toggle', 'tab');
     temp.setAttribute('href', '#tab-page1-'+i);
     temp.setAttribute('class', 'nav-link');
@@ -455,11 +453,23 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     var j;
     for(j=0; j<tempLog.length; j++)
     {
-      var TsendTo = tempLog.sendTo;
-      var Tgold = tempLog.gold;
-      var Ttime = tempLog.time;
-      var Tresult = tempLog.result;
-      
+      console.log(tempLog[j]);
+      var TsendTo = tempLog[j].sendTo;
+      var Tgold = tempLog[j].gold;
+      var Ttime = tempLog[j].time;
+      var Tresult = tempLog[j].result;
+
+      var date = new Date(Ttime*1000);
+
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var day = date.getDay() + 1;
+      var hour = date.getHours();
+      var minute = date.getMinutes();
+      var second = date.getSeconds();
+
+      var TtimeStr = year + '/' + month + '/' + day + "  " + hour + ':' + minute + ':' + second;
+
       var li1 = document.createElement('li');
       li1.setAttribute('class', 'list-group-item');
 
@@ -477,19 +487,27 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       div19.append(TsendTo);
       var div20 = document.createElement('div');
       div20.setAttribute('class', 'widget-subheading');
-      div20.append(Ttime);
+      div20.append(TtimeStr);
       var div21 = document.createElement('div');
       div21.setAttribute('class', 'widget-content-right');
       var div22 = document.createElement('div');
       div22.setAttribute('class', 'font-size-xlg text-muted');
       var span2 = document.createElement('span');
-      span2.append(Tgold);
+      span2.append(Math.abs(Tgold));
       var small1 = document.createElement('small');
       small1.setAttribute('class', 'opacity-5 pr-1');
       small1.append('원');
       var small2 = document.createElement('small');
-      small2.setAttribute('class', 'text-danger pl-2');
-      small2.append('출금');
+      if(Tgold > 0)
+      {
+        small2.setAttribute('class', 'text-danger pl-2');
+        small2.append('출금');
+      }
+      else
+      {
+        small2.setAttribute('class', 'text-success pl-2');
+        small2.append('입금');
+      }
       div22.appendChild(span2);
       div22.appendChild(small1);
       div22.appendChild(small2);
@@ -512,6 +530,4 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 
     select_panel.appendChild(div1);
   }
-  console.log(select_list);
-  console.log(select_panel);
 </script>

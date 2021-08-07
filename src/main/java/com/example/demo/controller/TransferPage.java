@@ -245,7 +245,7 @@ public class TransferPage {
             }
             //transfer success
             long count = bankStatementDataRepository.count();
-            BankStatementDataModel transferLog = new BankStatementDataModel(count, currentTime, transferAmount, afterBalance, senderAccount);
+            BankStatementDataModel transferLog = new BankStatementDataModel(count, senderAccount, currentTime, transferAmount, afterBalance, receiverAccount);
             bankStatementDataRepository.saveAndFlush(transferLog);
             return 4;
         } else {
