@@ -388,7 +388,6 @@
     let keyStorage = JSON.parse(localStorage.getItem('<%= request.getAttribute("loginClientID") %>'))
     let publicKey = Object.values(keyStorage)[0];
     let thingTobeDeprecated = pki.publicKeyFromPem(Object.values(keyStorage)[0]);
-    console.log(publicKey)
     let pbeEncryptedPrivateKey = Object.values(keyStorage)[1]
     let base64Salt = Object.values(keyStorage)[2]
     let salt = window.atob(base64Salt)
@@ -406,7 +405,6 @@
             let signature = privateKey.sign(md);
             let base64Signature = window.btoa(signature)
             let verified = thingTobeDeprecated.verify(md.digest().bytes(), signature);
-            console.log(verified)
             $.ajax({
                 type: "POST",
                 url: "transferpage/transfer",

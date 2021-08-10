@@ -51,7 +51,6 @@ public class TransferPage {
         String publicKey = (String) transferDataMap.get("publicKey");
         PublicKey publicKey1 = getPublicKeyFromBase64String(publicKey);
         System.out.println(transferData + "\n" + signature + "\n" + publicKey + "\n");
-
         signatureVerify(transferData, publicKey1, Base64.getDecoder().decode(signature));
         long account = 0;
         long transferAmount = 0;

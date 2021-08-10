@@ -48,7 +48,7 @@
     let pki = forge.pki
     let privateKey = pki.privateKeyFromPem(javaPrivateKey);
     let salt = forge.random.getBytesSync(128);
-    let base64Salt = window.btoa(salt)
+    let base64Salt = window.btoa(salt);
     let derivedKey = forge.pkcs5.pbkdf2(`<%=request.getAttribute("password")%>`, salt, 20, 16);
     let pbePrivateKey = pki.encryptRsaPrivateKey(privateKey, derivedKey);
     let homeButton = document.getElementById("home_button");
