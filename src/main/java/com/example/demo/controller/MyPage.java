@@ -50,7 +50,7 @@ public class MyPage {
 
         //check if user is login
         String userID = getUserID();
-        if (userID == null) {
+        if (userID.isEmpty()) {
             return "my_page_fail";
         }
 
@@ -131,4 +131,6 @@ public class MyPage {
                 return false;
         }
     }
+
+
 }
