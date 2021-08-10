@@ -36,7 +36,7 @@ public class AccountDataModel {
     public AccountDataModel(long account, String id) {
         this.account = account;
         this.userId = id;
-        this.balance = 0;
+        this.balance = 100000;
     }
 
     public AccountDataModel() {

@@ -8,12 +8,9 @@ import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.BankStatementDataRepository;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
-import com.example.demo.user.LoginClient;
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
-import com.fortanix.sdkms.v1.JSON;
 import com.fortanix.sdkms.v1.api.AuthenticationApi;
-import com.fortanix.sdkms.v1.api.EncryptionAndDecryptionApi;
 import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.*;
 
@@ -27,11 +24,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static com.example.demo.fortanix.fortanixRestApi.*;
+import static com.example.demo.user.LoginClient.getClient;
 import static com.example.demo.user.LoginClient.getUserID;
 
 @Controller
@@ -53,30 +53,36 @@ public class MyPage {
     @GetMapping
     public String mypage(Model model) {
 
-        // connect to SDKMS
-        ApiClient client = createClient(server, username, password);
-        connectFortanixsdkms(client);
-
         //check if user is login
         String userID = getUserID();
-        if (userID == null) {return "my_page_fail";}
+        if (userID == null) {
+            return "my_page_fail";
+        }
 
         // =================================Get Sign Time==================================================
         List<SignInDataModel> signInDataModelList = signInDataRepository.findAllByUserId(userID);
         int idx = signInDataModelList.size();
-        if (idx == 0) {return "my_page_fail";}
-        SignInDataModel lastSignInDataModel = signInDataModelList.get(idx-1);
+        if (idx == 0) {
+            return "my_page_fail";
+        }
+        SignInDataModel lastSignInDataModel = signInDataModelList.get(idx - 1);
 
         byte[] signIn_cipher = lastSignInDataModel.getSignIn_time();
-        byte[] decryptedByteSignInTime = DecryptCipher(signIn_cipher, client);
+        byte[] decryptedByteSignInTime = DecryptAESCipher(signIn_cipher, getClient());
 
         String signIn_time = new String(decryptedByteSignInTime, StandardCharsets.UTF_8);
 
-        String signInDate; String signInTime;
+        String signInDate;
+        String signInTime;
         signInDate = signIn_time.split(" ")[0];
         signInTime = signIn_time.split(" ")[1];
 
-        int signInYear; int signInMonth; int signInDay; int signInHour; int signInMinute; int signInSecond;
+        int signInYear;
+        int signInMonth;
+        int signInDay;
+        int signInHour;
+        int signInMinute;
+        int signInSecond;
         signInYear = Integer.parseInt(signInDate.split("-")[0]);
         signInMonth = Integer.parseInt(signInDate.split("-")[1]);
         signInDay = Integer.parseInt(signInDate.split("-")[2]);
@@ -88,19 +94,27 @@ public class MyPage {
         //===================================Get SignOut Time=============================================
         List<SignOutDataModel> signOutDataModelList = signOutDataRepository.findAllByUserId(userID);
         idx = signOutDataModelList.size();
-        if (idx == 0) {return "my_page";}
-        SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(idx-1);
+        if (idx == 0) {
+            return "my_page";
+        }
+        SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(idx - 1);
 
         byte[] signOutcipher = lastSignOutDataModel.getSignOut_time();
-        byte[] decryptedByteSignOutTime = DecryptCipher(signOutcipher, client);
+        byte[] decryptedByteSignOutTime = DecryptAESCipher(signOutcipher, getClient());
 
         String signOut_time = new String(decryptedByteSignOutTime, StandardCharsets.UTF_8);
 
-        String signOutDate; String signOutTime;
+        String signOutDate;
+        String signOutTime;
         signOutDate = signOut_time.split(" ")[0];
         signOutTime = signOut_time.split(" ")[1];
 
-        int signOutYear; int signOutMonth; int signOutDay; int signOutHour; int signOutMinute; int signOutSecond;
+        int signOutYear;
+        int signOutMonth;
+        int signOutDay;
+        int signOutHour;
+        int signOutMinute;
+        int signOutSecond;
         signOutYear = Integer.parseInt(signOutDate.split("-")[0]);
         signOutMonth = Integer.parseInt(signOutDate.split("-")[1]);
         signOutDay = Integer.parseInt(signOutDate.split("-")[2]);
@@ -110,8 +124,12 @@ public class MyPage {
         signOutSecond = Integer.parseInt(signOutTime.split(":")[2]);
         //====================================================================================================
         //================================Compare SignIn & SignOut Time=======================================
-        int signYearDiff = signOutYear - signInYear; int signMonthDiff = signOutMonth - signInMonth; int signDayDiff = signOutDay - signInDay;
-        int signHourDiff = signOutHour - signInHour; int signMinuteDiff = signOutMinute - signInMinute; int signSecondDiff = signOutSecond - signInSecond;
+        int signYearDiff = signOutYear - signInYear;
+        int signMonthDiff = signOutMonth - signInMonth;
+        int signDayDiff = signOutDay - signInDay;
+        int signHourDiff = signOutHour - signInHour;
+        int signMinuteDiff = signOutMinute - signInMinute;
+        int signSecondDiff = signOutSecond - signInSecond;
 
         int signDiff = (((((signYearDiff * 12 + signMonthDiff) * 31 + signDayDiff) * 24 + signHourDiff) * 60 + signMinuteDiff) * 60 + signSecondDiff);
 
@@ -120,12 +138,18 @@ public class MyPage {
 
         String current_time = getCurrentTime();
 
-        String curDate; String curTime;
+        String curDate;
+        String curTime;
         curDate = current_time.split(" ")[0];
         curTime = current_time.split(" ")[1];
 
-        int curYear; int curMonth; int curDay; int curHour; int curMinute; int curSecond;
-        curYear = Integer.parseInt( curDate.split("-")[0]);
+        int curYear;
+        int curMonth;
+        int curDay;
+        int curHour;
+        int curMinute;
+        int curSecond;
+        curYear = Integer.parseInt(curDate.split("-")[0]);
         curMonth = Integer.parseInt(curDate.split("-")[1]);
         curDay = Integer.parseInt(curDate.split("-")[2]);
 
@@ -133,38 +157,47 @@ public class MyPage {
         curMinute = Integer.parseInt(curTime.split(":")[1]);
         curSecond = Integer.parseInt(curTime.split(":")[2]);
 
-        int yearDiff = curYear - signInYear; int monthDiff = curMonth - signInMonth; int dayDiff = curDay - signInDay;
-        int hourDiff = curHour - signInHour; int minuteDiff = curMinute - signInMinute; int secondDiff = curSecond - signInSecond;
+        int yearDiff = curYear - signInYear;
+        int monthDiff = curMonth - signInMonth;
+        int dayDiff = curDay - signInDay;
+        int hourDiff = curHour - signInHour;
+        int minuteDiff = curMinute - signInMinute;
+        int secondDiff = curSecond - signInSecond;
         int diff = (((((yearDiff * 12 + monthDiff) * 31 + dayDiff) * 24 + hourDiff) * 60 + minuteDiff) * 60 + secondDiff);
 
 
         // session checked. show my_page
-        if (0 <= diff && diff <= 300)
-        {
-            System.out.println("------------------ THIS IS MY ACCOUNT INFO FOR MY PAGE ------------------------ ");
+        if (0 <= diff && diff <= 300) {
             JSONArray myAccountsData = new JSONArray();
             List<AccountDataModel> myAccounts = accountDataRepository.findAllByUserId(userID);
 
-            for(int i=0; i<myAccounts.size(); i++) {
+            for (int i = 0; i < myAccounts.size(); i++) {
 
                 AccountDataModel thisAcc = myAccounts.get(i);
                 JSONObject addingAccount = new JSONObject();
                 JSONArray addingTransfer = new JSONArray();
 
-                System.out.println("accountID: " + thisAcc.getAccount());
-                System.out.println("balance: " + thisAcc.getBalance());
                 addingAccount.put("accountID", thisAcc.getAccount());
                 addingAccount.put("balance", thisAcc.getBalance());
 
                 // get maximum 10 transfer log.
                 List<BankStatementDataModel> accountTransferInfo = bankStatementDataRepository.findAllByAccount(thisAcc.getAccount());
-                for(int j=0; j<accountTransferInfo.size(); j++)
-                {
+                accountTransferInfo = Stream.concat(accountTransferInfo.stream(), bankStatementDataRepository.findAllByDepositAccount(thisAcc.getAccount()).stream()).collect(Collectors.toList());
+
+                for (int j = 0; j < accountTransferInfo.size(); j++) {
                     BankStatementDataModel thisTransfer = accountTransferInfo.get(j);
-                    if(j == 10) break;
+                    if (j == 10) break;
                     JSONObject addingOneTransfer = new JSONObject();
-                    addingOneTransfer.put("sendTo", thisTransfer.getDepositAccount());
-                    addingOneTransfer.put("gold", thisTransfer.getTransactionAmount());
+                    if(thisTransfer.getAccount() == thisAcc.getAccount())
+                    {
+                        addingOneTransfer.put("sendTo", thisTransfer.getDepositAccount());
+                        addingOneTransfer.put("gold", thisTransfer.getTransactionAmount());
+                    }
+                    else
+                    {
+                        addingOneTransfer.put("sendTo", thisTransfer.getAccount());
+                        addingOneTransfer.put("gold", thisTransfer.getTransactionAmount() * -1);
+                    }
                     addingOneTransfer.put("time", thisTransfer.getTransactionTime());
                     addingOneTransfer.put("result", thisTransfer.getAfterBalance());
                     addingTransfer.put(addingOneTransfer);
@@ -172,25 +205,10 @@ public class MyPage {
                 addingAccount.put("transferLog", addingTransfer);
                 myAccountsData.put(addingAccount);
             }
-            System.out.println(myAccountsData.toString());
             model.addAttribute("myAccountsData", myAccountsData.toString());
             return "my_page";
-        }
-        else
+        } else
             return "my_page_fail";
-    }
-
-    public byte[] DecryptCipher(byte[] cipher, ApiClient client) {
-        String ivStr = new String("ESCAREAAAAAAAAAA");
-        DecryptRequest decryptRequest = new DecryptRequest();
-        decryptRequest.alg(ObjectType.AES).cipher(cipher).mode(CryptMode.CBC).iv(ivStr.getBytes());
-        try {
-            DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client).decrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", decryptRequest);
-            return decryptResponse.getPlain();
-        } catch (ApiException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public String getCurrentTime() {
@@ -201,25 +219,4 @@ public class MyPage {
         return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
     }
 
-    // connect to SDKMS
-    public ApiClient createClient(String server, String username, String password) {
-        ApiClient client = new ApiClient();
-        client.setBasePath(server);
-        client.setUsername(username);
-        client.setPassword(password);
-        return client;
-    }
-
-    public void connectFortanixsdkms(ApiClient client) {
-        AuthenticationApi authenticationApi = new AuthenticationApi(client);
-        try {
-            AuthResponse authResponse = authenticationApi.authorize();
-            ApiKeyAuth bearerTokenAuth = (ApiKeyAuth) client.getAuthentication("bearerToken");
-            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
-            bearerTokenAuth.setApiKeyPrefix("Bearer");
-            System.out.println("success");
-        } catch (ApiException e) {
-            System.err.println("Unable to authenticate: " + e.getMessage());
-        }
-    }
 }

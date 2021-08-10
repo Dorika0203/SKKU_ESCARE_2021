@@ -17,8 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.example.demo.user.LoginClient.getUserID;
-import static com.example.demo.user.LoginClient.setUserID;
+import static com.example.demo.fortanix.fortanixRestApi.*;
+import static com.example.demo.user.LoginClient.*;
 
 @Controller
 @RequestMapping("logout")
@@ -33,34 +33,17 @@ public class SignOut
 
     @GetMapping
     public String connect() {
-        // connect to SDKMS
-        ApiClient client = createClient(server, username, password);
-        connectFortanixsdkms(client);
 
         long tmp = signOutDataRepository.count();
         int iTmp = Long.valueOf(tmp).intValue();
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
-        byte[] cipher = generateCipher(byteCurrentTime, client);
+        byte[] cipher = generateAESCipher(byteCurrentTime, getClient());
         String ID = getUserID();
         SignOutDataModel signOutDataModel = new SignOutDataModel(iTmp, ID, cipher);
         signOutDataRepository.saveAndFlush(signOutDataModel);
         setUserID(null);
 
         return "logout_page";
-    }
-
-    public byte[] generateCipher(byte[] plain, ApiClient client) {
-        String ivStr = new String("ESCAREAAAAAAAAAA");
-        EncryptRequest encryptRequest = new EncryptRequest();
-        encryptRequest.alg(ObjectType.AES).plain(plain).mode(CryptMode.CBC).setIv(ivStr.getBytes());
-        try {
-            EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
-                    .encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
-            return encryptResponse.getCipher();
-        } catch (ApiException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public String getCurrentTime() {
@@ -71,25 +54,4 @@ public class SignOut
         return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
     }
 
-    // connect to SDKMS
-    public ApiClient createClient(String server, String username, String password) {
-        ApiClient client = new ApiClient();
-        client.setBasePath(server);
-        client.setUsername(username);
-        client.setPassword(password);
-        return client;
-    }
-
-    public void connectFortanixsdkms(ApiClient client) {
-        AuthenticationApi authenticationApi = new AuthenticationApi(client);
-        try {
-            AuthResponse authResponse = authenticationApi.authorize();
-            ApiKeyAuth bearerTokenAuth = (ApiKeyAuth) client.getAuthentication("bearerToken");
-            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
-            bearerTokenAuth.setApiKeyPrefix("Bearer");
-            System.out.println("success");
-        } catch (ApiException e) {
-            System.err.println("Unable to authenticate: " + e.getMessage());
-        }
-    }
 }

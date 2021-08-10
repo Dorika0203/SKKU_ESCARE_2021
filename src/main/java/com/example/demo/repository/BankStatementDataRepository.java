@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface BankStatementDataRepository extends JpaRepository<BankStatementDataModel, String> {
     List<BankStatementDataModel> findAllByAccount (long account);
+    List<BankStatementDataModel> findAllByDepositAccount (long depositAccount);
 }

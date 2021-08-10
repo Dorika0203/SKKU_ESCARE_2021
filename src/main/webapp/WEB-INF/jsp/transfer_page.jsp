@@ -66,7 +66,7 @@
                             <div class="widget-content-left ml-3 header-user-info">
                                 <div class="widget-heading">Hyejin Yoo</div>
                                 <div class="widget-subheading">
-                                    <span id="counter"></span>
+                                    <span id="counter1"></span>
                                     <input
                                             type="button"
                                             class="btn p-1 show-toastr-example"
@@ -127,229 +127,68 @@
                     <div class="col-md col-xl">
                         <div class="main-card mb-3 card">
                             <div class="card-body">
-                                <h5 class="card-title">Tab Header</h5>
-
-                                <ul class="nav nav-tabs nav-justified" role="tablist">
-                                    <li class="nav-item">
-                                        <a
-                                                data-toggle="tab"
-                                                href="#tab-page2-0"
-                                                class="active nav-link"
-                                                id="my-account1"
-                                        >계좌별칭</a
-                                        >
-                                    </li>
-                                    <li class="nav-item">
-                                        <a
-                                                data-toggle="tab"
-                                                href="#tab-page2-1"
-                                                class="nav-link"
-                                        >계좌별칭 2</a
-                                        >
-                                    </li>
-                                    <li class="nav-item">
-                                        <a
-                                                data-toggle="tab"
-                                                href="#tab-page2-2"
-                                                class="nav-link"
-                                        >계좌별칭 3</a
-                                        >
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
+                                <ul class="nav nav-tabs nav-justified" role="tablist" id='select_list'></ul>
+                                <div class="tab-content" id='select_panel'></div>
+                                <div class="mb-3 card">
                                     <div
-                                            class="tab-pane fade active show"
-                                            id="tab-page2-0"
-                                            role="tabpanel"
+                                            class="
+                      card-header-tab
+                      card-header-tab-animation
+                      card-header
+                    "
                                     >
-                                        <div class="card mb-3 widget-content bg-midnight-bloom">
-                                            <div class="widget-content-wrapper text-white">
-                                                <div class="widget-content-left">
-                                                    <div class="widget-heading">계좌별칭</div>
-                                                    <div class="widget-subheading">
-                                                        123-4567-8987-65
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-right">
-                                                    <div class="widget-numbers text-white">
-                                                        <span>999,999 원</span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="card-header-title">| 송금</div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="md-form form-group w-50 mb-3">
+                                            <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    aria-label="Text input with dropdown button"
+                                                    placeholder="비밀번호"
+                                                    id="password"
+                                            />
                                         </div>
-
-                                        <div class="mb-3 card">
-                                            <div
-                                                    class="
-                              card-header-tab
-                              card-header-tab-animation
-                              card-header
-                            "
-                                            >
-                                                <div class="card-header-title">| 송금</div>
+                                        <div class="input-group">
+<%--                                            <div class="input-group mb-3">--%>
+<%--                                                <input--%>
+<%--                                                        type="text"--%>
+<%--                                                        class="form-control"--%>
+<%--                                                        aria-label="Text input with dropdown button"--%>
+<%--                                                        placeholder="보내는 계좌번호 입력"--%>
+<%--                                                        id="remitter-account"--%>
+<%--                                                />--%>
+<%--                                            </div>--%>
+                                            <div class="input-group-mb3">
+                                                <select
+                                                        class="form-control"
+                                                        id="remitter-account">
+                                                </select>
                                             </div>
-                                            <div class="card-body">
-                                                <div class="input-group">
-                                                    <div class="input-group mb-3">
-                                                        <input
-                                                                type="text"
-                                                                class="form-control"
-                                                                aria-label="Text input with dropdown button"
-                                                                placeholder="비밀번호"
-                                                                id="password"
-                                                        />
-                                                    </div>
-                                                    <div class="input-group">
-                                                        <div class="input-group mb-3">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    aria-label="Text input with dropdown button"
-                                                                    placeholder="계좌번호 입력"
-                                                                    id="receiver-account"
-                                                            />
-                                                        </div>
-                                                        <div class="input-group mb-3">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    aria-label="Text input with dropdown button"
-                                                                    placeholder="금액"
-                                                                    id="transfer-amount"
-                                                            />
-                                                            <button
-                                                                    class="btn btn-outline-secondary"
-                                                                    type="submit"
-                                                                    id="send"
-                                                            >
-                                                                송금
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <div class="input-group mb-3">
+                                                <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        aria-label="Text input with dropdown button"
+                                                        placeholder="받는 계좌번호 입력"
+                                                        id="receiver-account"
+                                                />
                                             </div>
-                                            </form>
-                                        </div>
-
-                                        <div
-                                                class="tab-pane fade"
-                                                id="tab-page2-1"
-                                                role="tabpanel"
-                                        >
-                                            <div class="card mb-3 widget-content bg-midnight-bloom">
-                                                <div class="widget-content-wrapper text-white">
-                                                    <div class="widget-content-left">
-                                                        <div class="widget-heading">계좌별칭2</div>
-                                                        <div class="widget-subheading">
-                                                            123-4567-8987-65
-                                                        </div>
-                                                    </div>
-                                                    <div class="widget-content-right">
-                                                        <div class="widget-numbers text-white">
-                                                            <span>888,888 원</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3 card">
-                                                <div
-                                                        class="
-                              card-header-tab
-                              card-header-tab-animation
-                              card-header
-                            "
+                                            <div class="input-group mb-3">
+                                                <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        aria-label="Text input with dropdown button"
+                                                        placeholder="금액"
+                                                        id="transfer-amount"
+                                                />
+                                                <button
+                                                        class="btn btn-outline-secondary"
+                                                        type="submit"
+                                                        id="send"
                                                 >
-                                                    <div class="card-header-title">| 송금</div>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="input-group">
-                                                        <div class="input-group mb-3">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    aria-label="Text input with dropdown button"
-                                                                    placeholder="계좌번호 입력"
-                                                            />
-                                                        </div>
-                                                        <div class="input-group mb-3">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    aria-label="Text input with dropdown button"
-                                                                    placeholder="금액"
-                                                            />
-                                                            <button
-                                                                    class="btn btn-outline-secondary"
-                                                                    type="button"
-                                                                    id="button-addon2"
-                                                            >
-                                                                송금
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                                class="tab-pane fade"
-                                                id="tab-page2-2"
-                                                role="tabpanel"
-                                        >
-                                            <div class="card mb-3 widget-content bg-midnight-bloom">
-                                                <div class="widget-content-wrapper text-white">
-                                                    <div class="widget-content-left">
-                                                        <div class="widget-heading">계좌별칭3</div>
-                                                        <div class="widget-subheading">
-                                                            123-4567-8987-65
-                                                        </div>
-                                                    </div>
-                                                    <div class="widget-content-right">
-                                                        <div class="widget-numbers text-white">
-                                                            <span>777,777 원</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3 card">
-                                                <div
-                                                        class="
-                              card-header-tab
-                              card-header-tab-animation
-                              card-header
-                            "
-                                                >
-                                                    <div class="card-header-title">| 송금</div>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="input-group">
-                                                        <div class="input-group mb-3">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    aria-label="Text input with dropdown button"
-                                                                    placeholder="계좌번호 입력"
-                                                            />
-                                                        </div>
-                                                        <div class="input-group mb-3">
-                                                            <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    aria-label="Text input with dropdown button"
-                                                                    placeholder="금액"
-                                                            />
-                                                            <button
-                                                                    class="btn btn-outline-secondary"
-                                                                    type="button"
-                                                                    id="button-addon3"
-                                                            >
-                                                                송금
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                    송금
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -382,12 +221,93 @@
 <script type="text/javascript" src="js/my_page.js"></script>
 <script src="node-forge/dist/forge.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<%--<script>--%>
+<%--    let accountJSONData = `<%=request.getAttribute("myAccountsData")%>`;--%>
+<%--    let accounts = JSON.parse(accountJSONData);--%>
+
+<%--    var i;--%>
+<%--    var remitter_account = document.getElementById("remitter-account");--%>
+<%--    for(i=0; i<accounts.lenbits; i++){--%>
+<%--        var newlist = document.createElement("option");--%>
+<%--        newlist.setAttribute("value", i);--%>
+<%--        newlist.append(i);--%>
+<%--        remitter_account.appendChild(newlist);--%>
+<%--    }--%>
+
+
+
+<%--</script>--%>
+<script>
+    let accountJSONData = `<%=request.getAttribute("myAccountsData")%>`;
+    let accounts = JSON.parse(accountJSONData);
+    console.log(accounts);
+    var i;
+    var select_list = document.getElementById('select_list');
+    var select_panel = document.getElementById('select_panel');
+    var remitter_account = document.getElementById('remitter-account');
+    for (i=0; i<accounts.length; i++)
+    {
+        // select list creation
+        var newList = document.createElement("li");
+        newList.setAttribute("class", "nav-item");
+        console.log(newList);
+        var temp = document.createElement('a');
+        console.log(temp);
+        temp.setAttribute('data-toggle', 'tab');
+        temp.setAttribute('href', '#tab-page1-'+i);
+        temp.setAttribute('class', 'nav-link');
+        temp.append('계좌별칭 '+i);
+        newList.appendChild(temp);
+        select_list.appendChild(newList);
+
+
+        var div1 = document.createElement('div');
+        div1.setAttribute('class', 'tab-pane fade active show');
+        div1.setAttribute('id', 'tab-page1-'+i);
+        div1.setAttribute('role', 'tabpanel');
+        // account description
+        var div2 = document.createElement('div');
+        div2.setAttribute('class', 'card mb-3 widget-content bg-midnight-bloom');
+        var div3 = document.createElement('div');
+        div3.setAttribute('class', 'widget-content-wrapper text-white');
+        var div4 = document.createElement('div');
+        div4.setAttribute('class', 'widget-content-left');
+        var div5 = document.createElement('div');
+        div5.setAttribute('class', 'widget-heading');
+        div5.append('계좌별칭 '+i);
+        var div6 = document.createElement('div');
+        div6.append(accounts[i].accountID);
+        div6.setAttribute('class', 'widget-subheading');
+        var div7 = document.createElement('div');
+        div7.setAttribute('class', 'widget-content-right');
+        var div8 = document.createElement('div');
+        div8.setAttribute('class', 'widget-numbers text-white');
+        var span1 = document.createElement('span');
+        span1.append(accounts[i].balance);
+        div8.appendChild(span1);
+        div7.appendChild(div8);
+        div4.appendChild(div5);
+        div4.appendChild(div6);
+        div3.appendChild(div4);
+        div3.appendChild(div7);
+        div2.appendChild(div3);
+        div1.appendChild(div2);
+        select_panel.appendChild(div1);
+
+        var option = document.createElement("option");
+        option.setAttribute("value",i);
+        option.append(i);
+        remitter_account.appendChild(option);
+    }
+    console.log(select_list);
+    console.log(select_panel);
+</script>
 <script>
     //PKI element
     let pki = forge.pki
     let keyStorage = JSON.parse(localStorage.getItem('<%= request.getAttribute("loginClientID") %>'))
     let publicKey = Object.values(keyStorage)[0];
-    let thingTobeDeprecated = pki.publicKeyFromPem(Object.values(keyStorage)[0]);
+    console.log(publicKey)
     let pbeEncryptedPrivateKey = Object.values(keyStorage)[1]
     let base64Salt = Object.values(keyStorage)[2]
     let salt = window.atob(base64Salt)
@@ -396,15 +316,16 @@
             let password = $("#password").val();
             let pbeKey = forge.pkcs5.pbkdf2(password, salt, 20, 16);
             let privateKey = pki.decryptRsaPrivateKey(pbeEncryptedPrivateKey, pbeKey)
-            let account = $("#receiver-account").val()
+            let remitterAccount = $("#remitter-account").val()
+            let recieverAccount = $("#receiver-account").val()
             let transferAmount = $("#transfer-amount").val()
-            let transferData = account + transferAmount
+            let timestampSecond = Math.floor(+new Date() / 1000);
+            let transferData = recieverAccount + " " + remitterAccount + " " + transferAmount + " " + timestampSecond
             //signature
             let md = forge.md.sha1.create();
             md.update(transferData, 'utf8');
             let signature = privateKey.sign(md);
             let base64Signature = window.btoa(signature)
-            let verified = thingTobeDeprecated.verify(md.digest().bytes(), signature);
             $.ajax({
                 type: "POST",
                 url: "transferpage/transfer",
@@ -415,6 +336,9 @@
                 }, // parameters
                 success: function (result) {
                     switch (result) {
+                        case 0:
+                            alert("error")
+                            break
                         case 1:
                             alert("account or transfer amount format is incorrect")
                             break

@@ -8,8 +8,10 @@ import java.util.Date;
 
 import com.example.demo.fortanix.fortanixRestApi;
 import com.example.demo.model.*;
+import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.UserDataRepository;
 import com.example.demo.security.RSA;
+import com.example.demo.user.LoginClient;
 import com.fortanix.sdkms.v1.*;
 import com.fortanix.sdkms.v1.api.*;
 import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
@@ -20,7 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import static com.example.demo.fortanix.fortanixRestApi.createClient;
+import static com.example.demo.fortanix.fortanixRestApi.*;
 import static com.example.demo.security.RSA.genFortanixPBEKeyAndSalt;
 import static com.example.demo.security.RSA.getPKCS8KeyFromPKCS1Key;
 
@@ -35,6 +37,8 @@ public class SignUp {
 
     @Autowired
     private UserDataRepository userDataRepository;
+    @Autowired
+    AccountDataRepository accountData;
 
     @PostMapping("/signup")
     public String signUp(String ID, String PW, String lastName, String firstName, String phoneNumber) {
@@ -47,13 +51,12 @@ public class SignUp {
 
         //create sdkms client
         client = createClient(server, username, password);
-        connectFortanixsdkms(client);
 
         //hashing and encrypting pw
         byte[] cipher = null;
 
         try {
-            cipher = generatedCipher(sha256(byteArrPW), client);
+            cipher = generateAESCipher(sha256(byteArrPW), client);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -70,6 +73,13 @@ public class SignUp {
         }
 
         if (SUCCESS) {
+
+            // create account, then make certification.
+//            long Account = accountData.count();
+//            AccountDataModel account = new AccountDataModel(Account, ID);
+//            accountData.saveAndFlush(account);
+//            System.out.println("creating account successed.");
+
             return "certification";
         } else
             return "sign_up_fail";
@@ -110,20 +120,6 @@ public class SignUp {
         return userDataRepository.findById(ID).isPresent();
     }
 
-    public byte[] generatedCipher(byte[] plain, ApiClient client) {
-        String ivStr = new String("ESCAREAAAAAAAAAA");
-        EncryptRequest encryptRequest = new EncryptRequest();
-        encryptRequest.alg(ObjectType.AES).plain(plain).mode(CryptMode.CBC).setIv(ivStr.getBytes());
-        try {
-            EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
-                    .encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
-            return encryptResponse.getCipher();
-        } catch (ApiException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
         try {
@@ -148,17 +144,4 @@ public class SignUp {
         this.signUpID = ID;
     }
 
-    //used only in demo testing
-    public static void connectFortanixsdkms(ApiClient client) {
-        AuthenticationApi authenticationApi = new AuthenticationApi(client);
-        try {
-            AuthResponse authResponse = authenticationApi.authorize();
-            ApiKeyAuth bearerTokenAuth = (ApiKeyAuth) client.getAuthentication("bearerToken");
-            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
-            bearerTokenAuth.setApiKeyPrefix("Bearer");
-            System.out.println("success");
-        } catch (ApiException e) {
-            System.err.println("Unable to authenticate: " + e.getMessage());
-        }
-    }
 }

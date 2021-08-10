@@ -12,15 +12,15 @@ import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.UserDataRepository;
 import com.example.demo.user.LoginClient;
 import com.fortanix.sdkms.v1.*;
-import com.fortanix.sdkms.v1.api.*;
-import com.fortanix.sdkms.v1.model.*;
-import com.fortanix.sdkms.v1.auth.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static com.example.demo.fortanix.fortanixRestApi.*;
+import static com.example.demo.user.LoginClient.setClient;
 
 @Controller
 @RequestMapping("/signin")
@@ -43,7 +43,7 @@ public class SignIn {
         int flag = 0;
         // connect to SDKMS
         ApiClient client = createClient(server, username, password);
-        connectFortanixsdkms(client);
+        setClient(client);
 
         // try Login.
         if(userDataRepository.findById(ID_IN).isPresent()) {
@@ -52,12 +52,12 @@ public class SignIn {
             byte[] hex = userDataModel.getPw();
 
             try {
-                if(Arrays.equals(sha256(PW_IN), DecryptCipher((hex), client)))
+                if(Arrays.equals(sha256(PW_IN), DecryptAESCipher((hex), client)))
                 {
                     long tmp = signInDataRepository.count();
                     int iTmp = Long.valueOf(tmp).intValue();
                     byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
-                    byte[] cipher = generateCipher(byteCurrentTime, client);
+                    byte[] cipher = generateAESCipher(byteCurrentTime, client);
                     SignInDataModel signInDataModel = new SignInDataModel(iTmp, ID_IN, cipher);
                     signInDataRepository.saveAndFlush(signInDataModel);
                     LoginClient.setUserID(ID_IN);
@@ -86,33 +86,6 @@ public class SignIn {
 
     }
 
-    public byte[] generateCipher(byte[] plain, ApiClient client) {
-        String ivStr = new String("ESCAREAAAAAAAAAA");
-        EncryptRequest encryptRequest = new EncryptRequest();
-        encryptRequest.alg(ObjectType.AES).plain(plain).mode(CryptMode.CBC).setIv(ivStr.getBytes());
-        try {
-            EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
-                    .encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
-            return encryptResponse.getCipher();
-        } catch (ApiException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public byte[] DecryptCipher(byte[] cipher, ApiClient client) {
-        String ivStr = new String("ESCAREAAAAAAAAAA");
-        DecryptRequest decryptRequest = new DecryptRequest();
-        decryptRequest.alg(ObjectType.AES).cipher(cipher).mode(CryptMode.CBC).iv(ivStr.getBytes());
-        try {
-            DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client).decrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", decryptRequest);
-            return decryptResponse.getPlain();
-        } catch (ApiException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public byte[] sha256(String msg) throws NoSuchAlgorithmException {
         MessageDigest md = null;
         try {
@@ -134,32 +107,4 @@ public class SignIn {
         return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
     }
 
-//    public byte[] hexToBytes(String hex) {
-//        byte[] temp = new BigInteger(hex, 16).toByteArray();
-//        //byte[] retval = Arrays.copyOfRange(temp, 1, temp.length);
-//        for(int i=0; i<temp.length; i++) System.out.printf("%d: %d\n", i, temp[i]);
-//        return temp;
-//    }
-
-    // connect to SDKMS
-    public ApiClient createClient(String server, String username, String password) {
-        ApiClient client = new ApiClient();
-        client.setBasePath(server);
-        client.setUsername(username);
-        client.setPassword(password);
-        return client;
-    }
-
-    public void connectFortanixsdkms(ApiClient client) {
-        AuthenticationApi authenticationApi = new AuthenticationApi(client);
-        try {
-            AuthResponse authResponse = authenticationApi.authorize();
-            ApiKeyAuth bearerTokenAuth = (ApiKeyAuth) client.getAuthentication("bearerToken");
-            bearerTokenAuth.setApiKey(authResponse.getAccessToken());
-            bearerTokenAuth.setApiKeyPrefix("Bearer");
-            System.out.println("success");
-        } catch (ApiException e) {
-            System.err.println("Unable to authenticate: " + e.getMessage());
-        }
-    }
 }

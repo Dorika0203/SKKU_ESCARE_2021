@@ -37,3 +37,10 @@ function time_format(s) {
 
     return ""+nHour+":"+nMin+":"+nSec;
 }
+function createAccount(){
+    if(confirm("정말로 계좌를 생성하시겠습니까 ?")){
+        location.href="createaccount";
+    }else{
+        alert("계좌를 생성하지 않습니다.");
+    }
+}
