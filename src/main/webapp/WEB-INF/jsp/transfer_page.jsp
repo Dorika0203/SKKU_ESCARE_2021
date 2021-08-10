@@ -150,14 +150,20 @@
                                             />
                                         </div>
                                         <div class="input-group">
-                                            <div class="input-group mb-3">
-                                                <input
-                                                        type="text"
+<%--                                            <div class="input-group mb-3">--%>
+<%--                                                <input--%>
+<%--                                                        type="text"--%>
+<%--                                                        class="form-control"--%>
+<%--                                                        aria-label="Text input with dropdown button"--%>
+<%--                                                        placeholder="보내는 계좌번호 입력"--%>
+<%--                                                        id="remitter-account"--%>
+<%--                                                />--%>
+<%--                                            </div>--%>
+                                            <div class="input-group-mb3">
+                                                <select
                                                         class="form-control"
-                                                        aria-label="Text input with dropdown button"
-                                                        placeholder="보내는 계좌번호 입력"
-                                                        id="remitter-account"
-                                                />
+                                                        id="remitter-account">
+                                                </select>
                                             </div>
                                             <div class="input-group mb-3">
                                                 <input
@@ -215,6 +221,22 @@
 <script type="text/javascript" src="js/my_page.js"></script>
 <script src="node-forge/dist/forge.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<%--<script>--%>
+<%--    let accountJSONData = `<%=request.getAttribute("myAccountsData")%>`;--%>
+<%--    let accounts = JSON.parse(accountJSONData);--%>
+
+<%--    var i;--%>
+<%--    var remitter_account = document.getElementById("remitter-account");--%>
+<%--    for(i=0; i<accounts.lenbits; i++){--%>
+<%--        var newlist = document.createElement("option");--%>
+<%--        newlist.setAttribute("value", i);--%>
+<%--        newlist.append(i);--%>
+<%--        remitter_account.appendChild(newlist);--%>
+<%--    }--%>
+
+
+
+<%--</script>--%>
 <script>
     let accountJSONData = `<%=request.getAttribute("myAccountsData")%>`;
     let accounts = JSON.parse(accountJSONData);
@@ -222,6 +244,7 @@
     var i;
     var select_list = document.getElementById('select_list');
     var select_panel = document.getElementById('select_panel');
+    var remitter_account = document.getElementById('remitter-account');
     for (i=0; i<accounts.length; i++)
     {
         // select list creation
@@ -270,6 +293,11 @@
         div2.appendChild(div3);
         div1.appendChild(div2);
         select_panel.appendChild(div1);
+
+        var option = document.createElement("option");
+        option.setAttribute("value",i);
+        option.append(i);
+        remitter_account.appendChild(option);
     }
     console.log(select_list);
     console.log(select_panel);

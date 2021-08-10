@@ -49,7 +49,8 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                 <a href="transferpage"> | transfer </a>
               </div>
               <div class="widget-content-wrapper">
-                <a href="createaccount"> | account </a>
+                <a onclick="createAccount()"> | account </a>
+<%--                <a href="createaccount"> | account </a>--%>
               </div>
               <div class="widget-content-wrapper">
                 <a href="reissuance"> | reissuance </a>
