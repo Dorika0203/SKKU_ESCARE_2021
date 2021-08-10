@@ -77,56 +77,16 @@ public class TransferPage {
         model.addAttribute("myAccountsData", myAccountsData.toString());
         model.addAttribute("loginClientID", LoginClient.getUserID());
 
-        //SignInSession signInSession = new SignInSession();
-        //signInSession.SessionChecker("transfer_page");
-
         //check if user is login
         String userID = getUserID();
-        if (userID == null) {return "fail";}
-
-        // =================================Get Sign Time==================================================
-        List<SignInDataModel> signInDataModelList = signInDataRepository.findAllByUserId(userID);
-        int signInLogIndex = signInDataModelList.size();
-        if (signInLogIndex == 0) {
-            return "my_page_fail";
-        }
-        SignInDataModel lastSignInDataModel = signInDataModelList.get(signInLogIndex - 1);
-
-        byte[] signInTimestampCipher = lastSignInDataModel.getSignIn_time();
-        byte[] decryptedByteSignInTime = decryptAESCipherByFortanixSDKMS(signInTimestampCipher, getVerifiedFortanixClient());
-
-        String signInTimestamp = new String(decryptedByteSignInTime, StandardCharsets.UTF_8);
-
-        int UNIXSignInTime = parseTimestampFormatToUNIXTime(signInTimestamp);
-        //================================================================================================
-        //===================================Get SignOut Time=============================================
-        List<SignOutDataModel> signOutDataModelList = signOutDataRepository.findAllByUserId(userID);
-        int signOutLogIndex = signOutDataModelList.size();
-        if (signOutLogIndex == 0) {
-            return "my_page";
-        }
-        SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(signOutLogIndex - 1);
-
-        byte[] signOutCipher = lastSignOutDataModel.getSignOut_time();
-        byte[] decryptedByteSignOutTime = decryptAESCipherByFortanixSDKMS(signOutCipher, getVerifiedFortanixClient());
-
-        String signOutTimestamp = new String(decryptedByteSignOutTime, StandardCharsets.UTF_8);
-
-        int UNIXSignOutTime = parseTimestampFormatToUNIXTime(signOutTimestamp);
-        //====================================================================================================
-        //================================Compare SignIn & SignOut Time=======================================
-
-        int signOutAndInTimeDiff = UNIXSignOutTime - UNIXSignInTime;
-
-        if (signOutAndInTimeDiff > 0)
-            return "my_page_fail";
-
-        int signInAndCurrentTimeDiff = (int) (System.currentTimeMillis() / 1000) - UNIXSignInTime;
-
-        if (0 <= signInAndCurrentTimeDiff && signInAndCurrentTimeDiff <= 300)
-            return "transfer_page";
-        else
+        if (userID == null) {
             return "fail";
+        }
+
+        if (isClientLoginTimeLessThan5Minute(userID)) {
+            return "transfer_page";
+        } else
+            return "my_page_fail";
     }
 
     //needed to return value to ajax
@@ -208,5 +168,35 @@ public class TransferPage {
         // 년월일시분초 14자리 포멧
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
+    }
+
+    public boolean isClientLoginTimeLessThan5Minute(String userID) {
+        List<SignInDataModel> signInDataModelList = signInDataRepository.findAllByUserId(userID);
+        SignInDataModel lastSignInDataModel = signInDataModelList.get(signInDataModelList.size() - 1);
+        List<SignOutDataModel> signOutDataModelList = signOutDataRepository.findAllByUserId(userID);
+        SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(signOutDataModelList.size() - 1);
+        if (signInDataModelList.isEmpty()) {
+            return false;
+        } else if (signOutDataModelList.isEmpty()) {
+            return true;
+        } else {
+            byte[] signInTimestampCipher = lastSignInDataModel.getSignIn_time();
+            byte[] decryptedByteSignInTime = decryptAESCipherByFortanixSDKMS(signInTimestampCipher, getVerifiedFortanixClient());
+            String signInTimestamp = new String(decryptedByteSignInTime, StandardCharsets.UTF_8);
+            int UNIXSignInTime = parseTimestampFormatToUNIXTime(signInTimestamp);
+
+            byte[] signOutCipher = lastSignOutDataModel.getSignOut_time();
+            byte[] decryptedByteSignOutTime = decryptAESCipherByFortanixSDKMS(signOutCipher, getVerifiedFortanixClient());
+            String signOutTimestamp = new String(decryptedByteSignOutTime, StandardCharsets.UTF_8);
+            int UNIXSignOutTime = parseTimestampFormatToUNIXTime(signOutTimestamp);
+            int signOutAndInTimeDiff = UNIXSignOutTime - UNIXSignInTime;
+            if (signOutAndInTimeDiff > 0)
+                return false;
+            int signInAndCurrentTimeDiff = (int) (System.currentTimeMillis() / 1000) - UNIXSignInTime;
+            if (0 <= signInAndCurrentTimeDiff && signInAndCurrentTimeDiff <= 300) {
+                return true;
+            } else
+                return false;
+        }
     }
 }
