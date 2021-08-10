@@ -150,15 +150,15 @@
                                             />
                                         </div>
                                         <div class="input-group">
-<%--                                            <div class="input-group mb-3">--%>
-<%--                                                <input--%>
-<%--                                                        type="text"--%>
-<%--                                                        class="form-control"--%>
-<%--                                                        aria-label="Text input with dropdown button"--%>
-<%--                                                        placeholder="보내는 계좌번호 입력"--%>
-<%--                                                        id="remitter-account"--%>
-<%--                                                />--%>
-<%--                                            </div>--%>
+                                            <%--                                            <div class="input-group mb-3">--%>
+                                            <%--                                                <input--%>
+                                            <%--                                                        type="text"--%>
+                                            <%--                                                        class="form-control"--%>
+                                            <%--                                                        aria-label="Text input with dropdown button"--%>
+                                            <%--                                                        placeholder="보내는 계좌번호 입력"--%>
+                                            <%--                                                        id="remitter-account"--%>
+                                            <%--                                                />--%>
+                                            <%--                                            </div>--%>
                                             <div class="input-group-mb3">
                                                 <select
                                                         class="form-control"
@@ -221,49 +221,29 @@
 <script type="text/javascript" src="js/my_page.js"></script>
 <script src="node-forge/dist/forge.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<%--<script>--%>
-<%--    let accountJSONData = `<%=request.getAttribute("myAccountsData")%>`;--%>
-<%--    let accounts = JSON.parse(accountJSONData);--%>
-
-<%--    var i;--%>
-<%--    var remitter_account = document.getElementById("remitter-account");--%>
-<%--    for(i=0; i<accounts.lenbits; i++){--%>
-<%--        var newlist = document.createElement("option");--%>
-<%--        newlist.setAttribute("value", i);--%>
-<%--        newlist.append(i);--%>
-<%--        remitter_account.appendChild(newlist);--%>
-<%--    }--%>
-
-
-
-<%--</script>--%>
 <script>
     let accountJSONData = `<%=request.getAttribute("myAccountsData")%>`;
     let accounts = JSON.parse(accountJSONData);
-    console.log(accounts);
     var i;
     var select_list = document.getElementById('select_list');
     var select_panel = document.getElementById('select_panel');
     var remitter_account = document.getElementById('remitter-account');
-    for (i=0; i<accounts.length; i++)
-    {
+    for (i = 0; i < accounts.length; i++) {
         // select list creation
         var newList = document.createElement("li");
         newList.setAttribute("class", "nav-item");
-        console.log(newList);
         var temp = document.createElement('a');
-        console.log(temp);
         temp.setAttribute('data-toggle', 'tab');
-        temp.setAttribute('href', '#tab-page1-'+i);
+        temp.setAttribute('href', '#tab-page1-' + i);
         temp.setAttribute('class', 'nav-link');
-        temp.append('계좌별칭 '+i);
+        temp.append('계좌별칭 ' + i);
         newList.appendChild(temp);
         select_list.appendChild(newList);
 
 
         var div1 = document.createElement('div');
-        div1.setAttribute('class', 'tab-pane fade active show');
-        div1.setAttribute('id', 'tab-page1-'+i);
+        div1.setAttribute('class', 'tab-pane fade');
+        div1.setAttribute('id', 'tab-page1-' + i);
         div1.setAttribute('role', 'tabpanel');
         // account description
         var div2 = document.createElement('div');
@@ -274,7 +254,7 @@
         div4.setAttribute('class', 'widget-content-left');
         var div5 = document.createElement('div');
         div5.setAttribute('class', 'widget-heading');
-        div5.append('계좌별칭 '+i);
+        div5.append('계좌별칭 ' + i);
         var div6 = document.createElement('div');
         div6.append(accounts[i].accountID);
         div6.setAttribute('class', 'widget-subheading');
@@ -295,19 +275,16 @@
         select_panel.appendChild(div1);
 
         var option = document.createElement("option");
-        option.setAttribute("value",i);
+        option.setAttribute("value", i);
         option.append(i);
         remitter_account.appendChild(option);
     }
-    console.log(select_list);
-    console.log(select_panel);
 </script>
 <script>
     //PKI element
     let pki = forge.pki
     let keyStorage = JSON.parse(localStorage.getItem('<%= request.getAttribute("loginClientID") %>'))
     let publicKey = Object.values(keyStorage)[0];
-    console.log(publicKey)
     let pbeEncryptedPrivateKey = Object.values(keyStorage)[1]
     let base64Salt = Object.values(keyStorage)[2]
     let salt = window.atob(base64Salt)
