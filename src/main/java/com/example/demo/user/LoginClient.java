@@ -16,8 +16,8 @@ public class LoginClient {
         return userID;
     }
 
-    public static ApiClient getClient() { return client; }
+    public static ApiClient getVerifiedFortanixClient() { return client; }
 
-    public static void setClient(ApiClient client) { LoginClient.client = client; }
+    public static void setVerifiedFortanixClient(ApiClient client) { LoginClient.client = client; }
 
 }

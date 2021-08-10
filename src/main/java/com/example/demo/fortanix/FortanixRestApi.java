@@ -11,8 +11,8 @@ import com.fortanix.sdkms.v1.model.*;
 import java.util.Arrays;
 import java.util.Base64;
 
-public class fortanixRestApi {
-    public static ApiClient createClient(String server, String username, String password) {
+public class FortanixRestApi {
+    public static ApiClient createFortanixSDKMSClientAndVerify(String server, String username, String password) {
         ApiClient client = new ApiClient();
         client.setBasePath(server);
         client.setUsername(username);
@@ -51,7 +51,7 @@ public class fortanixRestApi {
         }
     }
 
-    public static KeyObject getSecObj(ApiClient client, String ID) throws ApiException {
+    public static KeyObject getSecurityObjectByID(ApiClient client, String ID) throws ApiException {
         SobjectDescriptor soDescriptor = new SobjectDescriptor()
                 .name(ID);
         SecurityObjectsApi securityObjectsApi = new SecurityObjectsApi(client);
@@ -60,7 +60,7 @@ public class fortanixRestApi {
         return keyObject;
     }
 
-    public static byte[] generateAESCipher(byte[] plain, ApiClient client) {
+    public static byte[] generateAESCipherByFortanixSDKMS(byte[] plain, ApiClient client) {
         String ivStr = new String("ESCAREAAAAAAAAAA");
         EncryptRequest encryptRequest = new EncryptRequest();
         encryptRequest.alg(ObjectType.AES).plain(plain).mode(CryptMode.CBC).setIv(ivStr.getBytes());
@@ -74,7 +74,7 @@ public class fortanixRestApi {
         }
     }
 
-    public static byte[] DecryptAESCipher(byte[] cipher, ApiClient client) {
+    public static byte[] decryptAESCipherByFortanixSDKMS(byte[] cipher, ApiClient client) {
         String ivStr = new String("ESCAREAAAAAAAAAA");
         DecryptRequest decryptRequest = new DecryptRequest();
         decryptRequest.alg(ObjectType.AES).cipher(cipher).mode(CryptMode.CBC).iv(ivStr.getBytes());
@@ -87,46 +87,5 @@ public class fortanixRestApi {
         }
     }
 
-    public static String TokenEncrypt(String plain, ApiClient client){
-        String ivStr = new String("ESCAREAAAAAAAAAA");
-        byte[] bArrPlain = Base64.getDecoder().decode(plain);
-        EncryptRequest encryptRequest = new EncryptRequest();
-        encryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).plain(bArrPlain);
-        try{
-            EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
-                    .encrypt("2bf3feac-11b3-4a63-92e4-88f17d05bbfa", encryptRequest);
-            return Base64.getEncoder().encodeToString(encryptResponse.getCipher());
-        } catch (ApiException e){
-            e.printStackTrace();
-            return null;
-        }
-    }
 
-    public static String TokenDecrypt(String cipher, ApiClient client){
-        String ivStr = new String("ESCAREAAAAAAAAAA");
-        byte[] bArrCipher = Base64.getDecoder().decode(cipher);
-        DecryptRequest decryptRequest = new DecryptRequest();
-        decryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).cipher(bArrCipher);
-        try{
-            DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client)
-                    .decrypt("2bf3feac-11b3-4a63-92e4-88f17d05bbfa", decryptRequest);
-            return Base64.getEncoder().encodeToString(decryptResponse.getPlain());
-        } catch (ApiException e){
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static void main(String[] args) {
-        String plain = "0123456789123456";
-        String B64Plain = Base64.getEncoder().encodeToString(plain.getBytes());
-        ApiClient client;
-        client = createClient("https://sdkms.fortanix.com", "a025eafd-5977-4924-8087-9b262315a974", "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ");
-
-        String cipher = TokenEncrypt(B64Plain,client);
-        System.out.println(cipher);
-
-        plain = TokenDecrypt(cipher, client);
-        System.out.println(plain);
-    }
 }

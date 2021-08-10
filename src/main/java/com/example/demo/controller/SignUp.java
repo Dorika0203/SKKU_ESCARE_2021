@@ -2,19 +2,14 @@ package com.example.demo.controller;
 
 import java.security.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 
-import com.example.demo.fortanix.fortanixRestApi;
+import com.example.demo.fortanix.FortanixRestApi;
 import com.example.demo.model.*;
 import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.UserDataRepository;
-import com.example.demo.security.RSA;
-import com.example.demo.user.LoginClient;
 import com.fortanix.sdkms.v1.*;
-import com.fortanix.sdkms.v1.api.*;
-import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import static com.example.demo.fortanix.fortanixRestApi.*;
-import static com.example.demo.security.RSA.genFortanixPBEKeyAndSalt;
-import static com.example.demo.security.RSA.getPKCS8KeyFromPKCS1Key;
+import static com.example.demo.fortanix.FortanixRestApi.*;
 
 @Controller
 public class SignUp {
@@ -50,13 +43,13 @@ public class SignUp {
         byte[] byteArrPW = PW.getBytes();
 
         //create sdkms client
-        client = createClient(server, username, password);
+        client = createFortanixSDKMSClientAndVerify(server, username, password);
 
         //hashing and encrypting pw
         byte[] cipher = null;
 
         try {
-            cipher = generateAESCipher(sha256(byteArrPW), client);
+            cipher = generateAESCipherByFortanixSDKMS(sha256(byteArrPW), client);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -94,8 +87,8 @@ public class SignUp {
             userDataRepository.saveAndFlush(issuedTimeUpdatedModel);
 
             //get RSA key pair from sdkms
-            fortanixRestApi.genRSAKeyFromFortanixSDKMS(client, signUpID);
-            KeyObject value = fortanixRestApi.getSecObj(client, signUpID);
+            FortanixRestApi.genRSAKeyFromFortanixSDKMS(client, signUpID);
+            KeyObject value = FortanixRestApi.getSecurityObjectByID(client, signUpID);
             byte[] pub = value.getPubKey();
             byte[] priv = value.getValue();//pkcs1 priv key
 

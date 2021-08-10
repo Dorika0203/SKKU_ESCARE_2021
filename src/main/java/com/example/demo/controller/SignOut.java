@@ -2,12 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.model.SignOutDataModel;
 import com.example.demo.repository.SignOutDataRepository;
-import com.fortanix.sdkms.v1.ApiClient;
-import com.fortanix.sdkms.v1.ApiException;
-import com.fortanix.sdkms.v1.api.AuthenticationApi;
-import com.fortanix.sdkms.v1.api.EncryptionAndDecryptionApi;
-import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
-import com.fortanix.sdkms.v1.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.example.demo.fortanix.fortanixRestApi.*;
+import static com.example.demo.fortanix.FortanixRestApi.*;
 import static com.example.demo.user.LoginClient.*;
 
 @Controller
@@ -37,7 +31,7 @@ public class SignOut
         long tmp = signOutDataRepository.count();
         int iTmp = Long.valueOf(tmp).intValue();
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
-        byte[] cipher = generateAESCipher(byteCurrentTime, getClient());
+        byte[] cipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, getVerifiedFortanixClient());
         String ID = getUserID();
         SignOutDataModel signOutDataModel = new SignOutDataModel(iTmp, ID, cipher);
         signOutDataRepository.saveAndFlush(signOutDataModel);

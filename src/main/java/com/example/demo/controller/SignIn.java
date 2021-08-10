@@ -19,8 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.example.demo.fortanix.fortanixRestApi.*;
-import static com.example.demo.user.LoginClient.setClient;
+import static com.example.demo.fortanix.FortanixRestApi.*;
+import static com.example.demo.user.LoginClient.setVerifiedFortanixClient;
 
 @Controller
 @RequestMapping("/signin")
@@ -39,27 +39,22 @@ public class SignIn {
     @PostMapping
     public String connect(Model model, String ID_IN, String PW_IN) {
 
-        System.out.println(ID_IN + " " + PW_IN);
         int flag = 0;
         // connect to SDKMS
-        ApiClient client = createClient(server, username, password);
-        setClient(client);
+        ApiClient client = createFortanixSDKMSClientAndVerify(server, username, password);
+        setVerifiedFortanixClient(client);
 
         // try Login.
         if(userDataRepository.findById(ID_IN).isPresent()) {
             UserDataModel userDataModel = userDataRepository.getById(ID_IN);
             // login success.
-            byte[] hex = userDataModel.getPw();
+            byte[] AESEncryptedPassword = userDataModel.getPw();
 
             try {
-                if(Arrays.equals(sha256(PW_IN), DecryptAESCipher((hex), client)))
+                if(Arrays.equals(sha256(PW_IN), decryptAESCipherByFortanixSDKMS((AESEncryptedPassword), client)))
                 {
-                    long tmp = signInDataRepository.count();
-                    int iTmp = Long.valueOf(tmp).intValue();
-                    byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
-                    byte[] cipher = generateAESCipher(byteCurrentTime, client);
-                    SignInDataModel signInDataModel = new SignInDataModel(iTmp, ID_IN, cipher);
-                    signInDataRepository.saveAndFlush(signInDataModel);
+                    byte[] encryptedTimestamp = createAESEncryptedTimestampByFortanixSDKMS(client);
+                    saveLoginClientInfo(ID_IN, encryptedTimestamp);
                     LoginClient.setUserID(ID_IN);
                     return "sign_in_success";
                 }
@@ -105,6 +100,18 @@ public class SignIn {
         // 년월일시분초 14자리 포멧
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
+    }
+
+    public void saveLoginClientInfo(String loginClientID, byte[] encryptedTimestamp) {
+        long count = signInDataRepository.count();
+        SignInDataModel signInDataModel = new SignInDataModel((int) count, loginClientID, encryptedTimestamp);
+        signInDataRepository.saveAndFlush(signInDataModel);
+    }
+
+    public byte[] createAESEncryptedTimestampByFortanixSDKMS(ApiClient client){
+        byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
+        byte[] EncryptedTimestamp = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
+        return EncryptedTimestamp;
     }
 
 }
