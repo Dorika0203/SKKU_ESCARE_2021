@@ -6,9 +6,12 @@ function counter_init() {
 }
 
 function counter_reset() {
-    clearInterval(tid);
-    cnt = parseInt(300);
-    counter_init();
+    var currentURL = window.location.href;
+    console.log(currentURL);
+    // clearInterval(tid);
+    // cnt = parseInt(300);
+    // counter_init();
+    location.replace(currentURL);
 }
 
 function counter_run() {

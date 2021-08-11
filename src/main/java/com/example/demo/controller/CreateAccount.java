@@ -57,14 +57,16 @@ public class CreateAccount {
 
     public boolean isClientLoginTimeLessThan5Minute(String userID) {
         List<SignInDataModel> signInDataModelList = signInDataRepository.findAllByUserId(userID);
-        SignInDataModel lastSignInDataModel = signInDataModelList.get(signInDataModelList.size() - 1);
         List<SignOutDataModel> signOutDataModelList = signOutDataRepository.findAllByUserId(userID);
-        SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(signOutDataModelList.size() - 1);
         if (signInDataModelList.isEmpty()) {
             return false;
         } else if (signOutDataModelList.isEmpty()) {
             return true;
         } else {
+
+            SignInDataModel lastSignInDataModel = signInDataModelList.get(signInDataModelList.size() - 1);
+            SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(signOutDataModelList.size() - 1);
+            
             byte[] signInTimestampCipher = lastSignInDataModel.getSignIn_time();
             byte[] decryptedByteSignInTime = decryptAESCipherByFortanixSDKMS(signInTimestampCipher, getVerifiedFortanixClient());
             String signInTimestamp = new String(decryptedByteSignInTime, StandardCharsets.UTF_8);

@@ -275,8 +275,8 @@
         select_panel.appendChild(div1);
 
         var option = document.createElement("option");
-        option.setAttribute("value", i);
-        option.append(i);
+        option.setAttribute("value", accounts[i].accountID);
+        option.append("계좌별칭 " + i + " | " + "계좌번호: " + accounts[i].accountID);
         remitter_account.appendChild(option);
     }
 </script>
