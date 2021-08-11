@@ -29,7 +29,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
                 width="400"
                 alt="logout_img"
               />
-              <h1>Sign in Success!</h1>
+              <h1>Log Out Success!</h1>
               <a href="home" title="Return to home page" target="_self"
                 >| Home |</a
               >

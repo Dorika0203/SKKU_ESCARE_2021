@@ -70,7 +70,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                     />
                   </div>
                   <div class="widget-content-left ml-3 header-user-info">
-                    <div class="widget-heading">Hyejin Yoo</div>
                     <div class="widget-subheading">
                       <span id="counter"></span>
                       <input
