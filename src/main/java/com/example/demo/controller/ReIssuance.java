@@ -3,9 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.date.Time;
 import com.example.demo.fortanix.FortanixRestApi;
 import com.example.demo.model.SignInDataModel;
-import com.example.demo.model.SignOutDataModel;
 import com.example.demo.repository.*;
-import com.example.demo.user.LoginClient;
+import com.example.demo.bank.LoginClient;
 import com.example.demo.model.UserDataModel;
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
@@ -21,13 +20,11 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 
 import java.util.Date;
-import java.util.List;
 
-import static com.example.demo.date.Time.parseTimestampFormatToUNIXTime;
-import static com.example.demo.fortanix.FortanixRestApi.decryptAESCipherByFortanixSDKMS;
+import static com.example.demo.fortanix.FortanixRestApi.createAESEncryptedTimestampByFortanixSDKMS;
 import static com.example.demo.fortanix.FortanixRestApi.generateAESCipherByFortanixSDKMS;
-import static com.example.demo.user.LoginClient.getVerifiedFortanixClient;
-import static com.example.demo.user.LoginClient.getUserID;
+import static com.example.demo.bank.LoginClient.getVerifiedFortanixClient;
+import static com.example.demo.bank.LoginClient.getUserID;
 
 @Controller
 public class ReIssuance {
@@ -93,24 +90,10 @@ public class ReIssuance {
             return "error";
     }
 
-    public String getCurrentTime() {
-        // 현재시간을 가져와 Date형으로 저장한다
-        Date date_now = new Date(System.currentTimeMillis());
-        // 년월일시분초 14자리 포멧
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
-    }
-
     public void saveLoginClientInfo(String loginClientID, byte[] encryptedTimestamp) {
         long count = signInDataRepository.count();
         SignInDataModel signInDataModel = new SignInDataModel((int) count, loginClientID, encryptedTimestamp);
         signInDataRepository.saveAndFlush(signInDataModel);
-    }
-
-    public byte[] createAESEncryptedTimestampByFortanixSDKMS(ApiClient client) {
-        byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
-        byte[] EncryptedTimestamp = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
-        return EncryptedTimestamp;
     }
 
 }

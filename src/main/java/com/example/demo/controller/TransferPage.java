@@ -1,15 +1,15 @@
 package com.example.demo.controller;
 
+import com.example.demo.bank.Transfer;
 import com.example.demo.date.Time;
 import com.example.demo.model.AccountDataModel;
 import com.example.demo.model.BankStatementDataModel;
 import com.example.demo.model.SignInDataModel;
-import com.example.demo.model.SignOutDataModel;
 import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.BankStatementDataRepository;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
-import com.example.demo.user.LoginClient;
+import com.example.demo.bank.LoginClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.fortanix.sdkms.v1.ApiClient;
@@ -39,12 +39,10 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import static com.example.demo.date.Time.parseTimestampFormatToUNIXTime;
-import static com.example.demo.fortanix.FortanixRestApi.decryptAESCipherByFortanixSDKMS;
 import static com.example.demo.fortanix.FortanixRestApi.generateAESCipherByFortanixSDKMS;
 import static com.example.demo.security.RSA.*;
-import static com.example.demo.user.LoginClient.getVerifiedFortanixClient;
-import static com.example.demo.user.LoginClient.getUserID;
+import static com.example.demo.bank.LoginClient.getVerifiedFortanixClient;
+import static com.example.demo.bank.LoginClient.getUserID;
 
 @Controller
 @RequestMapping("transferpage")
@@ -96,54 +94,46 @@ public class TransferPage {
     //needed to return value to ajax
     @ResponseBody
     @PostMapping("/transfer")
-    public int transfer(@RequestParam Map<String, Object> transferDataMap) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, SignatureException {
+    public int transfer(@RequestParam Map<String, Object> transferRequestMap) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, SignatureException {
 
         String ID_IN = getUserID();
         ApiClient client = getVerifiedFortanixClient();
-        long tmp = signInDataRepository.count();
-        int iTmp = Long.valueOf(tmp).intValue();
+        int signInDataRepositoryCount = (int) signInDataRepository.count();
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
-        byte[] cipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
-        SignInDataModel signInDataModel = new SignInDataModel(iTmp, ID_IN, cipher);
+        byte[] timestampCipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
+        SignInDataModel signInDataModel = new SignInDataModel(signInDataRepositoryCount, ID_IN, timestampCipher);
         signInDataRepository.saveAndFlush(signInDataModel);
         LoginClient.setUserID(ID_IN);
 
-        String transferData = (String) transferDataMap.get("transferData");
-        String signature = (String) transferDataMap.get("signature");
-        String base64PublicKey = (String) transferDataMap.get("publicKey");
+        String transferRequest = (String) transferRequestMap.get("transferData");
+        String signature = (String) transferRequestMap.get("signature");
+        String base64PublicKey = (String) transferRequestMap.get("publicKey");
         PublicKey publicKey = getPublicKeyFromBase64String(base64PublicKey);
-        String[] transferDataArray = transferData.split("\\s");
 
-        long receiverAccount = 0;
-        long senderAccount = 0;
-        long transferAmount = 0;
+        Transfer transfer = new Transfer(accountDataRepository, bankStatementDataRepository);
         long afterBalance = 0;
-        long messageTimestamp = 0;
         long currentTime = System.currentTimeMillis() / 1000;
 
-        if (signatureVerified(transferData, publicKey, Base64.getDecoder().decode(signature))) {
+        if (isSignatureVerified(transferRequest, publicKey, Base64.getDecoder().decode(signature))) {
             //check if all information are correct
             try {
-                receiverAccount = Integer.parseInt(transferDataArray[0]);
-                senderAccount = Integer.parseInt(transferDataArray[1]);
-                transferAmount = Integer.parseInt(transferDataArray[2]);
-                messageTimestamp = Integer.parseInt(transferDataArray[3]);
+                transfer.setTransferInfoFromTransferRequest(transferRequest);
             } catch (NumberFormatException e) {
                 //input format wrong
                 return 1;
             }
-            if (currentTime - messageTimestamp < 10 && currentTime - messageTimestamp >= 0) {
-                if (accountDataRepository.existsById(receiverAccount) && accountDataRepository.existsById(senderAccount)) {
+            if (transfer.isRequestArrivedLessThan10Seconds()) {
+                if (transfer.isAccountsExistInAccountDatabase()) {
                     //check if account exists
-                    AccountDataModel senderUserAccount = accountDataRepository.findById(senderAccount).get();
-                    AccountDataModel recieverUserAccount = accountDataRepository.findById(receiverAccount).get();
+                    AccountDataModel senderUserAccount = accountDataRepository.findById(transfer.getSenderAccount()).get();
+                    AccountDataModel receiverUserAccount = accountDataRepository.findById(transfer.getReceiverAccount()).get();
                     if (senderUserAccount.getBalance() >= transferAmount) {
                         //transfer and edit balance
-                        afterBalance = recieverUserAccount.getBalance() + transferAmount;
-                        recieverUserAccount.setBalance(afterBalance);
+                        afterBalance = receiverUserAccount.getBalance() + transferAmount;
+                        receiverUserAccount.setBalance(afterBalance);
                         senderUserAccount.setBalance(senderUserAccount.getBalance() - transferAmount);
                         accountDataRepository.saveAndFlush(senderUserAccount);
-                        accountDataRepository.saveAndFlush(recieverUserAccount);
+                        accountDataRepository.saveAndFlush(receiverUserAccount);
                     } else {
                         //if balance is less than transfer amount
                         return 3;
@@ -156,8 +146,8 @@ public class TransferPage {
                 return 0;
             }
             //transfer success
-            long count = bankStatementDataRepository.count();
-            BankStatementDataModel transferLog = new BankStatementDataModel(count, senderAccount, currentTime, transferAmount, afterBalance, receiverAccount);
+            long bankStatementDataRepositoryCount = bankStatementDataRepository.count();
+            BankStatementDataModel transferLog = new BankStatementDataModel(bankStatementDataRepositoryCount, senderAccount, currentTime, transferAmount, afterBalance, receiverAccount);
             bankStatementDataRepository.saveAndFlush(transferLog);
             return 4;
         } else {
@@ -173,5 +163,4 @@ public class TransferPage {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
     }
-
 }

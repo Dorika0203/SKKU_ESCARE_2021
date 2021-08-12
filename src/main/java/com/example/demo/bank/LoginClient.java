@@ -1,4 +1,4 @@
-package com.example.demo.user;
+package com.example.demo.bank;
 
 import com.fortanix.sdkms.v1.ApiClient;
 

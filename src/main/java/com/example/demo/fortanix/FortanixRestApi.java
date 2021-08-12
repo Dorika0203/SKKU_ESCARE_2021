@@ -8,8 +8,11 @@ import com.fortanix.sdkms.v1.api.SecurityObjectsApi;
 import com.fortanix.sdkms.v1.auth.ApiKeyAuth;
 import com.fortanix.sdkms.v1.model.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+
+import static com.example.demo.date.Time.getCurrentTime;
 
 public class FortanixRestApi {
     public static ApiClient createFortanixSDKMSClientAndVerify(String server, String username, String password) {
@@ -72,6 +75,12 @@ public class FortanixRestApi {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static byte[] createAESEncryptedTimestampByFortanixSDKMS(ApiClient client){
+        byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
+        byte[] EncryptedTimestamp = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
+        return EncryptedTimestamp;
     }
 
     public static byte[] decryptAESCipherByFortanixSDKMS(byte[] cipher, ApiClient client) {

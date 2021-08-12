@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.example.demo.user.LoginClient.getUserID;
+import static com.example.demo.bank.LoginClient.getUserID;
 
 @Controller
 @RequestMapping("mypage")

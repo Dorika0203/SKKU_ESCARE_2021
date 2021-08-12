@@ -10,7 +10,7 @@ import java.util.Date;
 import com.example.demo.model.*;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.UserDataRepository;
-import com.example.demo.user.LoginClient;
+import com.example.demo.bank.LoginClient;
 import com.fortanix.sdkms.v1.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import static com.example.demo.fortanix.FortanixRestApi.*;
-import static com.example.demo.user.LoginClient.setVerifiedFortanixClient;
+import static com.example.demo.bank.LoginClient.setVerifiedFortanixClient;
 
 @Controller
 @RequestMapping("/signin")

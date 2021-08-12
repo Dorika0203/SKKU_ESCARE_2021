@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.example.demo.fortanix.FortanixRestApi.*;
-import static com.example.demo.user.LoginClient.*;
+import static com.example.demo.bank.LoginClient.*;
 
 @Controller
 @RequestMapping("logout")
