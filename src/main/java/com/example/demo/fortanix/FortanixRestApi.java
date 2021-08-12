@@ -15,7 +15,7 @@ import java.util.Base64;
 import static com.example.demo.date.Time.getCurrentTime;
 
 public class FortanixRestApi {
-    public static ApiClient createFortanixSDKMSClientAndVerify(String server, String username, String password) {
+    public static ApiClient generateFortanixSDKMSClientAndVerify(String server, String username, String password) {
         ApiClient client = new ApiClient();
         client.setBasePath(server);
         client.setUsername(username);
@@ -35,7 +35,7 @@ public class FortanixRestApi {
 
 
 
-    public static void genRSAKeyFromFortanixSDKMS(ApiClient client, String ID){
+    public static void generateRSAKeyFromFortanixSDKMS(ApiClient client, String ID){
         SobjectRequest sobjectRequest = new SobjectRequest()
                 .name(ID)
                 .keySize(2048)
@@ -47,8 +47,7 @@ public class FortanixRestApi {
         SecurityObjectsApi securityObjectsApi = new
                 SecurityObjectsApi(client);
         try{
-            KeyObject keyObject =
-                    securityObjectsApi.generateSecurityObject(sobjectRequest);
+            securityObjectsApi.generateSecurityObject(sobjectRequest);
         } catch (ApiException e) {
             System.err.println("Unable to authenticate: " + e.getMessage());
         }
@@ -77,7 +76,7 @@ public class FortanixRestApi {
         }
     }
 
-    public static byte[] createAESEncryptedTimestampByFortanixSDKMS(ApiClient client){
+    public static byte[] generateAESEncryptedTimestampByFortanixSDKMS(ApiClient client){
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
         byte[] EncryptedTimestamp = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
         return EncryptedTimestamp;

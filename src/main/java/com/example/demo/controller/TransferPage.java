@@ -39,6 +39,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import static com.example.demo.date.Time.getCurrentTime;
 import static com.example.demo.fortanix.FortanixRestApi.generateAESCipherByFortanixSDKMS;
 import static com.example.demo.security.RSA.*;
 import static com.example.demo.bank.LoginClient.getVerifiedFortanixClient;
@@ -127,11 +128,11 @@ public class TransferPage {
                     //check if account exists
                     AccountDataModel senderUserAccount = accountDataRepository.findById(transfer.getSenderAccount()).get();
                     AccountDataModel receiverUserAccount = accountDataRepository.findById(transfer.getReceiverAccount()).get();
-                    if (senderUserAccount.getBalance() >= transferAmount) {
+                    if (senderUserAccount.getBalance() >= transfer.getTransferAmount()) {
                         //transfer and edit balance
-                        afterBalance = receiverUserAccount.getBalance() + transferAmount;
+                        afterBalance = receiverUserAccount.getBalance() + transfer.getTransferAmount();
                         receiverUserAccount.setBalance(afterBalance);
-                        senderUserAccount.setBalance(senderUserAccount.getBalance() - transferAmount);
+                        senderUserAccount.setBalance(senderUserAccount.getBalance() - transfer.getTransferAmount());
                         accountDataRepository.saveAndFlush(senderUserAccount);
                         accountDataRepository.saveAndFlush(receiverUserAccount);
                     } else {
@@ -147,7 +148,7 @@ public class TransferPage {
             }
             //transfer success
             long bankStatementDataRepositoryCount = bankStatementDataRepository.count();
-            BankStatementDataModel transferLog = new BankStatementDataModel(bankStatementDataRepositoryCount, senderAccount, currentTime, transferAmount, afterBalance, receiverAccount);
+            BankStatementDataModel transferLog = new BankStatementDataModel(bankStatementDataRepositoryCount, transfer.getSenderAccount(), currentTime, transfer.getTransferAmount(), afterBalance, transfer.getReceiverAccount());
             bankStatementDataRepository.saveAndFlush(transferLog);
             return 4;
         } else {
@@ -156,11 +157,4 @@ public class TransferPage {
         }
     }
 
-    public String getCurrentTime() {
-        // 현재시간을 가져와 Date형으로 저장한다
-        Date date_now = new Date(System.currentTimeMillis());
-        // 년월일시분초 14자리 포멧
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
-    }
 }

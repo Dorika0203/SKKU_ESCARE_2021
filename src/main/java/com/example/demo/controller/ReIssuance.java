@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.bank.Key;
 import com.example.demo.date.Time;
 import com.example.demo.fortanix.FortanixRestApi;
 import com.example.demo.model.SignInDataModel;
@@ -15,16 +16,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Base64;
 
-import java.util.Date;
-
-import static com.example.demo.fortanix.FortanixRestApi.createAESEncryptedTimestampByFortanixSDKMS;
-import static com.example.demo.fortanix.FortanixRestApi.generateAESCipherByFortanixSDKMS;
-import static com.example.demo.bank.LoginClient.getVerifiedFortanixClient;
-import static com.example.demo.bank.LoginClient.getUserID;
+import static com.example.demo.bank.LoginClient.*;
+import static com.example.demo.fortanix.FortanixRestApi.generateAESEncryptedTimestampByFortanixSDKMS;
 
 @Controller
 public class ReIssuance {
@@ -40,15 +35,14 @@ public class ReIssuance {
     @Autowired
     BankStatementDataRepository bankStatementDataRepository;
 
-    private String signUpID = null;
-
     @GetMapping("reissuance")
     public String reissuance() {
 
-        Time time = new Time(signInDataRepository,signOutDataRepository);
+        Time time = new Time(signInDataRepository, signOutDataRepository);
 
         String userID = getUserID();
-        if (userID == null) {
+
+        if (isLogin()) {
             return "fail";
         }
 
@@ -61,39 +55,38 @@ public class ReIssuance {
     @PostMapping("reissue")
     public String Reissue(String PW, Model model) throws ApiException {
 
-        String inputID = getUserID();
+        String userID = getUserID();
         ApiClient client = getVerifiedFortanixClient();
-        byte[] encryptedTimestamp = createAESEncryptedTimestampByFortanixSDKMS(client);
-        saveLoginClientInfo(inputID, encryptedTimestamp);
 
-        signUpID = LoginClient.getUserID();
+        saveLoginClientInfoToDatabase(userID);
 
-        if (signUpID != null) {
+        Key reissuedKey = new Key(userID, PW);
 
-            KeyObject value = FortanixRestApi.getSecurityObjectByID(client, signUpID);
-            byte[] pub = value.getPubKey();
-            byte[] priv = value.getValue();//pkcs1 priv key
+        KeyObject keyPair = FortanixRestApi.getSecurityObjectByID(client, userID);
+        reissuedKey.setBase64PublicKey(keyPair);
+        reissuedKey.setBase64PrivateKey(keyPair);
 
-            String base64PublicKey = Base64.getEncoder().encodeToString(pub);
-            String base64PrivateKey = Base64.getEncoder().encodeToString(priv);
+        sendUserPBEKeyAndPasswordToFrontend(model, reissuedKey);
 
-            UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
-
-            model.addAttribute("ID", signUpID);
-            model.addAttribute("publicKey", base64PublicKey);
-            model.addAttribute("privateKey", base64PrivateKey);
-            model.addAttribute("password", PW);
-            userDataRepository.saveAndFlush(saltBase64UpdatedModel);
-
-            return "reissue_success";
-        } else
-            return "error";
+        return "reissue_success";
     }
 
-    public void saveLoginClientInfo(String loginClientID, byte[] encryptedTimestamp) {
+    //TODO change sign in database to active user database
+    public void saveLoginClientInfoToDatabase(String loginClientID) {
         long count = signInDataRepository.count();
+
+        ApiClient client = getVerifiedFortanixClient();
+        byte[] encryptedTimestamp = generateAESEncryptedTimestampByFortanixSDKMS(client);
+
         SignInDataModel signInDataModel = new SignInDataModel((int) count, loginClientID, encryptedTimestamp);
         signInDataRepository.saveAndFlush(signInDataModel);
+    }
+
+    public void sendUserPBEKeyAndPasswordToFrontend(Model model, Key key) {
+        model.addAttribute("ID", key.getUserID());
+        model.addAttribute("publicKey", key.getBase64PublicKey());
+        model.addAttribute("privateKey", key.getBase64PrivateKey());
+        model.addAttribute("password", key.getPassword());
     }
 
 }

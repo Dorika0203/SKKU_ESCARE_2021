@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import static com.example.demo.fortanix.FortanixRestApi.*;
+import static org.apache.commons.codec.digest.DigestUtils.sha256;
 
 @Controller
 public class SignUp {
@@ -43,16 +44,12 @@ public class SignUp {
         byte[] byteArrPW = PW.getBytes();
 
         //create sdkms client
-        client = createFortanixSDKMSClientAndVerify(server, username, password);
+        client = generateFortanixSDKMSClientAndVerify(server, username, password);
 
         //hashing and encrypting pw
         byte[] cipher = null;
 
-        try {
-            cipher = generateAESCipherByFortanixSDKMS(sha256(byteArrPW), client);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        cipher = generateAESCipherByFortanixSDKMS(sha256(byteArrPW), client);
 
         //Insert Data in DB
         UserDataModel userDataModel = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
@@ -87,7 +84,7 @@ public class SignUp {
             userDataRepository.saveAndFlush(issuedTimeUpdatedModel);
 
             //get RSA key pair from sdkms
-            FortanixRestApi.genRSAKeyFromFortanixSDKMS(client, signUpID);
+            FortanixRestApi.generateRSAKeyFromFortanixSDKMS(client, signUpID);
             KeyObject value = FortanixRestApi.getSecurityObjectByID(client, signUpID);
             byte[] pub = value.getPubKey();
             byte[] priv = value.getValue();//pkcs1 priv key
@@ -97,7 +94,6 @@ public class SignUp {
             UserDataModel saltBase64UpdatedModel = userDataRepository.getById(signUpID);
 
             //add data to DB
-            saltBase64UpdatedModel.setSalt("0");
             model.addAttribute("ID", signUpID);
             model.addAttribute("publicKey", B64Pub);
             model.addAttribute("privateKey", B64Priv);
@@ -113,17 +109,6 @@ public class SignUp {
         return userDataRepository.findById(ID).isPresent();
     }
 
-    public byte[] sha256(byte[] msg) throws NoSuchAlgorithmException {
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        md.update(msg);
-
-        return md.digest();
-    }
 
     public String getCurrentTime() {
         // 현재시간을 가져와 Date형으로 저장한다

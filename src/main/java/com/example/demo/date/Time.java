@@ -41,8 +41,6 @@ public class Time {
         }
     }
 
-
-
     public static String getCurrentTime() {
         // 현재시간을 가져와 Date형으로 저장한다
         Date date_now = new Date(System.currentTimeMillis());
@@ -52,15 +50,17 @@ public class Time {
     }
 
     public boolean isClientLoginTimeLessThan5Minute(String userID) {
+        if(userID.isEmpty())
+            return false;
         List<SignInDataModel> signInDataModelList = signInDataRepository.findAllByUserId(userID);
-        SignInDataModel lastSignInDataModel = signInDataModelList.get(signInDataModelList.size() - 1);
         List<SignOutDataModel> signOutDataModelList = signOutDataRepository.findAllByUserId(userID);
-        SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(signOutDataModelList.size() - 1);
         if (signInDataModelList.isEmpty()) {
             return false;
         } else if (signOutDataModelList.isEmpty()) {
             return true;
         } else {
+            SignInDataModel lastSignInDataModel = signInDataModelList.get(signInDataModelList.size() - 1);
+            SignOutDataModel lastSignOutDataModel = signOutDataModelList.get(signOutDataModelList.size() - 1);
             byte[] signInTimestampCipher = lastSignInDataModel.getSignIn_time();
             byte[] decryptedByteSignInTime = decryptAESCipherByFortanixSDKMS(signInTimestampCipher, getVerifiedFortanixClient());
             String signInTimestamp = new String(decryptedByteSignInTime, StandardCharsets.UTF_8);

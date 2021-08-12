@@ -20,4 +20,8 @@ public class LoginClient {
 
     public static void setVerifiedFortanixClient(ApiClient client) { LoginClient.client = client; }
 
+    public static boolean isLogin() {
+        return !userID.isEmpty();
+    }
+
 }

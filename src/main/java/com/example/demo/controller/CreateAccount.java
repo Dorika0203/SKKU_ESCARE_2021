@@ -9,18 +9,18 @@ import com.example.demo.repository.SignOutDataRepository;
 import com.example.demo.bank.LoginClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import static com.example.demo.bank.LoginClient.getUserID;
+import static com.example.demo.bank.LoginClient.isLogin;
 
 @Controller
 @RequestMapping("/createaccount")
 public class CreateAccount {
 
     @Autowired
-    AccountDataRepository accountData;
+    AccountDataRepository accountDataRepository;
     @Autowired
     SignInDataRepository signInDataRepository;
     @Autowired
@@ -28,24 +28,23 @@ public class CreateAccount {
 
 
     @GetMapping
-    public String createaccount(Model model) {
+    public String createaccount() {
 
-        Time time = new Time(signInDataRepository,signOutDataRepository);
+        Time time = new Time(signInDataRepository, signOutDataRepository);
 
-        long Account = accountData.count();
-        String id = LoginClient.getUserID();
-
-        AccountDataModel account = new AccountDataModel(Account, id);
-        accountData.saveAndFlush(account);
-        String userID = getUserID();
-        if (userID == null) {
+        if (isLogin()) {
+            createUserAccountAndSaveToDataBase(getUserID());;
+        } else
             return "fail";
-        }
 
-        if (time.isClientLoginTimeLessThan5Minute(userID)) {
+        if (time.isClientLoginTimeLessThan5Minute(getUserID())) {
             return "account_create_success";
         } else return "my_page_fail";
 
     }
 
+    public void createUserAccountAndSaveToDataBase(String loginUserID) {
+        AccountDataModel account = new AccountDataModel(accountDataRepository.count(), loginUserID);
+        accountDataRepository.saveAndFlush(account);
+    }
 }
