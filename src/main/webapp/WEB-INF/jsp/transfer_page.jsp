@@ -64,7 +64,6 @@
                                 />
                             </div>
                             <div class="widget-content-left ml-3 header-user-info">
-                                <div class="widget-heading">Hyejin Yoo</div>
                                 <div class="widget-subheading">
                                     <span id="counter1"></span>
                                     <input
@@ -74,7 +73,6 @@
                                             onclick="counter_reset()"
                                     />
                                 </div>
-                                <div class="widget-subheading">hyejin1234</div>
                             </div>
 
                             <div class="widget-content-right header-user-info ml-3">
@@ -142,7 +140,7 @@
                                     <div class="card-body">
                                         <div class="md-form form-group w-50 mb-3">
                                             <input
-                                                    type="text"
+                                                    type="password"
                                                     class="form-control"
                                                     aria-label="Text input with dropdown button"
                                                     placeholder="비밀번호"
@@ -275,8 +273,8 @@
         select_panel.appendChild(div1);
 
         var option = document.createElement("option");
-        option.setAttribute("value", i);
-        option.append(i);
+        option.setAttribute("value", accounts[i].accountID);
+        option.append("계좌별칭 " + i + " | " + "계좌번호: " + accounts[i].accountID);
         remitter_account.appendChild(option);
     }
 </script>
