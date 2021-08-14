@@ -10,7 +10,6 @@ import com.fortanix.sdkms.v1.model.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Base64;
 
 import static com.example.demo.date.Time.getCurrentTime;
 

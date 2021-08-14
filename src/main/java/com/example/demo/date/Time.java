@@ -4,7 +4,6 @@ import com.example.demo.model.SignInDataModel;
 import com.example.demo.model.SignOutDataModel;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
-import com.fortanix.sdkms.v1.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ import java.util.List;
 
 import static com.example.demo.fortanix.FortanixRestApi.decryptAESCipherByFortanixSDKMS;
 import static com.example.demo.bank.LoginClient.getVerifiedFortanixClient;
-import static com.example.demo.fortanix.FortanixRestApi.generateAESCipherByFortanixSDKMS;
 
 @Service
 public class Time {

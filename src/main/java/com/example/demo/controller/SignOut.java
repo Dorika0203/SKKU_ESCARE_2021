@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.servlet.http.HttpSession;
+
 import static com.example.demo.fortanix.FortanixRestApi.*;
 import static com.example.demo.bank.LoginClient.*;
 
@@ -18,15 +20,12 @@ import static com.example.demo.bank.LoginClient.*;
 @RequestMapping("logout")
 public class SignOut
 {
-    private String server = "https://sdkms.fortanix.com";
-    private String username = "a025eafd-5977-4924-8087-9b262315a974";
-    private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
 
     @Autowired
     private SignOutDataRepository signOutDataRepository;
 
     @GetMapping
-    public String connect() {
+    public String connect(HttpSession session) {
 
         long tmp = signOutDataRepository.count();
         int iTmp = Long.valueOf(tmp).intValue();
@@ -35,7 +34,8 @@ public class SignOut
         String ID = getUserID();
         SignOutDataModel signOutDataModel = new SignOutDataModel(iTmp, ID, cipher);
         signOutDataRepository.saveAndFlush(signOutDataModel);
-        setUserID(null);
+        session.removeAttribute("userID");
+        // setUserID(null);
 
         return "logout_page";
     }

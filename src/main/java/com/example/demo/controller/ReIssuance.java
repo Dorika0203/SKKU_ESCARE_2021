@@ -5,8 +5,6 @@ import com.example.demo.date.Time;
 import com.example.demo.fortanix.FortanixRestApi;
 import com.example.demo.model.SignInDataModel;
 import com.example.demo.repository.*;
-import com.example.demo.bank.LoginClient;
-import com.example.demo.model.UserDataModel;
 import com.fortanix.sdkms.v1.ApiClient;
 import com.fortanix.sdkms.v1.ApiException;
 import com.fortanix.sdkms.v1.model.KeyObject;
@@ -16,7 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.Base64;
+import javax.servlet.http.HttpSession;
 
 import static com.example.demo.bank.LoginClient.*;
 import static com.example.demo.fortanix.FortanixRestApi.generateAESEncryptedTimestampByFortanixSDKMS;
@@ -36,13 +34,13 @@ public class ReIssuance {
     BankStatementDataRepository bankStatementDataRepository;
 
     @GetMapping("reissuance")
-    public String reissuance() {
+    public String reissuance(HttpSession session) {
 
         Time time = new Time(signInDataRepository, signOutDataRepository);
 
-        String userID = getUserID();
+        String userID = (String) session.getAttribute("userID");
 
-        if (isLogin()) {
+        if (userID == null) {
             return "fail";
         }
 
@@ -53,9 +51,9 @@ public class ReIssuance {
     }
 
     @PostMapping("reissue")
-    public String Reissue(String PW, Model model) throws ApiException {
+    public String Reissue(String PW, Model model, HttpSession session) throws ApiException {
 
-        String userID = getUserID();
+        String userID = (String) session.getAttribute("userID");
         ApiClient client = getVerifiedFortanixClient();
 
         saveLoginClientInfoToDatabase(userID);

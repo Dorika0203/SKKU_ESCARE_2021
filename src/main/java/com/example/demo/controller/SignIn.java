@@ -1,13 +1,12 @@
 package com.example.demo.controller;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import javax.servlet.http.HttpSession;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.UserDataRepository;
-import com.example.demo.bank.LoginClient;
 import com.fortanix.sdkms.v1.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +34,8 @@ public class SignIn {
     private SignInDataRepository signInDataRepository;
 
     @PostMapping
-    public String connect(Model model, String ID_IN, String PW_IN) {
-
+    public String connect(Model model, String ID_IN, String PW_IN, HttpSession session) {
+ 
         int FLAG = 0;
 
         ApiClient client = generateFortanixSDKMSClientAndVerify(server, username, password);
@@ -51,7 +50,8 @@ public class SignIn {
 
             if(isEqual(decryptedPassword, sha256(PW_IN))) {
                 saveLoginClientInfoToDatabase(ID_IN);
-                LoginClient.setUserID(ID_IN);
+                session.setAttribute("userID", ID_IN);
+                // LoginClient.setUserID(ID_IN);
                 return "sign_in_success";
             }
             else FLAG = 1;

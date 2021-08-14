@@ -9,7 +9,6 @@ import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.BankStatementDataRepository;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
-import com.example.demo.bank.LoginClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.fortanix.sdkms.v1.ApiClient;
@@ -25,10 +24,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
-import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.List;
-import java.util.Date;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,12 +35,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.servlet.http.HttpSession;
 
 import static com.example.demo.date.Time.getCurrentTime;
 import static com.example.demo.fortanix.FortanixRestApi.generateAESCipherByFortanixSDKMS;
 import static com.example.demo.security.RSA.*;
 import static com.example.demo.bank.LoginClient.getVerifiedFortanixClient;
-import static com.example.demo.bank.LoginClient.getUserID;
 
 @Controller
 @RequestMapping("transferpage")
@@ -59,12 +56,13 @@ public class TransferPage {
     BankStatementDataRepository bankStatementDataRepository;
 
     @GetMapping
-    public String transferPage(Model model) {
+    public String transferPage(Model model, HttpSession session) {
 
         Time time = new Time(signInDataRepository, signOutDataRepository);
+        String userID = (String) session.getAttribute("userID");
 
         //add ID to model
-        List<AccountDataModel> loginUserAccountList = accountDataRepository.findAllByUserId(LoginClient.getUserID());
+        List<AccountDataModel> loginUserAccountList = accountDataRepository.findAllByUserId(userID);
         JSONArray myAccountsData = new JSONArray();
 
         for (int i = 0; i < loginUserAccountList.size(); i++) {
@@ -78,10 +76,9 @@ public class TransferPage {
             myAccountsData.put(sendingData);
         }
         model.addAttribute("myAccountsData", myAccountsData.toString());
-        model.addAttribute("loginClientID", LoginClient.getUserID());
+        model.addAttribute("loginClientID", userID);
 
         //check if user is login
-        String userID = getUserID();
         if (userID == null) {
             return "fail";
         }
@@ -95,16 +92,16 @@ public class TransferPage {
     //needed to return value to ajax
     @ResponseBody
     @PostMapping("/transfer")
-    public int transfer(@RequestParam Map<String, Object> transferRequestMap) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, SignatureException {
+    public int transfer(@RequestParam Map<String, Object> transferRequestMap, HttpSession session) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, SignatureException {
 
-        String ID_IN = getUserID();
+        String ID_IN = (String) session.getAttribute("userID");
         ApiClient client = getVerifiedFortanixClient();
         int signInDataRepositoryCount = (int) signInDataRepository.count();
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
         byte[] timestampCipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
         SignInDataModel signInDataModel = new SignInDataModel(signInDataRepositoryCount, ID_IN, timestampCipher);
         signInDataRepository.saveAndFlush(signInDataModel);
-        LoginClient.setUserID(ID_IN);
+        // LoginClient.setUserID(ID_IN);
 
         String transferRequest = (String) transferRequestMap.get("transferData");
         String signature = (String) transferRequestMap.get("signature");

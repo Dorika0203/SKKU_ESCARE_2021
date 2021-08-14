@@ -19,15 +19,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.example.demo.bank.LoginClient.getUserID;
-import static com.example.demo.bank.LoginClient.isLogin;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("mypage")
 public class MyPage {
-    private String server = "https://sdkms.fortanix.com";
-    private String username = "a025eafd-5977-4924-8087-9b262315a974";
-    private String password = "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ";
 
     @Autowired
     private SignInDataRepository signInDataRepository;
@@ -39,13 +35,13 @@ public class MyPage {
     private BankStatementDataRepository bankStatementDataRepository;
 
     @GetMapping
-    public String mypage(Model model) {
+    public String mypage(Model model, HttpSession session) {
 
         Time time = new Time(signInDataRepository, signOutDataRepository);
 
         //check if user is login
-        String userID = getUserID();
-        if (isLogin()) {
+        String userID = (String) session.getAttribute("userID");
+        if (userID != null) {
             if (time.isClientLoginTimeLessThan5Minute(userID)) {
                 JSONArray transactionLog = new JSONArray();
                 List<AccountDataModel> AccountList = accountDataRepository.findAllByUserId(userID);
