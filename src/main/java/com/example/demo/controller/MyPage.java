@@ -46,15 +46,9 @@ public class MyPage {
             System.out.println("session ID: " + session.getId());
 
 
-
-            // create multiple accounts Info in JSON ARRAY.
-            // Each account info is JSON OBJECT.
-            // Each account info has JSON ARRAY child data ----> indicating multiple transfer log for that single Account.
-
             // 여러개 계좌의 정보를 JSON ARRAY로 정리한다.
             // 각 계좌의 정보는 JSON OBJECT 이다.
             // 각 계좌의 정보(JSON OBJECT)는 해당 계좌의 입출금 내역을 저장하는 자식(JSON ARRAY)을 가진다.
-
             JSONArray multipleAccountInfo = new JSONArray();
             List<AccountDataModel> accountList = accountDataRepository.findAllByUserId(userID);
 
