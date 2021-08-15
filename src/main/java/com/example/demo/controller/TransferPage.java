@@ -58,6 +58,7 @@ public class TransferPage {
     public String transferPage(Model model, HttpSession session) {
 
         String userID = getSessionUserID(session);
+        if (userID == null) return "fail";
 
         //add ID to model
         List<AccountDataModel> loginUserAccountList = accountDataRepository.findAllByUserId(userID);
@@ -75,9 +76,6 @@ public class TransferPage {
         }
         model.addAttribute("myAccountsData", myAccountsData.toString());
         model.addAttribute("loginClientID", userID);
-
-        //check if user is login
-        if (userID == null) return "fail";
         return "transfer_page";
     }
 
@@ -86,13 +84,11 @@ public class TransferPage {
     @PostMapping("/transfer")
     public int transfer(@RequestParam Map<String, Object> transferRequestMap, HttpSession session) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, SignatureException {
 
-        String ID_IN = getSessionUserID(session);
-        ApiClient client = getSessionApiClient(session);
-        int signInDataRepositoryCount = (int) signInDataRepository.count();
-        byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
-        byte[] timestampCipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
-        SignInDataModel signInDataModel = new SignInDataModel(signInDataRepositoryCount, ID_IN, timestampCipher);
-        signInDataRepository.saveAndFlush(signInDataModel);
+
+        // 세션 만료
+        String userID = getSessionUserID(session);
+        if (userID == null) return 5;
+
 
         String transferRequest = (String) transferRequestMap.get("transferData");
         String signature = (String) transferRequestMap.get("signature");
@@ -132,16 +128,16 @@ public class TransferPage {
                     return 2;
                 }
             } else {
-                return 0;
+                return 6;
             }
             //transfer success
             long bankStatementDataRepositoryCount = bankStatementDataRepository.count();
             BankStatementDataModel transferLog = new BankStatementDataModel(bankStatementDataRepositoryCount, transfer.getSenderAccount(), currentTime, transfer.getTransferAmount(), afterBalance, transfer.getReceiverAccount());
             bankStatementDataRepository.saveAndFlush(transferLog);
-            return 4;
+            return 0;
         } else {
             //wrong signature
-            return 0;
+            return 4;
         }
     }
 

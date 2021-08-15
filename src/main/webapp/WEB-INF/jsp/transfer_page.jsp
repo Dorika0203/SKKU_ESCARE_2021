@@ -312,7 +312,8 @@
                 success: function (result) {
                     switch (result) {
                         case 0:
-                            alert("error")
+                            alert("success!")
+                            location.replace("mypage")
                             break
                         case 1:
                             alert("account or transfer amount format is incorrect")
@@ -324,7 +325,13 @@
                             alert("your balance is less than transfer amount")
                             break
                         case 4:
-                            alert("success!")
+                            alert("Signature password seems wrong.")
+                            break
+                        case 5:
+                            alert("Session Expired!!!!")
+                            location.replace("home")
+                        case 6:
+                            alert("error")
                             location.replace("mypage")
                     }
                 },
