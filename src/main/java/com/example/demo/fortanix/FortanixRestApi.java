@@ -25,7 +25,7 @@ public class FortanixRestApi {
             ApiKeyAuth bearerTokenAuth = (ApiKeyAuth) client.getAuthentication("bearerToken");
             bearerTokenAuth.setApiKey(authResponse.getAccessToken());
             bearerTokenAuth.setApiKeyPrefix("Bearer");
-            System.out.println("success");
+            System.out.println("Fortanix SDKMS Authentication success");
         } catch (ApiException e) {
             System.err.println("Unable to authenticate: " + e.getMessage());
         }

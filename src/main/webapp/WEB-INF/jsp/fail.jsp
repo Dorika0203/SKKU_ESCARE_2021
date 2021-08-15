@@ -4,25 +4,39 @@ uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>My Board</title>
     <link
+      href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css"
+      id="bootstrap-css"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-      integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
-      crossorigin="anonymous"
-    />
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+    <title>Logout</title>
   </head>
-
   <body>
-    <div>
-      <h1>Failed!</h1>
-      <h2>connection fail to fortanix KMS due to</h2>
+    <div
+      class="container"
+      style="width: auto; max-width: 680px; padding: 0 15px; margin: auto"
+    >
+      <div class="row">
+        <div class="col-md-12">
+          <div class="error-template">
+            <div class="text-center">
+              <img
+                class="is-square"
+                src="image/logout.png"
+                width="400"
+                alt="logout_img"
+              />
+              <h1>Session Expired!! Please Sign In Again.</h1>
+              <a href="home" title="Return to home page" target="_self"
+                >| Home |</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

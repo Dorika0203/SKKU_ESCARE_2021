@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.date.Time;
 import com.example.demo.model.*;
 
 import com.example.demo.repository.AccountDataRepository;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
+
+import static com.example.demo.bank.LoginClient.*;
 
 @Controller
 @RequestMapping("/createaccount")
@@ -29,18 +30,13 @@ public class CreateAccount {
     @GetMapping
     public String createaccount(HttpSession session) {
 
-        Time time = new Time(signInDataRepository, signOutDataRepository);
-        String userID = (String) session.getAttribute("userID");
+        String userID = getSessionUserID(session);
 
         if (userID != null) {
-            createUserAccountAndSaveToDataBase(userID);;
-        } else
-            return "fail";
-
-        if (time.isClientLoginTimeLessThan5Minute(userID)) {
+            createUserAccountAndSaveToDataBase(userID);
             return "account_create_success";
-        } else return "my_page_fail";
-
+        } else
+            return "logout_page";
     }
 
     public void createUserAccountAndSaveToDataBase(String loginUserID) {

@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.bank.Key;
-import com.example.demo.date.Time;
 import com.example.demo.fortanix.FortanixRestApi;
 import com.example.demo.model.SignInDataModel;
 import com.example.demo.repository.*;
@@ -13,11 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import javax.servlet.http.HttpSession;
-
 import static com.example.demo.bank.LoginClient.*;
-import static com.example.demo.fortanix.FortanixRestApi.generateAESEncryptedTimestampByFortanixSDKMS;
+import static com.example.demo.fortanix.FortanixRestApi.*;
 
 @Controller
 public class ReIssuance {
@@ -36,44 +33,34 @@ public class ReIssuance {
     @GetMapping("reissuance")
     public String reissuance(HttpSession session) {
 
-        Time time = new Time(signInDataRepository, signOutDataRepository);
+        String userID = getSessionUserID(session);
 
-        String userID = (String) session.getAttribute("userID");
-
-        if (userID == null) {
-            return "fail";
-        }
-
-        if (time.isClientLoginTimeLessThan5Minute(userID)) {
-            return "reissuance";
-        } else
-            return "my_page_fail";
+        if (userID == null) return "logout_page";
+        return "reissuance";
     }
 
     @PostMapping("reissue")
     public String Reissue(String PW, Model model, HttpSession session) throws ApiException {
 
-        String userID = (String) session.getAttribute("userID");
-        ApiClient client = getVerifiedFortanixClient();
+        String userID = getSessionUserID(session);
+        if (userID == null) return "logout_page";
 
-        saveLoginClientInfoToDatabase(userID);
-
+        ApiClient client = getSessionApiClient(session);
+        saveLoginClientInfoToDatabase(userID, client);
         Key reissuedKey = new Key(userID, PW);
-
         KeyObject keyPair = FortanixRestApi.getSecurityObjectByID(client, userID);
         reissuedKey.setBase64PublicKey(keyPair);
         reissuedKey.setBase64PrivateKey(keyPair);
-
         sendUserPBEKeyAndPasswordToFrontend(model, reissuedKey);
 
         return "reissue_success";
     }
 
-    //TODO change sign in database to active user database
-    public void saveLoginClientInfoToDatabase(String loginClientID) {
+    // change sign in database to active user database
+    public void saveLoginClientInfoToDatabase(String loginClientID, ApiClient client) {
         long count = signInDataRepository.count();
 
-        ApiClient client = getVerifiedFortanixClient();
+        // ApiClient client = getVerifiedFortanixClient();
         byte[] encryptedTimestamp = generateAESEncryptedTimestampByFortanixSDKMS(client);
 
         SignInDataModel signInDataModel = new SignInDataModel((int) count, loginClientID, encryptedTimestamp);

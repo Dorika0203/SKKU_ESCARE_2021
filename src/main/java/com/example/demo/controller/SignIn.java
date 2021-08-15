@@ -15,9 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.example.demo.bank.LoginClient.getVerifiedFortanixClient;
 import static com.example.demo.fortanix.FortanixRestApi.*;
-import static com.example.demo.bank.LoginClient.setVerifiedFortanixClient;
+import static com.example.demo.bank.LoginClient.*;
 import static org.apache.commons.codec.digest.DigestUtils.sha256;
 
 import static com.example.demo.date.Time.getTime;
@@ -42,7 +41,8 @@ public class SignIn {
         int FLAG = 0;
 
         ApiClient client = generateFortanixSDKMSClientAndVerify(server, username, password);
-        setVerifiedFortanixClient(client);
+        // setVerifiedFortanixClient(client);
+        setSessionApiClient(client, session);
 
 
         if(userDataRepository.findById(ID_IN).isPresent()) {
@@ -52,17 +52,16 @@ public class SignIn {
             byte[] decryptedPassword = decryptAESCipherByFortanixSDKMS((AESEncryptedPassword), client);
 
             if(isEqual(decryptedPassword, sha256(PW_IN))) {
-                saveLoginClientInfoToDatabase(ID_IN);
+                saveLoginClientInfoToDatabase(ID_IN, client);
+                
                 System.out.println(" --------------------------------- SignIn -------------------------");
                 System.out.println("current Time: " + getCurrentTime());
-                System.out.println("session created Time: " + getTime(session.getCreationTime()));
                 System.out.println("Last Accessed Time: " + getTime(session.getLastAccessedTime()));
-                System.out.println("isNew: " + session.isNew());
+                System.out.println("session created Time: " + getTime(session.getCreationTime()));
                 System.out.println("session ID: " + session.getId());
+
                 session.setMaxInactiveInterval(60);
-                
-                session.setAttribute("userID", ID_IN);
-                // LoginClient.setUserID(ID_IN);
+                setSessionUserID(ID_IN, session);
                 return "sign_in_success";
             }
             else FLAG = 1;
@@ -82,15 +81,11 @@ public class SignIn {
                 model.addAttribute("errorMessage", "FLAG VALUE IS WRONG!!");
         }
         return "sign_in_fail";
-
     }
 
-    public void saveLoginClientInfoToDatabase(String loginClientID) {
+    public void saveLoginClientInfoToDatabase(String loginClientID, ApiClient client) {
         long count = signInDataRepository.count();
-
-        ApiClient client = getVerifiedFortanixClient();
         byte[] encryptedTimestamp = generateAESEncryptedTimestampByFortanixSDKMS(client);
-
         SignInDataModel signInDataModel = new SignInDataModel((int) count, loginClientID, encryptedTimestamp);
         signInDataRepository.saveAndFlush(signInDataModel);
     }

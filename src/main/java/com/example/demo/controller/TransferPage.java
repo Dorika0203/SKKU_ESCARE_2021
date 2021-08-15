@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.bank.Transfer;
-import com.example.demo.date.Time;
 import com.example.demo.model.AccountDataModel;
 import com.example.demo.model.BankStatementDataModel;
 import com.example.demo.model.SignInDataModel;
@@ -37,10 +36,10 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpSession;
 
-import static com.example.demo.date.Time.getCurrentTime;
-import static com.example.demo.fortanix.FortanixRestApi.generateAESCipherByFortanixSDKMS;
+import static com.example.demo.date.Time.*;
+import static com.example.demo.fortanix.FortanixRestApi.*;
 import static com.example.demo.security.RSA.*;
-import static com.example.demo.bank.LoginClient.getVerifiedFortanixClient;
+import static com.example.demo.bank.LoginClient.*;
 
 @Controller
 @RequestMapping("transferpage")
@@ -58,8 +57,7 @@ public class TransferPage {
     @GetMapping
     public String transferPage(Model model, HttpSession session) {
 
-        Time time = new Time(signInDataRepository, signOutDataRepository);
-        String userID = (String) session.getAttribute("userID");
+        String userID = getSessionUserID(session);
 
         //add ID to model
         List<AccountDataModel> loginUserAccountList = accountDataRepository.findAllByUserId(userID);
@@ -79,14 +77,8 @@ public class TransferPage {
         model.addAttribute("loginClientID", userID);
 
         //check if user is login
-        if (userID == null) {
-            return "fail";
-        }
-
-        if (time.isClientLoginTimeLessThan5Minute(userID)) {
-            return "transfer_page";
-        } else
-            return "my_page_fail";
+        if (userID == null) return "logout_page";
+        return "transfer_page";
     }
 
     //needed to return value to ajax
@@ -94,21 +86,20 @@ public class TransferPage {
     @PostMapping("/transfer")
     public int transfer(@RequestParam Map<String, Object> transferRequestMap, HttpSession session) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, SignatureException {
 
-        String ID_IN = (String) session.getAttribute("userID");
-        ApiClient client = getVerifiedFortanixClient();
+        String ID_IN = getSessionUserID(session);
+        ApiClient client = getSessionApiClient(session);
         int signInDataRepositoryCount = (int) signInDataRepository.count();
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
         byte[] timestampCipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
         SignInDataModel signInDataModel = new SignInDataModel(signInDataRepositoryCount, ID_IN, timestampCipher);
         signInDataRepository.saveAndFlush(signInDataModel);
-        // LoginClient.setUserID(ID_IN);
 
         String transferRequest = (String) transferRequestMap.get("transferData");
         String signature = (String) transferRequestMap.get("signature");
         String base64PublicKey = (String) transferRequestMap.get("publicKey");
         PublicKey publicKey = getPublicKeyFromBase64String(base64PublicKey);
 
-        Transfer transfer = new Transfer(accountDataRepository, bankStatementDataRepository);
+        Transfer transfer = new Transfer(accountDataRepository);
         long afterBalance = 0;
         long currentTime = System.currentTimeMillis() / 1000;
 

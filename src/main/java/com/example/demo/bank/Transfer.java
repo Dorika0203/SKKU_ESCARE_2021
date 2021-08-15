@@ -1,7 +1,6 @@
 package com.example.demo.bank;
 
 import com.example.demo.repository.AccountDataRepository;
-import com.example.demo.repository.BankStatementDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +9,6 @@ public class Transfer {
 
 
     private AccountDataRepository accountDataRepository;
-    private BankStatementDataRepository bankStatementDataRepository;
 
     long receiverAccount = 0;
     long senderAccount = 0;
@@ -81,9 +79,8 @@ public class Transfer {
     }
 
     @Autowired
-    public Transfer(AccountDataRepository accountDataRepository, BankStatementDataRepository bankStatementDataRepository) {
+    public Transfer(AccountDataRepository accountDataRepository) {
         super();
         this.accountDataRepository = accountDataRepository;
-        this.bankStatementDataRepository = bankStatementDataRepository;
     }
 }
