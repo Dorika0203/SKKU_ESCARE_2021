@@ -31,7 +31,7 @@ public class SignOut
         int iTmp = Long.valueOf(tmp).intValue();
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
         byte[] cipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, getVerifiedFortanixClient());
-        String ID = getUserID();
+        String ID = (String) session.getAttribute("userID");
         SignOutDataModel signOutDataModel = new SignOutDataModel(iTmp, ID, cipher);
         signOutDataRepository.saveAndFlush(signOutDataModel);
         session.removeAttribute("userID");

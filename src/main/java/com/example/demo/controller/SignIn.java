@@ -20,6 +20,9 @@ import static com.example.demo.fortanix.FortanixRestApi.*;
 import static com.example.demo.bank.LoginClient.setVerifiedFortanixClient;
 import static org.apache.commons.codec.digest.DigestUtils.sha256;
 
+import static com.example.demo.date.Time.getTime;
+import static com.example.demo.date.Time.getCurrentTime;
+
 @Controller
 @RequestMapping("/signin")
 public class SignIn {
@@ -50,6 +53,14 @@ public class SignIn {
 
             if(isEqual(decryptedPassword, sha256(PW_IN))) {
                 saveLoginClientInfoToDatabase(ID_IN);
+                System.out.println(" --------------------------------- SignIn -------------------------");
+                System.out.println("current Time: " + getCurrentTime());
+                System.out.println("session created Time: " + getTime(session.getCreationTime()));
+                System.out.println("Last Accessed Time: " + getTime(session.getLastAccessedTime()));
+                System.out.println("isNew: " + session.isNew());
+                System.out.println("session ID: " + session.getId());
+                session.setMaxInactiveInterval(60);
+                
                 session.setAttribute("userID", ID_IN);
                 // LoginClient.setUserID(ID_IN);
                 return "sign_in_success";

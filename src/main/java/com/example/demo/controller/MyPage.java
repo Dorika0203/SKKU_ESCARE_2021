@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpSession;
+import static com.example.demo.date.Time.getTime;
+import static com.example.demo.date.Time.getCurrentTime;
 
 @Controller
 @RequestMapping("mypage")
@@ -42,6 +44,13 @@ public class MyPage {
         //check if user is login
         String userID = (String) session.getAttribute("userID");
         if (userID != null) {
+            System.out.println(" --------------------------------- MyPage -------------------------");
+            System.out.println("current Time: " + getCurrentTime());
+            System.out.println("session created Time: " + getTime(session.getCreationTime()));
+            System.out.println("Last Accessed Time: " + getTime(session.getLastAccessedTime()));
+            System.out.println("isNew: " + session.isNew());
+            System.out.println("session ID: " + session.getId());
+
             if (time.isClientLoginTimeLessThan5Minute(userID)) {
                 JSONArray transactionLog = new JSONArray();
                 List<AccountDataModel> AccountList = accountDataRepository.findAllByUserId(userID);

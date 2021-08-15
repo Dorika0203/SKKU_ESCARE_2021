@@ -47,6 +47,12 @@ public class Time {
         return dateFormat.format(date_now); // 14자리 포멧으로 출력한다
     }
 
+    public static String getTime(long timeVal) {
+        Date date = new Date(timeVal);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
+    }
+
     public boolean isClientLoginTimeLessThan5Minute(String userID) {
         if(userID.isEmpty())
             return false;
