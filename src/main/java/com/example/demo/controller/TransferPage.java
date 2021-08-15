@@ -3,21 +3,18 @@ package com.example.demo.controller;
 import com.example.demo.bank.Transfer;
 import com.example.demo.model.AccountDataModel;
 import com.example.demo.model.BankStatementDataModel;
-import com.example.demo.model.SignInDataModel;
 import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.BankStatementDataRepository;
 import com.example.demo.repository.SignInDataRepository;
 import com.example.demo.repository.SignOutDataRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.fortanix.sdkms.v1.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -36,8 +33,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpSession;
 
-import static com.example.demo.date.Time.*;
-import static com.example.demo.fortanix.FortanixRestApi.*;
 import static com.example.demo.security.RSA.*;
 import static com.example.demo.bank.LoginClient.*;
 
