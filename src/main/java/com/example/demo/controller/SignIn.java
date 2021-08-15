@@ -19,9 +19,6 @@ import static com.example.demo.fortanix.FortanixRestApi.*;
 import static com.example.demo.bank.LoginClient.*;
 import static org.apache.commons.codec.digest.DigestUtils.sha256;
 
-import static com.example.demo.date.Time.getTime;
-import static com.example.demo.date.Time.getCurrentTime;
-
 @Controller
 @RequestMapping("/signin")
 public class SignIn {
@@ -37,11 +34,12 @@ public class SignIn {
 
     @PostMapping
     public String connect(Model model, String ID_IN, String PW_IN, HttpSession session) {
- 
-        int FLAG = 0;
+        
+        // if session cookie available -> redirect to mypage.
+        if(isSessionAvailable(session)) return "redirect:/mypage";
 
+        int FLAG = 0;
         ApiClient client = generateFortanixSDKMSClientAndVerify(server, username, password);
-        // setVerifiedFortanixClient(client);
         setSessionApiClient(client, session);
 
 
@@ -53,13 +51,6 @@ public class SignIn {
 
             if(isEqual(decryptedPassword, sha256(PW_IN))) {
                 saveLoginClientInfoToDatabase(ID_IN, client);
-                
-                System.out.println(" --------------------------------- SignIn -------------------------");
-                System.out.println("current Time: " + getCurrentTime());
-                System.out.println("Last Accessed Time: " + getTime(session.getLastAccessedTime()));
-                System.out.println("session created Time: " + getTime(session.getCreationTime()));
-                System.out.println("session ID: " + session.getId());
-
                 session.setMaxInactiveInterval(60);
                 setSessionUserID(ID_IN, session);
                 return "sign_in_success";

@@ -26,4 +26,9 @@ public class LoginClient {
         return (ApiClient) retVal;
     }
 
+    public static boolean isSessionAvailable(HttpSession session) {
+        if (getSessionApiClient(session) == null || getSessionUserID(session) == null) return false;
+        return true;
+    }
+
 }

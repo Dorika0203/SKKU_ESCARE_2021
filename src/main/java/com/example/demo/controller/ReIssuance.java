@@ -35,7 +35,7 @@ public class ReIssuance {
 
         String userID = getSessionUserID(session);
 
-        if (userID == null) return "logout_page";
+        if (userID == null) return "fail";
         return "reissuance";
     }
 
@@ -43,7 +43,7 @@ public class ReIssuance {
     public String Reissue(String PW, Model model, HttpSession session) throws ApiException {
 
         String userID = getSessionUserID(session);
-        if (userID == null) return "logout_page";
+        if (userID == null) return "fail";
 
         ApiClient client = getSessionApiClient(session);
         saveLoginClientInfoToDatabase(userID, client);

@@ -31,13 +31,14 @@ public class SignOut
 
         // 로그아웃을 시도하기 전에 이미 세션이 종료된 경우 -> 이미 로그아웃이 처리 되었으므로 로그아웃 페이지를 리턴
         if(client == null) return "logout_page";
-
-        long tmp = signOutDataRepository.count();
-        int iTmp = Long.valueOf(tmp).intValue();
         
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
         byte[] cipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
         String ID = (String) session.getAttribute("userID");
+
+        long tmp = signOutDataRepository.count();
+        int iTmp = Long.valueOf(tmp).intValue();
+        
         SignOutDataModel signOutDataModel = new SignOutDataModel(iTmp, ID, cipher);
         signOutDataRepository.saveAndFlush(signOutDataModel);
         // 세션 종료

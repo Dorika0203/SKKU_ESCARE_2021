@@ -101,7 +101,7 @@ public class MyPage {
             model.addAttribute("myAccountsData", multipleAccountInfo.toString());
             return "my_page";
         } else
-            return "logout_page";
+            return "fail";
 
     }
 

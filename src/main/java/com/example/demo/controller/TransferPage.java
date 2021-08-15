@@ -77,7 +77,7 @@ public class TransferPage {
         model.addAttribute("loginClientID", userID);
 
         //check if user is login
-        if (userID == null) return "logout_page";
+        if (userID == null) return "fail";
         return "transfer_page";
     }
 

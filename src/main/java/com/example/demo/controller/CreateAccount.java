@@ -36,7 +36,7 @@ public class CreateAccount {
             createUserAccountAndSaveToDataBase(userID);
             return "account_create_success";
         } else
-            return "logout_page";
+            return "fail";
     }
 
     public void createUserAccountAndSaveToDataBase(String loginUserID) {
