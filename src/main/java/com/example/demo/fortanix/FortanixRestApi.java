@@ -104,30 +104,30 @@ public class FortanixRestApi {
         }
     }
 
-    public static String TokenEncrypt(String plain, ApiClient client){
+    public static byte[] TokenEncrypt(String plain, ApiClient client){
         String ivStr = new String("ESCAREAAAAAAAAAA");
         byte[] bArrPlain = Base64.getDecoder().decode(plain);
         EncryptRequest encryptRequest = new EncryptRequest();
         encryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).plain(bArrPlain);
         try{
             EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
-                    .encrypt("2bf3feac-11b3-4a63-92e4-88f17d05bbfa", encryptRequest);
-            return Base64.getEncoder().encodeToString(encryptResponse.getCipher());
+                    .encrypt("20ed1d15-5765-4fa8-aad8-2c9a0f2cf36e", encryptRequest);
+            return encryptResponse.getCipher();
         } catch (ApiException e){
             e.printStackTrace();
             return null;
         }
     }
 
-    public static String TokenDecrypt(String cipher, ApiClient client){
+    public static byte[] TokenDecrypt(String cipher, ApiClient client){
         String ivStr = new String("ESCAREAAAAAAAAAA");
-        byte[] bArrCipher = Base64.getDecoder().decode(cipher);
+        byte[] bArrCipher = cipher.getBytes();
         DecryptRequest decryptRequest = new DecryptRequest();
         decryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).cipher(bArrCipher);
         try{
             DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client)
-                    .decrypt("2bf3feac-11b3-4a63-92e4-88f17d05bbfa", decryptRequest);
-            return Base64.getEncoder().encodeToString(decryptResponse.getPlain());
+                    .decrypt("20ed1d15-5765-4fa8-aad8-2c9a0f2cf36e", decryptRequest);
+            return decryptResponse.getPlain();
         } catch (ApiException e){
             e.printStackTrace();
             return null;
@@ -135,15 +135,15 @@ public class FortanixRestApi {
     }
 
     public static void main(String[] args) {
-        String plain = "0123456789123456";
+        String plain = "010-7152-5771";
         String B64Plain = Base64.getEncoder().encodeToString(plain.getBytes());
         ApiClient client;
-        client = createClient("https://sdkms.fortanix.com", "a025eafd-5977-4924-8087-9b262315a974", "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ");
+        client = generateFortanixSDKMSClientAndVerify("https://sdkms.fortanix.com", "a025eafd-5977-4924-8087-9b262315a974", "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ");
 
-        String cipher = TokenEncrypt(B64Plain,client);
+        String cipher = new String(TokenEncrypt(B64Plain,client));
         System.out.println(cipher);
 
-        plain = TokenDecrypt(cipher, client);
+        plain = new String(TokenDecrypt(cipher, client));
         System.out.println(plain);
     }
 
