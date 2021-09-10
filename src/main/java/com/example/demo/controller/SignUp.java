@@ -53,10 +53,10 @@ public class SignUp {
         //Tokenize phoneNumber
         String B64Plain = Base64.getEncoder().encodeToString(phoneNumber.getBytes());
 
-        String decryptedPhonnumber = new String(tokenEncrypt(B64Plain,client));
+        String TokenizedPhoneNumber = new String(tokenEncryptByFortanixSDKMS(B64Plain,client));
 
         //Insert Data in DB
-        UserDataModel userDataModel = new UserDataModel(ID, cipher, lastName, firstName, decryptedPhonnumber);
+        UserDataModel userDataModel = new UserDataModel(ID, cipher, lastName, firstName, TokenizedPhoneNumber);
 
         if (hasDuplicate(ID))
             return "sign_up_fail";
