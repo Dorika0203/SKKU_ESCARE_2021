@@ -50,8 +50,13 @@ public class SignUp {
 
         cipher = generateAESCipherByFortanixSDKMS(sha256(byteArrPW), client);
 
+        //Tokenize phoneNumber
+        String B64Plain = Base64.getEncoder().encodeToString(phoneNumber.getBytes());
+
+        String decryptedPhonnumber = new String(tokenEncrypt(B64Plain,client));
+
         //Insert Data in DB
-        UserDataModel userDataModel = new UserDataModel(ID, cipher, lastName, firstName, phoneNumber);
+        UserDataModel userDataModel = new UserDataModel(ID, cipher, lastName, firstName, decryptedPhonnumber);
 
         if (hasDuplicate(ID))
             return "sign_up_fail";

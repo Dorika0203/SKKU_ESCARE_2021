@@ -104,14 +104,15 @@ public class FortanixRestApi {
         }
     }
 
-    public static byte[] TokenEncrypt(String plain, ApiClient client){
+    public static byte[] tokenEncrypt(String plain, ApiClient client){
         String ivStr = new String("ESCAREAAAAAAAAAA");
+        FpeOptionsBasic fpeOptionsBasic = new FpeOptionsBasic();
         byte[] bArrPlain = Base64.getDecoder().decode(plain);
         EncryptRequest encryptRequest = new EncryptRequest();
         encryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).plain(bArrPlain);
         try{
             EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
-                    .encrypt("20ed1d15-5765-4fa8-aad8-2c9a0f2cf36e", encryptRequest);
+                    .encrypt("470420aa-ebd7-4198-a8ad-09637f087f04", encryptRequest);
             return encryptResponse.getCipher();
         } catch (ApiException e){
             e.printStackTrace();
@@ -119,14 +120,14 @@ public class FortanixRestApi {
         }
     }
 
-    public static byte[] TokenDecrypt(String cipher, ApiClient client){
+    public static byte[] tokenDecrypt(String cipher, ApiClient client){
         String ivStr = new String("ESCAREAAAAAAAAAA");
         byte[] bArrCipher = cipher.getBytes();
         DecryptRequest decryptRequest = new DecryptRequest();
         decryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).cipher(bArrCipher);
         try{
             DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client)
-                    .decrypt("20ed1d15-5765-4fa8-aad8-2c9a0f2cf36e", decryptRequest);
+                    .decrypt("470420aa-ebd7-4198-a8ad-09637f087f04", decryptRequest);
             return decryptResponse.getPlain();
         } catch (ApiException e){
             e.printStackTrace();
@@ -140,10 +141,10 @@ public class FortanixRestApi {
         ApiClient client;
         client = generateFortanixSDKMSClientAndVerify("https://sdkms.fortanix.com", "a025eafd-5977-4924-8087-9b262315a974", "vxYLi9s8_GXmNIBLBeUgV8caHqSyUZtTqvR2qoMFU3PVPlg64_vPIDkI0mpScqDH_p3g2Q5P0SdhIEr0TpEghQ");
 
-        String cipher = new String(TokenEncrypt(B64Plain,client));
+        String cipher = new String(tokenEncrypt(B64Plain,client));
         System.out.println(cipher);
 
-        plain = new String(TokenDecrypt(cipher, client));
+        plain = new String(tokenDecrypt(cipher, client));
         System.out.println(plain);
     }
 
