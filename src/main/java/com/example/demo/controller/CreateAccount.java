@@ -78,7 +78,7 @@ public class CreateAccount {
 
         // Set Third part of AccountNumber
         String accountNumberThird;
-        accountNumberThird = Integer.toString(day % 10) + Integer.toString(month % 10) + Integer.toString(second % 10);
+        accountNumberThird = Integer.toString((second * hour + minute) % 10) + Integer.toString((second * day + hour) % 10) + Integer.toString((day * month + second) % 10) + Integer.toString((second * minute + day) % 10);
 
         // Set Forth part of AccountNumber
         String accountNumberForth;
