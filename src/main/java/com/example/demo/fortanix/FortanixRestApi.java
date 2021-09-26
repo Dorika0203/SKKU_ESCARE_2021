@@ -105,7 +105,6 @@ public class FortanixRestApi {
     }
 
     public static String TokenEncrypt(String plain, ApiClient client){
-        String ivStr = new String("ESCAREAAAAAAAAAA");
         byte[] bArrPlain = Base64.getDecoder().decode(plain);
         EncryptRequest encryptRequest = new EncryptRequest();
         encryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).plain(bArrPlain);
@@ -120,7 +119,6 @@ public class FortanixRestApi {
     }
 
     public static String TokenDecrypt(String cipher, ApiClient client){
-        String ivStr = new String("ESCAREAAAAAAAAAA");
         byte[] bArrCipher = Base64.getDecoder().decode(cipher);
         DecryptRequest decryptRequest = new DecryptRequest();
         decryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).cipher(bArrCipher);
