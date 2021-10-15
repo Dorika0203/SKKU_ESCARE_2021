@@ -8,7 +8,6 @@ import com.fortanix.sdkms.v1.ApiClient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,6 +35,9 @@ public class Admin {
             String adminID = getSessionUserID(session);
             Long level = adminDataRepository.getById(adminID).getLevel();
 
+            // // token update test.
+            // generateAESCipherByFortanixSDKMS("HI".getBytes(), getSessionApiClient(session));
+
             // super admin.
             if(level == 0) return "redirect:/adminPage/manageAdmin";
             else if (level == 1) return "redirect:/adminPage/manageClient";
@@ -48,7 +50,7 @@ public class Admin {
     // At Login Request
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, path = "/adminPage")
-    public int adminLogin(Model model, String id, String pw, HttpSession session) {
+    public int adminLogin(String id, String pw, HttpSession session) {
 
         ApiClient client = generateFortanixSDKMSClientAndVerify(server, username, password);
         // if ID exist

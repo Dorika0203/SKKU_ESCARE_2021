@@ -29,17 +29,26 @@ public class FortanixRestApi {
         client.setBasePath(server);
         client.setUsername(username);
         client.setPassword(password);
+        updateBearerToken(client);
+        return client;
+    }
+
+
+    // BearerToken update.
+    public static boolean updateBearerToken(ApiClient client) {
         AuthenticationApi authenticationApi = new AuthenticationApi(client);
+        AuthResponse authResponse;
         try {
-            AuthResponse authResponse = authenticationApi.authorize();
+            authResponse = authenticationApi.authorize();
             ApiKeyAuth bearerTokenAuth = (ApiKeyAuth) client.getAuthentication("bearerToken");
             bearerTokenAuth.setApiKey(authResponse.getAccessToken());
             bearerTokenAuth.setApiKeyPrefix("Bearer");
-            System.out.println("Fortanix SDKMS Authentication success");
+            System.out.println("Bearer Token authentication SUCCESS...");
+            return true;
         } catch (ApiException e) {
-            System.err.println("Unable to authenticate: " + e.getMessage());
+            System.err.println("Bearer Token authentication FAIL..." + e.getMessage());
+            return false;
         }
-        return client;
     }
 
 
@@ -58,16 +67,15 @@ public class FortanixRestApi {
         try{
             securityObjectsApi.generateSecurityObject(sobjectRequest);
         } catch (ApiException e) {
-            System.err.println("Unable to authenticate: " + e.getMessage());
+            System.out.println("Token dead.");
+            if(updateBearerToken(client)) generateRSAKeyFromFortanixSDKMS(client, ID);
         }
     }
 
     public static KeyObject getSecurityObjectByID(ApiClient client, String ID) throws ApiException {
-        SobjectDescriptor soDescriptor = new SobjectDescriptor()
-                .name(ID);
+        SobjectDescriptor soDescriptor = new SobjectDescriptor().name(ID);
         SecurityObjectsApi securityObjectsApi = new SecurityObjectsApi(client);
         KeyObject keyObject = securityObjectsApi.getSecurityObjectValueEx(soDescriptor);
-
         return keyObject;
     }
 
@@ -80,7 +88,8 @@ public class FortanixRestApi {
                     .encrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", encryptRequest);
             return encryptResponse.getCipher();
         } catch (ApiException e) {
-            e.printStackTrace();
+            System.out.println("Token dead.");
+            if(updateBearerToken(client)) return generateAESCipherByFortanixSDKMS(plain, client);
             return null;
         }
     }
@@ -99,7 +108,8 @@ public class FortanixRestApi {
             DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client).decrypt("72ea7189-a27e-4625-96b0-fc899e8a49ff", decryptRequest);
             return decryptResponse.getPlain();
         } catch (ApiException e) {
-            e.printStackTrace();
+            System.out.println("Token dead.");
+            if(updateBearerToken(client)) return decryptAESCipherByFortanixSDKMS(cipher, client);
             return null;
         }
     }
@@ -113,7 +123,8 @@ public class FortanixRestApi {
                     .encrypt("2bf3feac-11b3-4a63-92e4-88f17d05bbfa", encryptRequest);
             return Base64.getEncoder().encodeToString(encryptResponse.getCipher());
         } catch (ApiException e){
-            e.printStackTrace();
+            System.out.println("Token dead.");
+            if(updateBearerToken(client)) return TokenEncrypt(plain, client);
             return null;
         }
     }
@@ -127,7 +138,8 @@ public class FortanixRestApi {
                     .decrypt("2bf3feac-11b3-4a63-92e4-88f17d05bbfa", decryptRequest);
             return Base64.getEncoder().encodeToString(decryptResponse.getPlain());
         } catch (ApiException e){
-            e.printStackTrace();
+            System.out.println("Token dead.");
+            if(updateBearerToken(client)) return TokenDecrypt(cipher, client);
             return null;
         }
     }
