@@ -59,6 +59,7 @@ public class SessionControll implements HttpSessionListener{
         System.out.println("**");
         ApiClient client = getSessionApiClient(session);
         String ID = getSessionUserID(session);
+        int flag = getSessionFlag(session);
 
         System.out.println("**");
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
