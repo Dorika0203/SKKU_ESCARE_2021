@@ -6,8 +6,11 @@ import com.example.demo.model.AdminDataModel;
 import com.example.demo.repository.AdminDataRepository;
 import com.fortanix.sdkms.v1.ApiClient;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +20,7 @@ import static com.example.demo.bank.LoginClient.*;
 import static org.apache.commons.codec.digest.DigestUtils.sha256;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 public class Admin {
@@ -28,7 +32,8 @@ public class Admin {
     @Autowired
     private AdminDataRepository adminDataRepository;
 
-    // Login Page
+
+    // 로그인 페이지
     @RequestMapping(method = RequestMethod.GET, path = "/adminPage")
     public String adminHome(HttpSession session) {
         if(isAdminSessionAvailable(session)) {
@@ -47,7 +52,7 @@ public class Admin {
     }
 
 
-    // At Login Request
+    // 로그인 요청 응답
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, path = "/adminPage")
     public int adminLogin(String id, String pw, HttpSession session) {
@@ -72,5 +77,36 @@ public class Admin {
             return 2;
         }
         return 1;
+    }
+
+
+    // 수퍼 관리자 로그인 결과창 (관리자 리스트 조회 기능)
+    @RequestMapping(method = RequestMethod.GET, path = "/adminPage/manageAdmin")
+    public String superAdminHome(HttpSession session, Model model) {
+        if(!isAdminSessionAvailable(session)) return "redirect:/adminPage";
+
+        List<AdminDataModel> adminList = adminDataRepository.findAll();
+        JSONArray adminListInfo = new JSONArray();
+
+        for(int i=0; i<adminList.size(); i++)
+        {
+            AdminDataModel ith_Admin = adminList.get(i);
+            JSONObject ith_Info = new JSONObject();
+            ith_Info.put("id", ith_Admin.getId());
+            ith_Info.put("name", ith_Admin.getName());
+            ith_Info.put("number", ith_Admin.getNumber());
+            ith_Info.put("level", ith_Admin.getLevel());
+            adminListInfo.put(ith_Info);
+        }
+
+        model.addAttribute("adminListInfo", adminListInfo);
+        return "admin_home0";
+    }
+
+
+    // 일반 관리자 로그인 결과창 (유저 리스트 조회 기능)
+    @RequestMapping(method = RequestMethod.GET, path = "/adminPage/manageClient")
+    public String generalAdminHome(HttpSession session) {
+        return null;
     }
 }
