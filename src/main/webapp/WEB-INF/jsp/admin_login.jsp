@@ -28,13 +28,13 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             success: function(result) {
               switch(result) {
                 case 0:
-                  alert("login success!");
+                  alert("로그인 성공 !");
                   break;
                 case 1:
-                  alert("ID does not exist! request to super administrator.");
+                  alert("아이디가 존재하지 않습니다. 수퍼 관리자에게 문의하세요. ");
                   break;
                 case 2:
-                  alert("PW is wrong! request to super administrator.");
+                  alert("비밀 번호가 틀렸습니다.");
                   break;
                 default:
                   alert("something wrong...");

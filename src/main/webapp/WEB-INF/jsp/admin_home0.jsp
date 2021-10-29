@@ -53,17 +53,18 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         adminListTable.appendChild(tr);
       }
 
+
+      // 관리자 생성
       $('#create_admin').click(function() {
 
           let id = prompt('ID?', '');
           let pw = prompt('PW?', '');
           let name = prompt('name?', '');
-          let number = prompt('phone number?', '');
-          let adminLevel = prompt('admin level?', '');
-
+          let number = prompt('phone number? 010-XXXX-XXXX', '');
+          let adminLevel = prompt('admin level? 0:super, 1:general', '');
           $.ajax({
             type: "POST",
-            url: "adminPage/manageAdmin/create",
+            url: "manageAdmin/create",
             data: {
               id: id,
               pw: pw,
@@ -79,18 +80,57 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                 case 1:
                   alert("ID 중복");
                   break;
+                case 2:
+                  alert("권한 없음 혹은 세션 없음");
+                  break;
+                case 3:
+                  alert("데이터 타입 안맞음");
+                  break;
                 default:
-                  alert("알수 없는 오류");
+                  alert("알 수 없는 오류");
                   break;
               }
               location.reload();
             },
             error:function(request,status,error) {
-              alert("HTTP ERROR...");
-              alert("code = "+ request.status + " message = " + request.responseText + " error = " + error);
+              alert("서버 오류");
+              location.reload();
             }
           });
           
+        })
+
+        // 관리자 제거
+        $('#remove_admin').click(function() {
+          let id = prompt('ID?', '');
+          $.ajax({
+            type: "POST",
+            url: "manageAdmin/remove",
+            data: {
+              id: id,
+            },
+            success: function(result) {
+              switch(result) {
+                case 0:
+                  alert("관리자 제거 성공");
+                  break;
+                case 1:
+                  alert("ID 존재하지 않음");
+                  break;
+                case 2:
+                  alert("권한 없음 혹은 세션 없음");
+                  break;
+                default:
+                  alert("알 수 없는 오류");
+                  break;
+              }
+              location.reload();
+            },
+            error:function(request,status,error) {
+              alert("서버 오류");
+              location.reload();
+            }
+          });
         })
     </script>
   </body>

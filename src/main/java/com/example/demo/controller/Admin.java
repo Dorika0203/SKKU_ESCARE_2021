@@ -38,13 +38,17 @@ public class Admin {
     public String adminHome(HttpSession session) {
         if(isAdminSessionAvailable(session)) {
             String adminID = getSessionUserID(session);
+            
+            // DB에 해당 관리자 존재하지 않는 경우 (로그인 후에 수퍼관리자가 삭제하는 경우)
+            if(!isAdminExist(adminID)) {
+                session.invalidate();
+                return "redirect:/adminPage";
+            }
             Long level = adminDataRepository.getById(adminID).getLevel();
-
-            // // token update test.
-            // generateAESCipherByFortanixSDKMS("HI".getBytes(), getSessionApiClient(session));
-
-            // super admin.
+            // 수퍼 관리자
             if(level == 0) return "redirect:/adminPage/manageAdmin";
+
+            // 일반 관리자
             else if (level == 1) return "redirect:/adminPage/manageClient";
             else return "fail"; 
         }
@@ -70,8 +74,7 @@ public class Admin {
                 setSessionUserID(id, session);
                 setSessionFlag(1, session);
                 setSessionApiClient(client, session);
-                session.setMaxInactiveInterval(3600);
-                System.out.println("HI");
+                session.setMaxInactiveInterval(300); // 세션 수명
                 return 0;
             }
             return 2;
@@ -80,14 +83,24 @@ public class Admin {
     }
 
 
+    // 수퍼 관리자 기능 -----------------------------------------------------------------------------------
     // 수퍼 관리자 로그인 결과창 (관리자 리스트 조회 기능)
     @RequestMapping(method = RequestMethod.GET, path = "/adminPage/manageAdmin")
     public String superAdminHome(HttpSession session, Model model) {
         if(!isAdminSessionAvailable(session)) return "redirect:/adminPage";
+        String currentAdminId = getSessionUserID(session);
+
+        // DB에 해당 관리자 존재하지 않는 경우 (로그인 후에 수퍼관리자가 삭제하는 경우)
+        if(!isAdminExist(currentAdminId)) {
+            session.invalidate();
+            return "redirect:/adminPage";
+        }
+
+        // 수퍼 관리자가 아닌데 시도하는 경우
+        if(adminDataRepository.getById(currentAdminId).getLevel() != 0) return "redirect:/adminPage";
 
         List<AdminDataModel> adminList = adminDataRepository.findAll();
         JSONArray adminListInfo = new JSONArray();
-
         for(int i=0; i<adminList.size(); i++)
         {
             AdminDataModel ith_Admin = adminList.get(i);
@@ -104,9 +117,79 @@ public class Admin {
     }
 
 
+    // 관리자 생성 기능
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, path = "/adminPage/manageAdmin/create")
+    public int createAdmin(HttpSession session, String id, String pw, String name, String number, String adminLevel)
+    {
+        // 세션이 사용 불가
+        if(!isAdminSessionAvailable(session)) return 2;
+        String currentAdminId = getSessionUserID(session);
+        // DB에 해당 관리자 존재하지 않는 경우 (로그인 후에 수퍼관리자가 삭제하는 경우)
+        if(!isAdminExist(currentAdminId)) {
+            session.invalidate();
+            return 2;
+        }
+        Long currentAdminLevel = adminDataRepository.getById(currentAdminId).getLevel();
+        if(currentAdminLevel != 0) return 2;
+
+        // 중복 아이디 존재
+        if(isAdminExist(id)) return 1;
+
+
+        // 입력 데이터타입 검사
+        Long level;
+        try {
+            level = Long.parseLong(adminLevel);   
+        } catch (NumberFormatException e) {
+            System.out.println("not appropriate admin level");
+            return 3;
+        }
+        
+        ApiClient client = getSessionApiClient(session);
+        byte[] cipher = generateAESCipherByFortanixSDKMS(sha256(pw), client);
+        AdminDataModel newAdmin = new AdminDataModel(id, cipher, name, number, level);
+        adminDataRepository.saveAndFlush(newAdmin);
+        return 0;
+    }
+
+    // 관리자 제거 기능
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, path = "/adminPage/manageAdmin/remove")
+    public int remove(HttpSession session, String id)
+    {
+        // 세션이 사용 불가
+        if(!isAdminSessionAvailable(session)) return 2;
+        String currentAdminId = getSessionUserID(session);
+
+        // DB에 해당 관리자 존재하지 않는 경우 (로그인 후에 수퍼관리자가 삭제하는 경우)
+        if(!isAdminExist(currentAdminId)) {
+            session.invalidate();
+            return 2;
+        }
+        Long currentAdminLevel = adminDataRepository.getById(currentAdminId).getLevel();
+        if(currentAdminLevel != 0) return 2;
+
+        // 아이디가 존재하지 않음
+        if(!isAdminExist(id)) return 1;
+
+        // 성공
+        adminDataRepository.deleteById(id);
+        return 0;
+    }
+
+
+
+
+    // 일반 관리자 기능 -----------------------------------------------------------------------------------
+    
     // 일반 관리자 로그인 결과창 (유저 리스트 조회 기능)
     @RequestMapping(method = RequestMethod.GET, path = "/adminPage/manageClient")
     public String generalAdminHome(HttpSession session) {
         return null;
+    }
+
+    public boolean isAdminExist(String id) {
+        return adminDataRepository.findById(id).isPresent();
     }
 }

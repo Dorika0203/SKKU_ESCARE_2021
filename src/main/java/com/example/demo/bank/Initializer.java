@@ -43,14 +43,14 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent>{
         adminDataRepository.saveAndFlush(superAdmin);
 
         // test general admin initialize
-        AdminDataModel testAdmin1 = new AdminDataModel("ID_1", cipherPW, "name_1", "010-1111-1111", 1);
-        adminDataRepository.saveAndFlush(testAdmin1);
-        AdminDataModel testAdmin2 = new AdminDataModel("ID_2", cipherPW, "name_2", "010-2222-2222", 1);
-        adminDataRepository.saveAndFlush(testAdmin2);
-        AdminDataModel testAdmin3 = new AdminDataModel("ID_3", cipherPW, "name_3", "010-3333-3333", 1);
-        adminDataRepository.saveAndFlush(testAdmin3);
-        AdminDataModel testAdmin4 = new AdminDataModel("ID_4", cipherPW, "name_4", "010-4444-4444", 1);
-        adminDataRepository.saveAndFlush(testAdmin4);
+        // AdminDataModel testAdmin1 = new AdminDataModel("ID_1", cipherPW, "name_1", "010-1111-1111", 1);
+        // adminDataRepository.saveAndFlush(testAdmin1);
+        // AdminDataModel testAdmin2 = new AdminDataModel("ID_2", cipherPW, "name_2", "010-2222-2222", 1);
+        // adminDataRepository.saveAndFlush(testAdmin2);
+        // AdminDataModel testAdmin3 = new AdminDataModel("ID_3", cipherPW, "name_3", "010-3333-3333", 1);
+        // adminDataRepository.saveAndFlush(testAdmin3);
+        // AdminDataModel testAdmin4 = new AdminDataModel("ID_4", cipherPW, "name_4", "010-4444-4444", 1);
+        // adminDataRepository.saveAndFlush(testAdmin4);
         //
 
 
