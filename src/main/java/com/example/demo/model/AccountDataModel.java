@@ -9,15 +9,15 @@ import javax.persistence.Table;
 @Table(name="AccountInfo")
 public class AccountDataModel {
     @Id
-    private long account;
+    private String account;
     @Column
     private String userId;
     @Column
     private long balance;
 
-    public long getAccount() { return account; }
+    public String getAccount() { return account; }
 
-    public void setAccount(long account) {
+    public void setAccount(String account) {
         this.account = account;
     }
 
@@ -33,7 +33,7 @@ public class AccountDataModel {
 
     public void setBalance(long balance) {this.balance = balance;}
 
-    public AccountDataModel(long account, String id) {
+    public AccountDataModel(String account, String id) {
         this.account = account;
         this.userId = id;
         this.balance = 100000;

@@ -12,7 +12,7 @@ public class BankStatementDataModel {
     private long count;
 
     @Column
-    private long account;
+    private String account;
 
     @Column
     private long transactionTime;
@@ -24,12 +24,12 @@ public class BankStatementDataModel {
     private long afterBalance;
 
     @Column
-    private long depositAccount;
+    private String depositAccount;
 
 
-    public long getAccount() {return account;}
+    public String getAccount() {return account;}
 
-    public void setAccount(long account) {this.account = account;}
+    public void setAccount(String account) {this.account = account;}
 
     public long getTransactionTime() { return transactionTime; }
 
@@ -43,11 +43,11 @@ public class BankStatementDataModel {
 
     public void setAfterBalance(long afterBalance) {this.afterBalance = afterBalance;}
 
-    public long getDepositAccount() {return depositAccount;}
+    public String getDepositAccount() {return depositAccount;}
 
-    public void setDepositAccount(long depositAccount) {this.depositAccount = depositAccount;}
+    public void setDepositAccount(String depositAccount) {this.depositAccount = depositAccount;}
 
-    public BankStatementDataModel(long count, long account, long transactionTime, long transactionAmount, long afterBalance, long depositAccount) {
+    public BankStatementDataModel(long count, String account, long transactionTime, long transactionAmount, long afterBalance, String depositAccount) {
         this.count = count;
         this.account = account;
         this.transactionTime = transactionTime;

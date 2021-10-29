@@ -105,8 +105,8 @@ public class TransferPage {
             if (transfer.isRequestArrivedLessThan10Seconds()) {
                 if (transfer.isAccountsExistInAccountDatabase()) {
                     //check if account exists
-                    AccountDataModel senderUserAccount = accountDataRepository.findById(transfer.getSenderAccount()).get();
-                    AccountDataModel receiverUserAccount = accountDataRepository.findById(transfer.getReceiverAccount()).get();
+                    AccountDataModel senderUserAccount = accountDataRepository.findByAccount(transfer.getSenderAccount());
+                    AccountDataModel receiverUserAccount = accountDataRepository.findByAccount(transfer.getReceiverAccount());
                     if (senderUserAccount.getBalance() >= transfer.getTransferAmount()) {
                         //transfer and edit balance
                         afterBalance = receiverUserAccount.getBalance() + transfer.getTransferAmount();
