@@ -120,7 +120,8 @@ public class FortanixRestApi {
         encryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).plain(bArrPlain);
         try{
             EncryptResponse encryptResponse = new EncryptionAndDecryptionApi(client)
-                    .encrypt("470420aa-ebd7-4198-a8ad-09637f087f04", encryptRequest);
+                    // .encrypt("470420aa-ebd7-4198-a8ad-09637f087f04", encryptRequest);
+                    .encrypt("c253ae61-73d9-4182-a261-ef63dfd31644", encryptRequest);
             return encryptResponse.getCipher();
         } catch (ApiException e){
             System.out.println("Token dead.");
@@ -135,7 +136,8 @@ public class FortanixRestApi {
         decryptRequest.alg(ObjectType.AES).mode(CryptMode.FPE).cipher(bArrCipher);
         try{
             DecryptResponse decryptResponse = new EncryptionAndDecryptionApi(client)
-                    .decrypt("470420aa-ebd7-4198-a8ad-09637f087f04", decryptRequest);
+                    // .decrypt("470420aa-ebd7-4198-a8ad-09637f087f04", decryptRequest);
+                    .decrypt("c253ae61-73d9-4182-a261-ef63dfd31644", decryptRequest);
             return decryptResponse.getPlain();
         } catch (ApiException e){
             System.out.println("Token dead.");

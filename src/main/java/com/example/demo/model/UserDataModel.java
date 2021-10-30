@@ -50,6 +50,22 @@ public class UserDataModel {
         Lastname = lastname;
     }
 
+    public String getFirstname() {
+        return Firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.Firstname = firstname;
+    }
+
+    public String getPhoneNumber() {
+        return this.PhoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.PhoneNumber = phoneNumber;
+    }
+
     public String getIssued_time() {
         return issued_time;
     }

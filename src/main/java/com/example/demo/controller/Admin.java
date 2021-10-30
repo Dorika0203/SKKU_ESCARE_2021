@@ -3,7 +3,11 @@ package com.example.demo.controller;
 import javax.servlet.http.HttpSession;
 
 import com.example.demo.model.AdminDataModel;
+import com.example.demo.model.UserDataModel;
+import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.AdminDataRepository;
+import com.example.demo.repository.BankStatementDataRepository;
+import com.example.demo.repository.UserDataRepository;
 import com.fortanix.sdkms.v1.ApiClient;
 
 import org.json.JSONArray;
@@ -31,6 +35,12 @@ public class Admin {
 
     @Autowired
     private AdminDataRepository adminDataRepository;
+    @Autowired
+    private UserDataRepository userDataRepository;
+    @Autowired
+    private BankStatementDataRepository bankStatementDataRepository;
+    @Autowired
+    private AccountDataRepository accountDataRepository;
 
 
     // 로그인 페이지
@@ -185,8 +195,46 @@ public class Admin {
     
     // 일반 관리자 로그인 결과창 (유저 리스트 조회 기능)
     @RequestMapping(method = RequestMethod.GET, path = "/adminPage/manageClient")
-    public String generalAdminHome(HttpSession session) {
-        return null;
+    public String generalAdminHome(HttpSession session, Model model) {
+
+        // 세션 검사
+        if(!isAdminSessionAvailable(session)) return "redirect:/adminPage";
+        String currentAdminId = getSessionUserID(session);
+
+        // DB에 해당 관리자 존재하지 않는 경우 (로그인 후에 수퍼관리자가 삭제하는 경우)
+        if(!isAdminExist(currentAdminId)) {
+            session.invalidate();
+            return "redirect:/adminPage";
+        }
+
+        // 일반 관리자가 아닌데 시도하는 경우
+        if(adminDataRepository.getById(currentAdminId).getLevel() != 1) return "redirect:/adminPage";
+
+        // 성공, 사용자 리스트 반환.
+        List<UserDataModel> userList = userDataRepository.findAll();
+        JSONArray userListInfo = new JSONArray();
+        for(int i=0; i<userList.size(); i++)
+        {
+            UserDataModel ith_User = userList.get(i);
+            JSONObject ith_Info = new JSONObject();
+            ith_Info.put("id", ith_User.getId());
+            ith_Info.put("lastName", ith_User.getLastname());
+            ith_Info.put("firstName", ith_User.getFirstname());
+            ith_Info.put("issuedTime", ith_User.getIssued_time());
+
+            // // 전화 번호 토큰화 해제해서 보여주는 경우
+            String tokenizedPhoneNumber = ith_User.getPhoneNumber();
+            // String realPhoneNumber = new String(tokenDecryptByFortanixSDKMS(tokenizedPhoneNumber, getSessionApiClient(session)));
+            // ith_Info.put("phoneNumber", realPhoneNumber);
+
+            // 그냥 토큰화 결과로 보기
+            String maskedPhoneNumber = tokenizedPhoneNumber.substring(0, 4) + "****" + tokenizedPhoneNumber.substring(8, 13);
+            ith_Info.put("phoneNumber", maskedPhoneNumber);
+            userListInfo.put(ith_Info);
+        }
+
+        model.addAttribute("userListInfo", userListInfo);
+        return "admin_home1";
     }
 
     public boolean isAdminExist(String id) {
