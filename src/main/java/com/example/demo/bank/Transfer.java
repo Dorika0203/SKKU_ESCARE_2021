@@ -10,24 +10,24 @@ public class Transfer {
 
     private AccountDataRepository accountDataRepository;
 
-    long receiverAccount = 0;
-    long senderAccount = 0;
+    String receiverAccount;
+    String senderAccount;
     long transferAmount = 0;
     long messageTimestamp = 0;
 
-    public long getReceiverAccount() {
+    public String getReceiverAccount() {
         return receiverAccount;
     }
 
-    public void setReceiverAccount(long receiverAccount) {
+    public void setReceiverAccount(String receiverAccount) {
         this.receiverAccount = receiverAccount;
     }
 
-    public long getSenderAccount() {
+    public String getSenderAccount() {
         return senderAccount;
     }
 
-    public void setSenderAccount(long senderAccount) {
+    public void setSenderAccount(String senderAccount) {
         this.senderAccount = senderAccount;
     }
 
@@ -41,8 +41,8 @@ public class Transfer {
 
     public void setTransferInfoFromTransferRequest(String transferRequest) {
         String[] transferRequestParsedArray = transferRequest.split("\\s");
-        setReceiverAccount(Integer.parseInt(transferRequestParsedArray[0]));
-        setSenderAccount(Integer.parseInt(transferRequestParsedArray[1]));
+        setReceiverAccount(transferRequestParsedArray[0]);
+        setSenderAccount(transferRequestParsedArray[1]);
         setTransferAmount(Integer.parseInt(transferRequestParsedArray[2]));
         setMessageTimestamp(Integer.parseInt(transferRequestParsedArray[3]));
     }
@@ -65,13 +65,13 @@ public class Transfer {
     }
 
     public boolean isAccountsExistInAccountDatabase() {
-        if (accountDataRepository.existsById(receiverAccount) && accountDataRepository.existsById(senderAccount))
+        if (accountDataRepository.existsByAccount(receiverAccount) && accountDataRepository.existsByAccount(senderAccount))
             return true;
         else
             return false;
     }
 
-    public Transfer(long receiverAccount, long senderAccount, long transferAmount, long messageTimestamp) {
+    public Transfer(String receiverAccount, String senderAccount, long transferAmount, long messageTimestamp) {
         this.receiverAccount = receiverAccount;
         this.senderAccount = senderAccount;
         this.transferAmount = transferAmount;

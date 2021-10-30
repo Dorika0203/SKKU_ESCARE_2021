@@ -56,12 +56,18 @@ public class SessionControll implements HttpSessionListener{
 
 
         // 시나리오 3을 제외한 경우 자동 로그아웃 처리.
+        System.out.println("**");
         ApiClient client = getSessionApiClient(session);
         String ID = getSessionUserID(session);
+        int flag = getSessionFlag(session);
 
+        System.out.println("**");
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
         byte[] cipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);
 
+
+        System.out.println("**");
+        
         if (ID != null && client != null)
         {
             long tmp = signOutDataRepository.count();

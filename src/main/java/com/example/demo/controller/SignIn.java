@@ -51,8 +51,9 @@ public class SignIn {
 
             if(isEqual(decryptedPassword, sha256(PW_IN))) {
                 saveLoginClientInfoToDatabase(ID_IN, client);
-                session.setMaxInactiveInterval(60);
+                session.setMaxInactiveInterval(300);
                 setSessionUserID(ID_IN, session);
+                setSessionFlag(0, session);
                 return "sign_in_success";
             }
             else FLAG = 1;
