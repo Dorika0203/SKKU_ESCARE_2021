@@ -27,10 +27,10 @@ public class SignOut
     @GetMapping
     public String connect(HttpSession session) {
 
-        ApiClient client = getSessionApiClient(session);
-
         // 로그아웃을 시도하기 전에 이미 세션이 종료된 경우 -> 이미 로그아웃이 처리 되었으므로 로그아웃 페이지를 리턴
-        if(client == null) return "logout_page";
+        if(!isSessionAvailable(session)) return "logout_page";
+
+        ApiClient client = getSessionApiClient(session);
         
         byte[] byteCurrentTime = getCurrentTime().getBytes(StandardCharsets.UTF_8);
         byte[] cipher = generateAESCipherByFortanixSDKMS(byteCurrentTime, client);

@@ -31,14 +31,13 @@ public class CreateAccount {
     @GetMapping
     public String createaccount(HttpSession session) {
 
-        String userID = getSessionUserID(session);
+        // 세션 만료 시
+        if(!isSessionAvailable(session)) return "fail";
 
-        if (userID != null) {
-            String accountNumber = generateAccountNumber();
-            saveToDataBase(accountNumber, userID);
-            return "account_create_success";
-        } else
-            return "fail";
+        String userID = getSessionUserID(session);
+        String accountNumber = generateAccountNumber();
+        saveToDataBase(accountNumber, userID);
+        return "account_create_success";
     }
 
     /* Account Number

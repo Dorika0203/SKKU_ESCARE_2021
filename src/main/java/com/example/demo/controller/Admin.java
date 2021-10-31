@@ -4,9 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import com.example.demo.model.AdminDataModel;
 import com.example.demo.model.UserDataModel;
-import com.example.demo.repository.AccountDataRepository;
 import com.example.demo.repository.AdminDataRepository;
-import com.example.demo.repository.BankStatementDataRepository;
 import com.example.demo.repository.UserDataRepository;
 import com.fortanix.sdkms.v1.ApiClient;
 
@@ -37,10 +35,6 @@ public class Admin {
     private AdminDataRepository adminDataRepository;
     @Autowired
     private UserDataRepository userDataRepository;
-    @Autowired
-    private BankStatementDataRepository bankStatementDataRepository;
-    @Autowired
-    private AccountDataRepository accountDataRepository;
 
 
     // 로그인 페이지
@@ -55,12 +49,18 @@ public class Admin {
                 return "redirect:/adminPage";
             }
             Long level = adminDataRepository.getById(adminID).getLevel();
+
             // 수퍼 관리자
             if(level == 0) return "redirect:/adminPage/manageAdmin";
-
             // 일반 관리자
             else if (level == 1) return "redirect:/adminPage/manageClient";
-            else return "fail"; 
+            // 그 외 (오류)
+            else
+            {
+                System.out.println("admin Level is out of bound...." + level);
+                session.invalidate();
+                return "redirect:/adminPage";
+            } 
         }
         return "admin_login";
     }

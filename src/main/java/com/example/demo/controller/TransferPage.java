@@ -52,9 +52,11 @@ public class TransferPage {
     @GetMapping
     public String transferPage(Model model, HttpSession session) {
 
-        String userID = getSessionUserID(session);
-        if (userID == null) return "fail";
+        // 세션 만료 시
+        if(!isSessionAvailable(session)) return "fail";
 
+        String userID = getSessionUserID(session);
+        
         //add ID to model
         List<AccountDataModel> loginUserAccountList = accountDataRepository.findAllByUserId(userID);
         JSONArray myAccountsData = new JSONArray();
@@ -80,10 +82,8 @@ public class TransferPage {
     public int transfer(@RequestParam Map<String, Object> transferRequestMap, HttpSession session) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, BadPaddingException, InvalidKeyException, SignatureException {
 
 
-        // 세션 만료
-        String userID = getSessionUserID(session);
-        if (userID == null) return 5;
-
+        // 세션 만료 시
+        if(!isSessionAvailable(session)) return 5;
 
         String transferRequest = (String) transferRequestMap.get("transferData");
         String signature = (String) transferRequestMap.get("signature");

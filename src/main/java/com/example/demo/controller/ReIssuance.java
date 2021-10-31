@@ -31,19 +31,20 @@ public class ReIssuance {
     @GetMapping("reissuance")
     public String reissuance(HttpSession session) {
 
-        String userID = getSessionUserID(session);
-
-        if (userID == null) return "fail";
+        // 세션 만료 시
+        if(!isSessionAvailable(session)) return "fail";
         return "reissuance";
     }
 
     @PostMapping("reissue")
     public String Reissue(String PW, Model model, HttpSession session) throws ApiException {
 
-        String userID = getSessionUserID(session);
-        if (userID == null) return "fail";
+        // 세션 만료 시
+        if(!isSessionAvailable(session)) return "fail";
 
+        String userID = getSessionUserID(session);
         ApiClient client = getSessionApiClient(session);
+        
         Key reissuedKey = new Key(userID, PW);
         KeyObject keyPair = FortanixRestApi.getSecurityObjectByID(client, userID);
         reissuedKey.setBase64PublicKey(keyPair);
