@@ -14,6 +14,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     <button id="modify_admin", type="button"> 관리자 정보 수정 </button>
     <button id="remove_admin", type="button"> 관리자 제거 </button>
     <p></p>
+    <button type="button">
+      <a href="logout">로그 아웃</a>
+    </button>
+    <p></p>
     <table border="1", id="adminListTable">
       <th>인덱스</th>
       <th>아이디</th>
@@ -52,7 +56,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 
         adminListTable.appendChild(tr);
       }
-
 
       // 관리자 생성
       $('#create_admin').click(function() {

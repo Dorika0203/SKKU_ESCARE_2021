@@ -65,6 +65,13 @@ public class Admin {
         return "admin_login";
     }
 
+    // 로그아웃
+    @RequestMapping(method = RequestMethod.GET, path = "/adminPage/logout")
+    public String adminLogOut(HttpSession session) {
+        session.invalidate();
+        return "redirect:/adminPage";
+    }    
+
 
     // 로그인 요청 응답
     @ResponseBody

@@ -13,6 +13,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     <button id="modify_user", type="button"> 사용자 정보 수정 </button>
     <button id="remove_user", type="button"> 사용자 제거 </button>
     <p></p>
+    <button type="button">
+      <a href="logout">로그 아웃</a>
+    </button>
+    <p></p>
     <table border="1", id="userListTable">
       <th>인덱스</th>
       <th>아이디</th>
