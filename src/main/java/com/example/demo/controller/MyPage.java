@@ -73,12 +73,13 @@ public class MyPage {
                 if (j == 10) break;
                 JSONObject singleTransferInfo = new JSONObject();
 
-                // 출금, 입금 구분
-                if (jth_Transfer_For_ith_Account.getAccount() == ith_Account.getAccount())
+                // 출금
+                if (jth_Transfer_For_ith_Account.getAccount().equals(ith_Account.getAccount()))
                 {
                     singleTransferInfo.put("sendTo", jth_Transfer_For_ith_Account.getDepositAccount());
                     singleTransferInfo.put("gold", jth_Transfer_For_ith_Account.getTransactionAmount());
                 }
+                // 입금
                 else
                 {
                     singleTransferInfo.put("sendTo", jth_Transfer_For_ith_Account.getAccount());
